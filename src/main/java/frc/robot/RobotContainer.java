@@ -7,6 +7,8 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -33,6 +35,10 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.FieldCentricFacingAngle snapDrive = new SwerveRequest.FieldCentricFacingAngle()
+        .withDeadband(MaxSpeed * 0.035)
+        .withDriveRequestType(DriveRequestType.Velocity);
+    
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -49,6 +55,8 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        snapDrive.HeadingController = new PhoenixPIDController(10, 0, 0);
+        snapDrive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -59,12 +67,17 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+        joystick.rightBumper().whileTrue(
+            drivetrain.applyRequest(() -> 
+            snapDrive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-joystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(Rotation2d.fromDegrees(45)))
+        );
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
-
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -74,7 +87,7 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.rightBumper().whileTrue(new AutoAlignCoralScore(drivetrain));
+        joystick.rightTrigger().whileTrue(new AutoAlignCoralScore(drivetrain));
         //joystick.y().onTrue(new InstantCommand(() -> drivetrain.setSwerveToX()));
 
         drivetrain.registerTelemetry(logger::telemeterize);

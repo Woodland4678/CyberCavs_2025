@@ -17,6 +17,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,14 +27,25 @@ public class Armevator extends SubsystemBase {
   TalonFX elevatorMotor;
   TalonFX armMotor;
   SparkMax wristMotor;
+  SparkMax endAffectorWheels;
   private SparkMaxConfig motorConfig;
+  private SparkMaxConfig endAffectorConfig;
   private SparkClosedLoopController wristController;
+  private SparkClosedLoopController endAffectorController;
+  private DigitalInput hasCoral;
+  private final DutyCycleEncoder armAbsolute; // Absoloute Encoder
+  private final DutyCycleEncoder wristAbsolute; // Absoloute Encoder
   /** Creates a new Armevator. */
   public Armevator() {
     elevatorMotor = new TalonFX(0,"rio");
     armMotor = new TalonFX(1, "rio");
     wristMotor = new SparkMax(2, SparkLowLevel.MotorType.kBrushless);
     wristController = wristMotor.getClosedLoopController();
+    endAffectorWheels = new SparkMax(6, SparkLowLevel.MotorType.kBrushless);
+    endAffectorController = endAffectorWheels.getClosedLoopController();
+    hasCoral = new DigitalInput(1);
+    armAbsolute = new DutyCycleEncoder(2);
+    wristAbsolute = new DutyCycleEncoder(3);
     // in init function
     var elevatorConfigs = new TalonFXConfiguration();
 
@@ -84,7 +97,18 @@ public class Armevator extends SubsystemBase {
       .d(0)
       .outputRange(-1, 1);
 
-      wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+      endAffectorConfig.closedLoop
+      .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      // Set PID values for position control. We don't need to pass a closed
+      // loop slot, as it will default to slot 0.
+      .p(0.4)
+      .i(0)
+      .d(0)
+      .outputRange(-1, 1);
+
+      endAffectorWheels.configure(endAffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
        
   }
 
@@ -110,6 +134,15 @@ public class Armevator extends SubsystemBase {
 
   public void moveWristToPosition(double pos){
       wristController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
+  }
+  public void moveEndAffectorWheelsToPosition(double pos){
+    endAffectorController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
+}
+  public void setEndAffectorVelocity(double velocity){
+    endAffectorController.setReference(velocity,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+}
+  public boolean gethasCoral() {
+    return !hasCoral.get();
   }
 
 }

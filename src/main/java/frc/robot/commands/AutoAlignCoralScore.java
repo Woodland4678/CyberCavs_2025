@@ -19,7 +19,7 @@ public class AutoAlignCoralScore extends Command {
   CommandSwerveDrivetrain S_Swerve;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   PIDController xController = new PIDController(0.12, 0, 0);
-  PIDController yController = new PIDController(0.4, 0, 0);
+  PIDController yController = new PIDController(0.6, 0, 0.03);
   PIDController rController = new PIDController(0.22, 0, 0.001);
   double xSpeed = 0.0;
   double ySpeed = 0.0;
@@ -43,8 +43,8 @@ public class AutoAlignCoralScore extends Command {
   public void initialize() {
     xController.setSetpoint(0); //left and right
     xController.setTolerance(0.6);
-    yController.setSetpoint(0.0);// forward and back
-    yController.setTolerance(0.2);
+    yController.setSetpoint(-13.34);// forward and back
+    yController.setTolerance(0.5);
     rController.setSetpoint(180); //rotation
     rController.setTolerance(1.0);
     state = 0;
@@ -54,9 +54,9 @@ public class AutoAlignCoralScore extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //dashPIDS = S_Swerve.getDashPIDS();
-    //rController.setPID(dashPIDS[0], dashPIDS[1], dashPIDS[2]);
-    //rController.setIZone(dashPIDS[3]);
+    dashPIDS = S_Swerve.getDashPIDS();
+    xController.setPID(dashPIDS[0], dashPIDS[1], dashPIDS[2]);
+    xController.setIZone(dashPIDS[3]);
     
     //rController.setSetpoint(Constants.SwerveConstants.aprilTagRotationValues.get(S_Swerve.getBestAprilTagID())); //update the rcontroller target to the rotation target of the best april tag we see
     switch(state) {
@@ -76,8 +76,22 @@ public class AutoAlignCoralScore extends Command {
           xSpeed *= 0.5;
         }
         //xSpeed = 0;
-        // ySpeed = yController.calculate(S_Swerve.getAprilTagY());
-        ySpeed = 0;
+        ySpeed = yController.calculate(S_Swerve.getAprilTagY());
+        if (xController.atSetpoint()) {
+          xSpeed = 0;
+        }
+        if (yController.atSetpoint()) {
+          ySpeed = 0;
+        }
+        if (rController.atSetpoint()) {
+          rSpeed = 0;
+        }
+        if (S_Swerve.hasAprilTagTarget() == false){
+          xSpeed = 0;
+          ySpeed = 0;
+          rSpeed = 0;
+        }
+        //ySpeed = 0;
         SmartDashboard.putNumber("Auto Align Coral X Speed", xSpeed);
         SmartDashboard.putNumber("Auto Align Coral R Speed", rSpeed);
         S_Swerve.setControl(
@@ -85,7 +99,7 @@ public class AutoAlignCoralScore extends Command {
               .withVelocityY(xSpeed)
               .withRotationalRate(rSpeed)
         );
-        if (xController.atSetpoint() && rController.atSetpoint()) {
+        if (xController.atSetpoint() && yController.atSetpoint() && rController.atSetpoint()) {
           isAtSetpointCnt++;
           if (isAtSetpointCnt > 10) {
             state++;
@@ -97,7 +111,8 @@ public class AutoAlignCoralScore extends Command {
         
         break;
       case 1:
-        S_Swerve.applyRequest(() -> brake);
+        S_Swerve.setControl(brake);
+       // S_Swerve.applyRequest(() -> brake);
         break;
     }
     
