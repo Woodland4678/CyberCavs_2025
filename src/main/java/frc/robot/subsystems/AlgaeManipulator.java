@@ -68,4 +68,7 @@ public class AlgaeManipulator extends SubsystemBase {
   public void setIntakeSpeed(double velocity){
     intakeController.setReference(velocity,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
   }
+  public void stopIntakeWheels() {
+    intakeMotor.stopMotor();
+  }
 }

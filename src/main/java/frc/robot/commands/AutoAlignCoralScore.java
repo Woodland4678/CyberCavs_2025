@@ -32,7 +32,7 @@ public class AutoAlignCoralScore extends Command {
    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
    .withSteerRequestType(SteerRequestType.MotionMagicExpo);
   /** Creates a new AutoAlignCoralScore. */
-  public AutoAlignCoralScore(CommandSwerveDrivetrain S_Swerve) {
+  public AutoAlignCoralScore(CommandSwerveDrivetrain S_Swerve, char branch) {
     this.S_Swerve = S_Swerve;
     addRequirements(S_Swerve);
     // Use addRequirements() here to declare subsystem dependencies.
