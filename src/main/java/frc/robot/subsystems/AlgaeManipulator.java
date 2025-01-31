@@ -80,4 +80,7 @@ public class AlgaeManipulator extends SubsystemBase {
     return intakeMotor.getEncoder().getVelocity();
 
   }
+  public void stopIntakeWheels() {
+    intakeMotor.stopMotor();
+  }
 }

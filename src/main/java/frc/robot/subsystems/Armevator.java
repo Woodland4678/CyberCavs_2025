@@ -153,6 +153,9 @@ public class Armevator extends SubsystemBase {
   public void setEndAffectorVelocity(double velocity){
     endAffectorController.setReference(velocity,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
 }
+  public void stopEndAffectorWheels() {
+    endAffectorWheels.stopMotor();
+  }
   public boolean hasCoral() {
     return !hasCoral.get();
   }
