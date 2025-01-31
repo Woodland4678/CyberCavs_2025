@@ -20,6 +20,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -33,6 +34,7 @@ public class Armevator extends SubsystemBase {
   private SparkClosedLoopController wristController;
   private SparkClosedLoopController endAffectorController;
   private DigitalInput hasCoral;
+  private DigitalInput atStartPos; 
   private final DutyCycleEncoder armAbsolute; // Absoloute Encoder
   private final DutyCycleEncoder wristAbsolute; // Absoloute Encoder
   /** Creates a new Armevator. */
@@ -46,6 +48,7 @@ public class Armevator extends SubsystemBase {
     hasCoral = new DigitalInput(1);
     armAbsolute = new DutyCycleEncoder(2);
     wristAbsolute = new DutyCycleEncoder(3);
+    atStartPos = new DigitalInput(4);
     // in init function
     var elevatorConfigs = new TalonFXConfiguration();
 
@@ -115,6 +118,15 @@ public class Armevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Elevator Position", getElevatorPosition());
+    SmartDashboard.putNumber("Arm Absolute", getArmAbsolute());
+    SmartDashboard.putNumber("Arm Position", getArmPosition());
+    SmartDashboard.putNumber("Wrist Absolute", getWristAbsolute());
+    SmartDashboard.putNumber("Wrist Position", getWristPosition());
+    SmartDashboard.putNumber("End effector wheel speed", getEndAffectorWheelSpeed());
+    SmartDashboard.putBoolean("Has Coral", hasCoral());
+    SmartDashboard.putBoolean("Elevator at start point", isAtStartPos());
+    // Lidar SmartDashboard needs to be added here
   }
   public void moveElevatorToPosition(double pos){
     // create a Motion Magic request, voltage output
@@ -141,8 +153,33 @@ public class Armevator extends SubsystemBase {
   public void setEndAffectorVelocity(double velocity){
     endAffectorController.setReference(velocity,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
 }
-  public boolean gethasCoral() {
+  public boolean hasCoral() {
     return !hasCoral.get();
   }
+  public double getElevatorPosition(){
+    return elevatorMotor.getPosition().getValueAsDouble();
+  }
+  public double getArmAbsolute(){
+    return armAbsolute.get();
+  }
+  public double getArmPosition(){
+    return armMotor.getPosition().getValueAsDouble();
+  }
+  public double getWristAbsolute(){
+    return wristAbsolute.get();
+  }
+  public double getWristPosition(){
+    return wristMotor.getEncoder().getPosition();
+  }
+  public double getEndAffectorWheelSpeed(){
+    return endAffectorWheels.get();
+  }
+  public boolean isAtStartPos(){
+    return !atStartPos.get();
+
+
+  }
+  
+  
 
 }

@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AlgaeManipulator extends SubsystemBase {
@@ -59,6 +60,8 @@ public class AlgaeManipulator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Algae Manipulator Position", getPosition());
+    SmartDashboard.putNumber("Algae Manipulator Speed", getSpeed());
     // This method will be called once per scheduler run
   }
 
@@ -67,5 +70,14 @@ public class AlgaeManipulator extends SubsystemBase {
   }
   public void setIntakeSpeed(double velocity){
     intakeController.setReference(velocity,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+
+  }
+  public double getPosition(){
+    return manipulatorPositionMotor.getEncoder().getPosition();
+
+  }
+  public double getSpeed(){
+    return intakeMotor.getEncoder().getVelocity();
+
   }
 }

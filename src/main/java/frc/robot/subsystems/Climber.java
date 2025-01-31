@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
@@ -45,6 +46,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Climber Position", getClimberPosition());
     // This method will be called once per scheduler run
   }
   public boolean getAtMaxClimb() {
@@ -57,4 +59,9 @@ public class Climber extends SubsystemBase {
     // set target position to 100 rotations
     climberMotor.setControl(m_request.withPosition(pos));
   }
+  public double getClimberPosition(){
+
+    return climberMotor.getPosition().getValueAsDouble();
+  }
+  
 }
