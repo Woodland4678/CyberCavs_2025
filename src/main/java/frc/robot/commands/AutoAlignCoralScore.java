@@ -11,6 +11,12 @@ import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
+import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
+
+import java.security.Timestamp;
+import java.security.cert.X509CRL;
+
+import com.ctre.phoenix6.AllTimestamps;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 
@@ -18,9 +24,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 public class AutoAlignCoralScore extends Command {
   CommandSwerveDrivetrain S_Swerve;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  PIDController xController = new PIDController(0.12, 0, 0);
-  PIDController yController = new PIDController(0.6, 0, 0.03);
-  PIDController rController = new PIDController(0.22, 0, 0.001);
+  PhoenixPIDController xController = new PhoenixPIDController(0.12, 0, 0);
+  PhoenixPIDController yController = new PhoenixPIDController(0.6, 0, 0.03);
+  PhoenixPIDController rController = new PhoenixPIDController(0.22, 0, 0.001);
   double xSpeed = 0.0;
   double ySpeed = 0.0;
   double rSpeed = 0.0;
@@ -28,6 +34,10 @@ public class AutoAlignCoralScore extends Command {
   double[] dashPIDS = new double[5];
   int isAtSetpointCnt;
   double degrees = 0;
+  double xControllerSetpoint;
+  double yControllerSetpoint;
+  double rControllerSetpoint;
+  AllTimestamps time = new AllTimestamps();
   private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
    .withSteerRequestType(SteerRequestType.MotionMagicExpo);
@@ -41,11 +51,11 @@ public class AutoAlignCoralScore extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    xController.setSetpoint(0); //left and right
+    xControllerSetpoint = (0); //left and right
     xController.setTolerance(0.6);
-    yController.setSetpoint(-13.34);// forward and back
+    yControllerSetpoint = (-13.34);// forward and back
     yController.setTolerance(0.5);
-    rController.setSetpoint(180); //rotation
+    rControllerSetpoint = (180); //rotation
     rController.setTolerance(1.0);
     state = 0;
     isAtSetpointCnt = 0;
@@ -68,15 +78,15 @@ public class AutoAlignCoralScore extends Command {
         else if (rController.getSetpoint() < -160 && degrees > 0) {
           degrees = degrees - 360;
         }
-        rSpeed = rController.calculate(degrees);
+        rSpeed = rController.calculate(degrees, rControllerSetpoint, time.getDeviceTimestamp().getTime());
         //rSpeed = 0;
         
-        xSpeed = xController.calculate(S_Swerve.getAprilTagX());
-        if (rController.getError() > 5) {
+        xSpeed = xController.calculate(S_Swerve.getAprilTagX(), xControllerSetpoint, time.getDeviceTimestamp().getTime());
+        if (rController.getPositionError() > 5) {
           xSpeed *= 0.5;
         }
         //xSpeed = 0;
-        ySpeed = yController.calculate(S_Swerve.getAprilTagY());
+        ySpeed = yController.calculate(S_Swerve.getAprilTagY(), yControllerSetpoint, time.getDeviceTimestamp().getTime());
         if (xController.atSetpoint()) {
           xSpeed = 0;
         }
