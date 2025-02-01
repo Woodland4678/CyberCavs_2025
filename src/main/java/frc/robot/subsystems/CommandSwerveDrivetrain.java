@@ -51,7 +51,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double bestAprilTagTargetX;
     private double bestAprilTagTargetY;
     private int bestAprilTagTargetID;
-    private double[] dashPIDS = new double[5];
+    private double[] dashPIDS = new double[11];
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -346,12 +346,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             
          }
      }
-     public void setDashPIDS(double P, double I, double D, double Izone, double FF) {
+     public void setDashPIDS(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
         dashPIDS[0] = P;
         dashPIDS[1] = I;
         dashPIDS[2] = D;
-        dashPIDS[3] = Izone;
-        dashPIDS[4] = FF;
+        dashPIDS[3] = P2;
+        dashPIDS[4] = I2;
+        dashPIDS[5] = D2;
+        dashPIDS[6] = P3;
+        dashPIDS[7] = I3;
+        dashPIDS[8] = D3;
+        dashPIDS[9] = Izone;
+        dashPIDS[10] = FF;
      }
      public double[] getDashPIDS() {
         return dashPIDS;

@@ -94,8 +94,8 @@ public class RobotContainer {
          joystick.a().onTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(5000)));
          joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(30))); // Rest postition, tune value later.
          joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
-         joystick.rightTrigger().onTrue(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(5000))); // Wheel velocity, tune value later.
-         joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.stopEndAffectorWheels()));
+         //joystick.rightTrigger().onTrue(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(5000))); // Wheel velocity, tune value later.
+         //joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.stopEndAffectorWheels()));
 
         snapDrive.HeadingController = new PhoenixPIDController(10, 0, 0);
         snapDrive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -160,7 +160,7 @@ public class RobotContainer {
         return autoChooser.getSelected();
         //return Commands.print("No autonomous command configured");
     }
-    public void setDashboardPIDs(double P, double I, double D, double Izone, double FF) {
-        drivetrain.setDashPIDS(P, I, D, Izone, FF); 
+    public void setDashboardPIDs(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
+        drivetrain.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
     }
 }

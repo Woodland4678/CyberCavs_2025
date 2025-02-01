@@ -5,6 +5,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -17,6 +20,7 @@ import java.security.Timestamp;
 import java.security.cert.X509CRL;
 
 import com.ctre.phoenix6.AllTimestamps;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 
@@ -24,19 +28,20 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 public class AutoAlignCoralScore extends Command {
   CommandSwerveDrivetrain S_Swerve;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  PhoenixPIDController xController = new PhoenixPIDController(0.12, 0, 0);
-  PhoenixPIDController yController = new PhoenixPIDController(0.6, 0, 0.03);
-  PhoenixPIDController rController = new PhoenixPIDController(0.22, 0, 0.001);
+  PhoenixPIDController xController = new PhoenixPIDController(0.08, 0, 0.01);
+  PhoenixPIDController yController = new PhoenixPIDController(0.32, 0, 0.022); //0.06, 0, 0.04
+  PhoenixPIDController rController = new PhoenixPIDController(0.12, 0, 0.00);
   double xSpeed = 0.0;
   double ySpeed = 0.0;
   double rSpeed = 0.0;
   int state = 0;
-  double[] dashPIDS = new double[5];
+  double[] dashPIDS = new double[11];
   int isAtSetpointCnt;
   double degrees = 0;
   double xControllerSetpoint;
   double yControllerSetpoint;
   double rControllerSetpoint;
+  StatusSignal time2 = new StatusSignal<>(getClass(), null, null);
   AllTimestamps time = new AllTimestamps();
   private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
@@ -52,11 +57,11 @@ public class AutoAlignCoralScore extends Command {
   @Override
   public void initialize() {
     xControllerSetpoint = (0); //left and right
-    xController.setTolerance(0.6);
-    yControllerSetpoint = (-13.34);// forward and back
-    yController.setTolerance(0.5);
+    xController.setTolerance(1);
+    yControllerSetpoint = (-4.6);// forward and back
+    yController.setTolerance(0.25);
     rControllerSetpoint = (180); //rotation
-    rController.setTolerance(1.0);
+    rController.setTolerance(2);
     state = 0;
     isAtSetpointCnt = 0;
   }
@@ -66,6 +71,8 @@ public class AutoAlignCoralScore extends Command {
   public void execute() {
     dashPIDS = S_Swerve.getDashPIDS();
     xController.setPID(dashPIDS[0], dashPIDS[1], dashPIDS[2]);
+    yController.setPID(dashPIDS[3], dashPIDS[4], dashPIDS[5]);
+    rController.setPID(dashPIDS[6], dashPIDS[7], dashPIDS[8]);
     xController.setIZone(dashPIDS[3]);
     
     //rController.setSetpoint(Constants.SwerveConstants.aprilTagRotationValues.get(S_Swerve.getBestAprilTagID())); //update the rcontroller target to the rotation target of the best april tag we see
@@ -78,15 +85,25 @@ public class AutoAlignCoralScore extends Command {
         else if (rController.getSetpoint() < -160 && degrees > 0) {
           degrees = degrees - 360;
         }
-        rSpeed = rController.calculate(degrees, rControllerSetpoint, time.getDeviceTimestamp().getTime());
-        //rSpeed = 0;
+        rSpeed = rController.calculate(degrees, rControllerSetpoint, Timer.getFPGATimestamp());
+       // rSpeed = 0;
         
-        xSpeed = xController.calculate(S_Swerve.getAprilTagX(), xControllerSetpoint, time.getDeviceTimestamp().getTime());
-        if (rController.getPositionError() > 5) {
-          xSpeed *= 0.5;
+        xSpeed = xController.calculate(S_Swerve.getAprilTagX(), xControllerSetpoint,Timer.getFPGATimestamp());
+        if (Math.abs(rController.getPositionError()) > rController.getPositionTolerance()) {
+          xSpeed = 0;
         }
         //xSpeed = 0;
-        ySpeed = yController.calculate(S_Swerve.getAprilTagY(), yControllerSetpoint, time.getDeviceTimestamp().getTime());
+        //time2.refresh();
+        ySpeed = yController.calculate(S_Swerve.getAprilTagY(), -4.6, Timer.getFPGATimestamp());
+        SmartDashboard.putNumber("auto align coral y-speed", ySpeed);
+        SmartDashboard.putNumber("auto align coral timestamp2", time2.getAllTimestamps().getBestTimestamp().getTime());
+        SmartDashboard.putNumber("auto align coral timestamp", time.getSystemTimestamp().getTime());
+        SmartDashboard.putBoolean("auto align coral is x done", xController.atSetpoint());
+        SmartDashboard.putBoolean("auto align coral is y done", yController.atSetpoint());
+        SmartDashboard.putBoolean("auto align coral is r done", rController.atSetpoint());
+        SmartDashboard.putNumber("auto align coral x error", xController.getPositionError());
+        SmartDashboard.putNumber("auto align coral y error", yController.getPositionError());
+        SmartDashboard.putNumber("auto align coral r error", rController.getPositionError());
         if (xController.atSetpoint()) {
           xSpeed = 0;
         }
@@ -94,7 +111,7 @@ public class AutoAlignCoralScore extends Command {
           ySpeed = 0;
         }
         if (rController.atSetpoint()) {
-          rSpeed = 0;
+          // rSpeed = 0;
         }
         if (S_Swerve.hasAprilTagTarget() == false){
           xSpeed = 0;
@@ -112,7 +129,7 @@ public class AutoAlignCoralScore extends Command {
         if (xController.atSetpoint() && yController.atSetpoint() && rController.atSetpoint()) {
           isAtSetpointCnt++;
           if (isAtSetpointCnt > 10) {
-            state++;
+            //state++;
           }
         }
         else {
