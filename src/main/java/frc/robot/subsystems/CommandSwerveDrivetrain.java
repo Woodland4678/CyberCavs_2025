@@ -22,8 +22,10 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
@@ -52,6 +54,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double bestAprilTagTargetY;
     private int bestAprilTagTargetID;
     private double[] dashPIDS = new double[11];
+    private DutyCycle distanceLaser;
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -148,6 +151,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        distanceLaser = new DutyCycle(new DigitalInput(0));
         rpi = new PhotonCamera("Arducam_Main");
         configureAutoBuilder();
     }
@@ -174,6 +178,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        distanceLaser = new DutyCycle(new DigitalInput(0));
         configureAutoBuilder();
     }
 
@@ -207,6 +212,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        distanceLaser = new DutyCycle(new DigitalInput(0));
         configureAutoBuilder();
     }
     private void configureAutoBuilder() {
@@ -305,6 +311,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("Gyro", getgyroValue());
         SmartDashboard.putString("2D pose X", this.getState().Pose.getMeasureX().toString());
         SmartDashboard.putString("2D pose Y", this.getState().Pose.getMeasureY().toString());
+        SmartDashboard.putNumber("Distance Laser", this.getDistanceLaser());
 
     }
 
@@ -362,6 +369,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      public double[] getDashPIDS() {
         return dashPIDS;
      }
+     public double getDistanceLaser() {
+        return distanceLaser.getOutput() * 180 + 20;
+    }
 
      
 }

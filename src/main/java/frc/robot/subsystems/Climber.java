@@ -22,7 +22,7 @@ public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   public Climber() {
     climberMotor = new TalonFX(5,"rio");
-    atMaxClimb = new DigitalInput(0);
+    atMaxClimb = new DigitalInput(5);
 
     var climberConfigs = new TalonFXConfiguration();
 
@@ -46,7 +46,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Climber Position", getClimberPosition());
+    //SmartDashboard.putNumber("Climber Position", getClimberPosition());
     // This method will be called once per scheduler run
   }
   public boolean getAtMaxClimb() {
