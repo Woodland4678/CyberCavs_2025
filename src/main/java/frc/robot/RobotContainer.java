@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.AutoAlignCoralPath;
 import frc.robot.commands.AutoAlignCoralScore;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeManipulator;
@@ -136,7 +137,8 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.rightTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, 'A'));
+        //joystick.rightTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, 'A'));
+        joystick.rightTrigger().whileTrue(new AutoAlignCoralPath(drivetrain));
 
         operatorController.button(1).whileTrue(new AutoAlignCoralScore(drivetrain, 'A'));
         operatorController.button(2).whileTrue(new AutoAlignCoralScore(drivetrain, 'B'));

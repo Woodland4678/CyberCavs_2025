@@ -20,6 +20,9 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -55,6 +58,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private int bestAprilTagTargetID;
     private double[] dashPIDS = new double[11];
     private DutyCycle distanceLaser;
+    private Transform3d cameraToTag;
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -303,6 +307,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 bestAprilTagTargetX = bestTarget.yaw;
                 bestAprilTagTargetY = bestTarget.pitch;
                 bestAprilTagTargetID = bestTarget.fiducialId;
+                cameraToTag = bestTarget.getBestCameraToTarget();
             }
         }
         SmartDashboard.putNumber("April Tag Best ID", bestAprilTagTargetID);
@@ -312,6 +317,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putString("2D pose X", this.getState().Pose.getMeasureX().toString());
         SmartDashboard.putString("2D pose Y", this.getState().Pose.getMeasureY().toString());
         SmartDashboard.putNumber("Distance Laser", this.getDistanceLaser());
+        //SmartDashboard.putNumber("Path Coral Align Estimated Y", cameraToTag.getX());
+        //SmartDashboard.putNumber("Path Coral Align Estimated X", cameraToTag.getY());
+        //SmartDashboard.putString("cameraToTag", cameraToTag.toString());
 
     }
 
@@ -337,6 +345,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      }
      public int getBestAprilTagID() {
          return bestAprilTagTargetID;
+     }
+     public Transform3d getCameraToTarget() {
+        return cameraToTag;
      }
      public boolean hasAprilTagTarget() {
          if (rpi.getLatestResult().hasTargets()) { 

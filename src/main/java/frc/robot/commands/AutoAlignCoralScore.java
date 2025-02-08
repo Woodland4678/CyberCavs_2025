@@ -30,9 +30,10 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 public class AutoAlignCoralScore extends Command {
   CommandSwerveDrivetrain S_Swerve;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  PhoenixPIDController xController = new PhoenixPIDController(2, 0, 0.03);
+  //PhoenixPIDController xController = new PhoenixPIDController(2, 0, 0.03); //for meters
+  PhoenixPIDController xController = new PhoenixPIDController(0.04, 0, 0.001); //for cm
   //PhoenixPIDController yController = new PhoenixPIDController(0.37, 0, 0.02); //0.32, 0, 0.022 //for using camera pitch for lineup
-  PhoenixPIDController yController = new PhoenixPIDController(0.1, 0, 0.0); //0.32, 0, 0.022 //for using lidar to line up
+  PhoenixPIDController yController = new PhoenixPIDController(0.03, 0, 0.001); //0.32, 0, 0.022 //for using lidar to line up
   PhoenixPIDController rController = new PhoenixPIDController(0.12, 0, 0.00);
   double xSpeed = 0.0;
   double ySpeed = 0.0;
@@ -59,12 +60,13 @@ public class AutoAlignCoralScore extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    xControllerSetpoint = (0.2); //left and right
-    xController.setTolerance(0.03);
-    yControllerSetpoint = (9);// forward and back
-    yController.setTolerance(0.5);
+    xControllerSetpoint = (17); //left and right
+    xController.setTolerance(3.0);
+    //yControllerSetpoint = (9);// forward and back
+    yControllerSetpoint = 61;
+    yController.setTolerance(3.0); //3cm
     rControllerSetpoint = (180); //rotation
-    rController.setTolerance(2);
+    rController.setTolerance(0.5);
     state = 0;
     isAtSetpointCnt = 0;
     yController.reset();
@@ -96,9 +98,15 @@ public class AutoAlignCoralScore extends Command {
         }
         rSpeed = rController.calculate(degrees, rControllerSetpoint, Timer.getFPGATimestamp());
         //rSpeed = 0;
-        var estYDist = 0.0798/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY()))); //0.0889 is the height diff between the camera and middle of the april tag (3.5 inches)
-        var xDist = estYDist * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
-        xSpeed = xController.calculate(xDist, xControllerSetpoint,Timer.getFPGATimestamp()) + 0.1;
+        //var estYDist = 0.0798/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY()))); //0.0889 is the height diff between the camera and middle of the april tag (3.5 inches)
+        var xDist = (S_Swerve.getDistanceLaser()) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
+        xSpeed = xController.calculate(xDist, xControllerSetpoint,Timer.getFPGATimestamp());
+        if (xSpeed < 0) { //a little bit of feedfoward
+          xSpeed -= 0.07;
+        }
+        else {
+          xSpeed += 0.07;
+        }
         if (xSpeed > 4.0) {
           xSpeed = 4.0;
         }
@@ -113,7 +121,13 @@ public class AutoAlignCoralScore extends Command {
         // else {
         //   yController.setP(3);
         // }
-        ySpeed = yController.calculate(S_Swerve.getAprilTagY(), yControllerSetpoint, Timer.getFPGATimestamp());
+        ySpeed = yController.calculate(S_Swerve.getDistanceLaser(), yControllerSetpoint, Timer.getFPGATimestamp());
+        if(ySpeed < 0) {
+          ySpeed -= 0.1;
+        }
+        else {
+          ySpeed += 0.1;
+        }
         if (ySpeed < -4) {
           ySpeed = -4.0;
         }
@@ -124,7 +138,7 @@ public class AutoAlignCoralScore extends Command {
           ySpeed = 0;
         }
         if (rController.atSetpoint()) {
-          // rSpeed = 0;
+           rSpeed = 0;
         }
         if (S_Swerve.hasAprilTagTarget() == false){
           xSpeed = 0;
@@ -140,13 +154,13 @@ public class AutoAlignCoralScore extends Command {
         SmartDashboard.putNumber("auto align coral x error", xController.getPositionError());
         SmartDashboard.putNumber("auto align coral y error", yController.getPositionError());
         SmartDashboard.putNumber("auto align coral r error", rController.getPositionError());
-        SmartDashboard.putNumber("auto align coral estimated y distance", estYDist);
+       // SmartDashboard.putNumber("auto align coral estimated y distance", estYDist);
         SmartDashboard.putNumber("auto align coral estimated x distance", xDist);
         
         SmartDashboard.putNumber("Auto Align Coral X Speed", xSpeed);
         SmartDashboard.putNumber("Auto Align Coral R Speed", rSpeed);
         S_Swerve.setControl(
-          m_driveRequest.withVelocityX(ySpeed)
+          m_driveRequest.withVelocityX(-ySpeed)
               .withVelocityY(xSpeed)
               .withRotationalRate(rSpeed)
         );
