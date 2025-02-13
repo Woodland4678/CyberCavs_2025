@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,6 +16,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -25,30 +27,49 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class Armevator extends SubsystemBase {
+  enum CoralStates {
+    WAITING_FOR_CORAL,
+    POSITION_CORAL_FOR_ARM_MOVE,
+    POSITION_CORAL_FOR_SCORE,
+  } 
+  CoralStates cState;
   TalonFX elevatorMotor;
   TalonFX armMotor;
   SparkMax wristMotor;
-  SparkMax endAffectorWheels;
+  SparkMax endEffectorMotor;
+  private int coralState = 0;
   private SparkMaxConfig motorConfig;
-  private SparkMaxConfig endAffectorConfig;
+  private SparkMaxConfig endEffectorConfig;
   private SparkClosedLoopController wristController;
-  private SparkClosedLoopController endAffectorController;
+  private SparkClosedLoopController endEffectorController;
   private DigitalInput hasCoral;
   private DigitalInput atStartPos; 
   private final DutyCycleEncoder armAbsolute; // Absoloute Encoder
   private final DutyCycleEncoder wristAbsolute; // Absoloute Encoder
+  private boolean isCoralPositionedForArmMove;
+  private boolean isArmAtRest;
+  private boolean isCoralPositionedForScore;
+  private final double coralPositionForArmMove = 0; //TODO find
+  private final double coralPositionToScore = 0; //TODO find
+  private int currentArmPositionID = 0;
+  private double currentWristTarget = 0;
   /** Creates a new Armevator. */
   public Armevator() {
+    cState = CoralStates.WAITING_FOR_CORAL;
+    isCoralPositionedForArmMove = false;
+    isCoralPositionedForScore = false;
     elevatorMotor = new TalonFX(0,"rio");
     armMotor = new TalonFX(1, "rio");
     wristMotor = new SparkMax(2, SparkLowLevel.MotorType.kBrushless);
     wristController = wristMotor.getClosedLoopController();
-    endAffectorWheels = new SparkMax(6, SparkLowLevel.MotorType.kBrushless);
-    endAffectorController = endAffectorWheels.getClosedLoopController();
+    endEffectorMotor = new SparkMax(6, SparkLowLevel.MotorType.kBrushless);
+    endEffectorController = endEffectorMotor.getClosedLoopController();
     hasCoral = new DigitalInput(1);
     armAbsolute = new DutyCycleEncoder(2);
     wristAbsolute = new DutyCycleEncoder(3);
     atStartPos = new DigitalInput(4);
+    FeedbackConfigs armFeedbackConfigs = new FeedbackConfigs();
+    armFeedbackConfigs.RotorToSensorRatio = 48; // 48:1 on the arm
     // in init function
     var elevatorConfigs = new TalonFXConfiguration();
 
@@ -66,6 +87,7 @@ public class Armevator extends SubsystemBase {
     elevatorMotionConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
     elevatorMotionConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
     elevatorMotionConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
+
 
     elevatorMotor.getConfigurator().apply(elevatorConfigs);
 
@@ -88,6 +110,7 @@ public class Armevator extends SubsystemBase {
     armMotionConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armMotor.getConfigurator().apply(armConfigs);
+    armMotor.getConfigurator().apply(armFeedbackConfigs);
 
     motorConfig = new SparkMaxConfig();
 
@@ -101,7 +124,9 @@ public class Armevator extends SubsystemBase {
       .outputRange(-1, 1);
 
     wristMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-
+    EncoderConfig wristFeedbackConfig = new EncoderConfig();
+    wristFeedbackConfig.positionConversionFactor(24); //TODO double check ratio here and check how to apply the factor
+  
       // endAffectorConfig.closedLoop
       // .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       // // Set PID values for position control. We don't need to pass a closed
@@ -127,6 +152,37 @@ public class Armevator extends SubsystemBase {
     SmartDashboard.putBoolean("Has Coral", hasCoral());
     SmartDashboard.putBoolean("Elevator at start point", isAtStartPos());
     // Lidar SmartDashboard needs to be added here
+
+
+    //State machine for handling coral positioning in the end effector
+    switch(cState) {
+      case WAITING_FOR_CORAL:
+        if (hasCoral()) {
+          cState = CoralStates.POSITION_CORAL_FOR_ARM_MOVE;
+          endEffectorMotor.disable();
+        }
+      break;
+      case POSITION_CORAL_FOR_ARM_MOVE:
+        if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 100) { //TODO tune this for robot
+          isCoralPositionedForArmMove = true;
+        }
+        if (isArmAtRest && isCoralPositionedForArmMove) {
+          cState = CoralStates.POSITION_CORAL_FOR_SCORE;
+          endEffectorMotor.disable();
+          isCoralPositionedForArmMove = false;
+        }
+      break;
+      case POSITION_CORAL_FOR_SCORE:
+        if (moveEndAffectorWheelsToPosition(coralPositionToScore) < 100){ //TODO tune for robot 
+          isCoralPositionedForScore = true;
+        }
+      break;
+    }
+    if (!hasCoral()) {
+      cState = CoralStates.WAITING_FOR_CORAL;
+      isCoralPositionedForArmMove = false;
+      isCoralPositionedForScore = false;
+    }
   }
   public void moveElevatorToPosition(double pos){
     // create a Motion Magic request, voltage output
@@ -146,21 +202,32 @@ public class Armevator extends SubsystemBase {
 
   public void moveWristToPosition(double pos){
       wristController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
+      currentWristTarget = pos;
   }
-  public void moveEndAffectorWheelsToPosition(double pos){
-    endAffectorController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
-}
+  public double moveEndAffectorWheelsToPosition(double pos){
+    endEffectorController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
+    return Math.abs(pos - endEffectorMotor.getEncoder().getPosition());
+  }
   public void setEndAffectorVelocity(double velocity){
-    endAffectorController.setReference(velocity,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
-}
+    endEffectorController.setReference(velocity,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+  }
   public void stopEndAffectorWheels() {
-    endAffectorWheels.stopMotor();
+    endEffectorMotor.stopMotor();
   }
   public boolean hasCoral() {
     return !hasCoral.get();
   }
   public double getElevatorPosition(){
     return elevatorMotor.getPosition().getValueAsDouble();
+  }
+  public double getElevatorPositionError() {
+    return elevatorMotor.getClosedLoopError(true).getValueAsDouble();
+  }
+  public double getArmPositionError() {
+    return armMotor.getClosedLoopError(true).getValueAsDouble();
+  }
+  public double getWristPositionError() {
+    return Math.abs(wristMotor.getEncoder().getPosition() - currentWristTarget);
   }
   public double getArmAbsolute(){
     return armAbsolute.get();
@@ -175,12 +242,16 @@ public class Armevator extends SubsystemBase {
     return wristMotor.getEncoder().getPosition();
   }
   public double getEndAffectorWheelSpeed(){
-    return endAffectorWheels.get();
+    return endEffectorMotor.get();
   }
   public boolean isAtStartPos(){
     return !atStartPos.get();
-
-
+  }
+  public void setCurrentArmPositionID(int ID) {
+    currentArmPositionID = ID;
+  }
+  public int getCurrentArmPositionID() {
+    return currentArmPositionID;
   }
   
   

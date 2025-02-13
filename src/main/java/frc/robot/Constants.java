@@ -22,4 +22,25 @@ public final class Constants {
         }};
         
     }
+    public static class ArmConstants {
+        public static final ArmPosition homePosition = new ArmPosition(0,-90, 0, 0);
+        public static final ArmPosition intakePosition = new ArmPosition(1, -90, 0, 0);
+        public static final ArmPosition restPosition = new ArmPosition(2, -90, 0, 0);        
+        public static final ArmPosition L1Position = new ArmPosition(3, -90, 0, 0);
+        public static final ArmPosition L2Position = new ArmPosition(4,-90, 0, 0);
+        public static final ArmPosition L3Position = new ArmPosition(5,-90, 0, 0);
+        public static final ArmPosition L4Position = new ArmPosition(6,-90, 0, 0);
+    }
+    public static class ArmPosition{
+        public double armTargetAngle = -90; //home angle
+        public double elevatorTarget = 0; //home position 
+        public double wristTarget = 0; //TODO determine home position
+        public int positionID = 0;
+        public ArmPosition(int positionID, double armTargetAngle, double elevatorTarget, double wristTarget) {
+          this.armTargetAngle = armTargetAngle;
+          this.elevatorTarget = elevatorTarget;
+          this.wristTarget = wristTarget;
+          this.positionID = positionID;
+        }
+      }
 }
