@@ -45,7 +45,7 @@ public class AutoAlignCoralScore extends Command {
   double xControllerSetpoint;
   double yControllerSetpoint;
   double rControllerSetpoint;
-  StatusSignal time2 = new StatusSignal<>(getClass(), null, null);
+ // StatusSignal time2 = new StatusSignal<>(getClass(), null, null);
   AllTimestamps time = new AllTimestamps();
   private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
@@ -146,7 +146,7 @@ public class AutoAlignCoralScore extends Command {
           rSpeed = 0;
         }
         SmartDashboard.putNumber("auto align coral y-speed", ySpeed);
-        SmartDashboard.putNumber("auto align coral timestamp2", time2.getAllTimestamps().getBestTimestamp().getTime());
+        //SmartDashboard.putNumber("auto align coral timestamp2", time2.getAllTimestamps().getBestTimestamp().getTime());
         SmartDashboard.putNumber("auto align coral timestamp", time.getSystemTimestamp().getTime());
         SmartDashboard.putBoolean("auto align coral is x done", xController.atSetpoint());
         SmartDashboard.putBoolean("auto align coral is y done", yController.atSetpoint());

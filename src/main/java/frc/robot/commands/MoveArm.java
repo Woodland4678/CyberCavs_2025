@@ -31,7 +31,8 @@ public class MoveArm extends Command {
   public void initialize() {
     isDone = false;
     currentArmPositionID = S_Armevator.getCurrentArmPositionID();
-    if (targetPosition.positionID == 1 && currentArmPositionID != 2) { //if we're moving to intake coral and we're not already in rest position, move to rest first
+    S_Armevator.setTargetArmPositionID(targetPosition.positionID);
+    if ((currentArmPositionID == 1 && targetPosition.positionID > 1) || (currentArmPositionID != 1 && targetPosition.positionID == 1)) { //if we're moving to intake coral and we're not already in rest position, move to rest first
       S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
       S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
       S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
@@ -54,9 +55,6 @@ public class MoveArm extends Command {
           }
       break;
       case 1:
-          if (targetPosition.positionID == Constants.ArmConstants.intakePosition.positionID) { //if we're going to intake position turn the wheels on
-            S_Armevator.setEndAffectorVelocity(8000); //intake wheel speed
-          }
           S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
           S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
           S_Armevator.moveWristToPosition(targetPosition.wristTarget);

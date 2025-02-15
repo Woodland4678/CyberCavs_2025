@@ -59,6 +59,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double[] dashPIDS = new double[11];
     private DutyCycle distanceLaser;
     private Transform3d cameraToTag;
+    private boolean hasAprilTagTarget = false;
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -303,12 +304,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (!rpiCoralScoreResult.isEmpty()) {
             var res = rpiCoralScoreResult.get(rpiCoralScoreResult.size() - 1);
             if (res.hasTargets()) {
+                hasAprilTagTarget = true;
                 var bestTarget = res.getBestTarget();
                 bestAprilTagTargetX = bestTarget.yaw;
                 bestAprilTagTargetY = bestTarget.pitch;
                 bestAprilTagTargetID = bestTarget.fiducialId;
                 cameraToTag = bestTarget.getBestCameraToTarget();
             }
+            else {
+                hasAprilTagTarget = false;
+            }
+        }
+        else {
+            hasAprilTagTarget = false;
         }
         SmartDashboard.putNumber("April Tag Best ID", bestAprilTagTargetID);
         SmartDashboard.putNumber("April Tag X", bestAprilTagTargetX);
@@ -350,10 +358,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return cameraToTag;
      }
      public boolean hasAprilTagTarget() {
-         if (rpi.getLatestResult().hasTargets()) { 
-             return true;
-         }
-         return false;
+         return hasAprilTagTarget;
      }
      public double getgyroValue() {
          return this.getState().Pose.getRotation().getDegrees();
