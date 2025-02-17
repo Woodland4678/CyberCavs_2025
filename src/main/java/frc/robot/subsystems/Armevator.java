@@ -22,6 +22,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
@@ -57,7 +58,7 @@ public class Armevator extends SubsystemBase {
   private DigitalInput hasCoral;
   //private DigitalInput atStartPos; 
   private final DutyCycleEncoder armAbsolute; // Absoloute Encoder
-  private final DutyCycleEncoder wristAbsolute; // Absoloute Encoder
+  private final AnalogInput wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
   private boolean isArmAtRest;
   private final double coralPositionForArmMove = 0; //TODO find
@@ -77,8 +78,8 @@ public class Armevator extends SubsystemBase {
     endEffectorMotor = new SparkMax(6, SparkLowLevel.MotorType.kBrushless);
     endEffectorController = endEffectorMotor.getClosedLoopController();
     hasCoral = new DigitalInput(3);
-    armAbsolute = new DutyCycleEncoder(2);
-    wristAbsolute = new DutyCycleEncoder(3);
+    armAbsolute = new DutyCycleEncoder(6);
+    wristAbsolute = new AnalogInput(0);
     //atStartPos = new DigitalInput(4);
     FeedbackConfigs armFeedbackConfigs = new FeedbackConfigs();
     //armFeedbackConfigs.SensorToMechanismRatio = 48; // 48:1 on the arm
@@ -89,18 +90,18 @@ public class Armevator extends SubsystemBase {
 
     // set slot 0 gains
     var elevatorMotionPIDConfigs = elevatorConfigs.Slot0; //TODO tune for robot
-    elevatorMotionPIDConfigs.kS = 0.25; // Add 0.25 V output to overcome static friction
-    elevatorMotionPIDConfigs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-    elevatorMotionPIDConfigs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    elevatorMotionPIDConfigs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    elevatorMotionPIDConfigs.kS = 0.0; // Add 0.25 V output to overcome static friction
+    elevatorMotionPIDConfigs.kV = 0.0; // A velocity target of 1 rps results in 0.12 V output
+    elevatorMotionPIDConfigs.kA = 0.0; // An acceleration of 1 rps/s requires 0.01 V output
+    elevatorMotionPIDConfigs.kP = 10; // A position error of 2.5 rotations results in 12 V output
     elevatorMotionPIDConfigs.kI = 0; // no output for integrated error
-    elevatorMotionPIDConfigs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+    elevatorMotionPIDConfigs.kD = 0.0; // A velocity error of 1 rps results in 0.1 V output
 
     // set Motion Magic settings
     var elevatorMotionConfigs = elevatorConfigs.MotionMagic;
-    elevatorMotionConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-    elevatorMotionConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
-    elevatorMotionConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    elevatorMotionConfigs.MotionMagicCruiseVelocity = 100; // Target cruise velocity of 80 rps
+    elevatorMotionConfigs.MotionMagicAcceleration = 500; // Target acceleration of 160 rps/s (0.5 seconds)
+    elevatorMotionConfigs.MotionMagicJerk = 6000; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
 
     elevatorMotor.getConfigurator().apply(elevatorConfigs);
@@ -111,19 +112,19 @@ public class Armevator extends SubsystemBase {
 
     // set slot 0 gains
     var armMotionPIDConfigs = armConfigs.Slot0; //TODO tune for robot
-    armMotionPIDConfigs.kS = 0.25; // Add 0.25 V output to overcome static friction
-    armMotionPIDConfigs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-    armMotionPIDConfigs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output    
-    armMotionPIDConfigs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    armMotionPIDConfigs.kS = 0.0; // Add 0.25 V output to overcome static friction
+    armMotionPIDConfigs.kV = 0.0; // A velocity target of 1 rps results in 0.12 V output
+    armMotionPIDConfigs.kA = 0.0; // An acceleration of 1 rps/s requires 0.01 V output    
+    armMotionPIDConfigs.kP = 30; // A position error of 2.5 rotations results in 12 V output
     armMotionPIDConfigs.kI = 0; // no output for integrated error
-    armMotionPIDConfigs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+    armMotionPIDConfigs.kD = 0.0; // A velocity error of 1 rps results in 0.1 V output
     armMotionPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
     armMotionPIDConfigs.kG = 0.0;
 
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
-    armMotionConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-    armMotionConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicCruiseVelocity = 30; // Target cruise velocity of 80 rps
+    armMotionConfigs.MotionMagicAcceleration = 60; // Target acceleration of 160 rps/s (0.5 seconds)
     armMotionConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armConfigs.withFeedback(armFeedbackConfigs);
@@ -141,22 +142,22 @@ public class Armevator extends SubsystemBase {
       .outputRange(-1, 1);
    
     EncoderConfig wristFeedbackConfig = new EncoderConfig();
-    wristFeedbackConfig.positionConversionFactor(25); //TODO double check ratio here and check how to apply the factor
+    wristFeedbackConfig.positionConversionFactor(0.04); //TODO double check ratio here and check how to apply the factor
     wristMotorConfig.apply(wristFeedbackConfig);
     wristMotor.configure(wristMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     
     
   
-      endEffectorConfig.closedLoop
-      .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-      // Set PID values for position control. We don't need to pass a closed
-      // loop slot, as it will default to slot 0.
-      .p(0.4) //TODO tune for robot
-      .i(0)
-      .d(0)
-      .outputRange(-1, 1);
+      // endEffectorConfig.closedLoop
+      // .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+      // // Set PID values for position control. We don't need to pass a closed
+      // // loop slot, as it will default to slot 0.
+      // .p(0.4) //TODO tune for robot
+      // .i(0)
+      // .d(0)
+      // .outputRange(-1, 1);
 
-      endEffectorMotor.configure(endEffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      // endEffectorMotor.configure(endEffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
        
   }
   private VoltageOut vOut = new VoltageOut(0.0);
@@ -194,42 +195,42 @@ public class Armevator extends SubsystemBase {
 
 
     //State machine for handling coral positioning in the end effector
-    switch(cState) {
-      case WAITING_FOR_CORAL:
-        if (hasCoral()) {
-          canArmMove = false;
-          cState = CoralStates.POSITION_CORAL_FOR_ARM_MOVE;
-          endEffectorMotor.disable();
-        }
-      break;
-      case POSITION_CORAL_FOR_ARM_MOVE:
-        if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 100) { //TODO tune this for robot
-          canArmMove = true;
-          moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
-          moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
-          moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
-        }
-        if (currentArmPositionID == 2 && canArmMove) {
-          cState = CoralStates.POSITION_CORAL_FOR_SCORE;
-          endEffectorMotor.disable();
-        }
-      break;
-      case POSITION_CORAL_FOR_SCORE:
-        if (moveEndAffectorWheelsToPosition(coralPositionToScore) < 100){ //TODO tune for robot 
-          canArmMove = true;
-          cState = CoralStates.WAITING_FOR_SCORE; //move on to another state so we don't keep calling the posiiton control
-        }
-      break;
-      case WAITING_FOR_SCORE:
-        //do nothing really
-      break;
-    }
-    if (getTargetArmPositionID() == 1 && !hasCoral()) {
-      cState = CoralStates.WAITING_FOR_CORAL;
-      setEndAffectorVelocity(8000); //TODO determine correct velocity
-    } else if (!hasCoral()) {
-      canArmMove = true;
-    }
+    // switch(cState) {
+    //   case WAITING_FOR_CORAL:
+    //     if (hasCoral()) {
+    //       canArmMove = false;
+    //       cState = CoralStates.POSITION_CORAL_FOR_ARM_MOVE;
+    //       endEffectorMotor.disable();
+    //     }
+    //   break;
+    //   case POSITION_CORAL_FOR_ARM_MOVE:
+    //     if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 100) { //TODO tune this for robot
+    //       canArmMove = true;
+    //       // moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+    //       // moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+    //       // moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
+    //     }
+    //     if (currentArmPositionID == 2 && canArmMove) {
+    //       cState = CoralStates.POSITION_CORAL_FOR_SCORE;
+    //       endEffectorMotor.disable();
+    //     }
+    //   break;
+    //   case POSITION_CORAL_FOR_SCORE:
+    //     if (moveEndAffectorWheelsToPosition(coralPositionToScore) < 100){ //TODO tune for robot 
+    //       canArmMove = true;
+    //       cState = CoralStates.WAITING_FOR_SCORE; //move on to another state so we don't keep calling the posiiton control
+    //     }
+    //   break;
+    //   case WAITING_FOR_SCORE:
+    //     //do nothing really
+    //   break;
+    // }
+    // if (getTargetArmPositionID() == 1 && !hasCoral()) {
+    //   cState = CoralStates.WAITING_FOR_CORAL;
+    //   setEndAffectorVelocity(8000); //TODO determine correct velocity
+    // } else if (!hasCoral()) {
+    //   canArmMove = true;
+    // }
   }
   public void moveElevatorToPosition(double pos){
     // create a Motion Magic request, voltage output
@@ -250,17 +251,17 @@ public class Armevator extends SubsystemBase {
   }
 
   public void moveWristToPosition(double pos){
-    if (canArmMove()) {
+    //if (canArmMove()) {
       wristController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
       currentWristTarget = pos;
-    }
+    //}
   }
   public double moveEndAffectorWheelsToPosition(double pos){
     endEffectorController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
     return Math.abs(pos - endEffectorMotor.getEncoder().getPosition());
   }
   public void setEndAffectorVelocity(double velocity){
-    endEffectorController.setReference(velocity,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    endEffectorController.setReference(velocity,ControlType.kVoltage, ClosedLoopSlot.kSlot0);
   }
   public void stopEndAffectorWheels() {
     endEffectorMotor.stopMotor();
@@ -293,7 +294,7 @@ public class Armevator extends SubsystemBase {
     return armMotor.getPosition().getValueAsDouble();
   }
   public double getWristAbsolute(){
-    return wristAbsolute.get();
+    return wristAbsolute.getValue();
   }
   public double getWristPosition(){
     return wristMotor.getEncoder().getPosition();

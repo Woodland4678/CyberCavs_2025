@@ -96,13 +96,28 @@ public class RobotContainer {
          joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(30))); // Rest postition, tune value later.
          joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
 
-         joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(0.2))); //0.25 should be straight up
-         joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.25))); //-0.25 should be straight down
-         joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(0))); //TODO find this test value
-         joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(0))); //TODO find this test value
+         //joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.35))); //0.25 should be straight up
+         //joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.066))); //-0.25 should be straight down
+         //joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-6.5))); //TODO find this test value
+         //joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-16))); //TODO find this test value
          //joystick.rightTrigger().onTrue(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(5000))); // Wheel velocity, tune value later.
          //joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.stopEndAffectorWheels()));
-
+         //joystick.pov(0).onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(-10.83))); //0.25 should be straight up
+         //joystick.pov(180).onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(-3.02))); //-0.25 should be straight down
+        //  joystick.pov(90).onTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(-4.0))); //TODO find this test value
+        //  joystick.pov(270).onTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(4.0))); //TODO find this test value
+        //  joystick.pov(90).onFalse(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(0))); //TODO find this test value
+        //  joystick.pov(270).onFalse(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(0))); //TODO find this test value
+       // joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(3)));
+        // joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(-3)));
+        // joystick.pov(90).onFalse(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(0)));
+        // joystick.pov(270).onFalse(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(0)));
+       // joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveWristToPosition(0.05)));
+        //joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveWristToPosition(0.25)));
+        joystick.pov(270).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(18.0)));
+        joystick.pov(90).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(-47.33)));
+        joystick.pov(0).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(0.06)));
+        
         snapDrive.HeadingController = new PhoenixPIDController(10, 0, 0);
         snapDrive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
         // Note that X is defined as forward according to WPILib convention,
