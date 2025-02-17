@@ -95,6 +95,11 @@ public class RobotContainer {
          joystick.a().onTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(5000)));
          joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(30))); // Rest postition, tune value later.
          joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
+
+         joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(0.2))); //0.25 should be straight up
+         joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.25))); //-0.25 should be straight down
+         joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(0))); //TODO find this test value
+         joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(0))); //TODO find this test value
          //joystick.rightTrigger().onTrue(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(5000))); // Wheel velocity, tune value later.
          //joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.stopEndAffectorWheels()));
 
@@ -134,6 +139,10 @@ public class RobotContainer {
         // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.back().and(joystick.y()).whileTrue(S_Armevator.sysIDDynamic(Direction.kForward));
+        joystick.back().and(joystick.x()).whileTrue(S_Armevator.sysIDDynamic(Direction.kReverse));
+        joystick.start().and(joystick.y()).whileTrue(S_Armevator.sysIDQuasistatic(Direction.kForward));
+        joystick.start().and(joystick.x()).whileTrue(S_Armevator.sysIDQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -164,5 +173,8 @@ public class RobotContainer {
     }
     public void setDashboardPIDs(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
         drivetrain.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
+        S_Armevator.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
+        S_Climber.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
+        S_AlgaeManipulator.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
     }
 }

@@ -4,9 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -24,9 +26,16 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 public class Armevator extends SubsystemBase {
   enum CoralStates {
@@ -46,7 +55,7 @@ public class Armevator extends SubsystemBase {
   private SparkClosedLoopController wristController;
   private SparkClosedLoopController endEffectorController;
   private DigitalInput hasCoral;
-  private DigitalInput atStartPos; 
+  //private DigitalInput atStartPos; 
   private final DutyCycleEncoder armAbsolute; // Absoloute Encoder
   private final DutyCycleEncoder wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
@@ -56,6 +65,7 @@ public class Armevator extends SubsystemBase {
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
   private double currentWristTarget = 0;
+  private double[] dashPIDS = new double[11];
   /** Creates a new Armevator. */
   public Armevator() {
     cState = CoralStates.WAITING_FOR_CORAL;
@@ -66,10 +76,10 @@ public class Armevator extends SubsystemBase {
     wristController = wristMotor.getClosedLoopController();
     endEffectorMotor = new SparkMax(6, SparkLowLevel.MotorType.kBrushless);
     endEffectorController = endEffectorMotor.getClosedLoopController();
-    hasCoral = new DigitalInput(1);
+    hasCoral = new DigitalInput(3);
     armAbsolute = new DutyCycleEncoder(2);
     wristAbsolute = new DutyCycleEncoder(3);
-    atStartPos = new DigitalInput(4);
+    //atStartPos = new DigitalInput(4);
     FeedbackConfigs armFeedbackConfigs = new FeedbackConfigs();
     //armFeedbackConfigs.SensorToMechanismRatio = 48; // 48:1 on the arm
     armFeedbackConfigs.RotorToSensorRatio = 48; //48:1
@@ -149,6 +159,25 @@ public class Armevator extends SubsystemBase {
       endEffectorMotor.configure(endEffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
        
   }
+  private VoltageOut vOut = new VoltageOut(0.0);
+  private final SysIdRoutine armSysIDRoutine = new SysIdRoutine(
+      new SysIdRoutine.Config(
+          null,
+          Volts.of(7),
+          Seconds.of(3),
+          state -> SignalLogger.writeString("state", state.toString())),
+      new SysIdRoutine.Mechanism(
+          volts -> armMotor.setControl(vOut.withOutput(volts.in(Volts))),
+          null,
+          this));
+
+  public Command sysIDQuasistatic(SysIdRoutine.Direction direction) {
+    return armSysIDRoutine.quasistatic(direction);
+  }
+
+  public Command sysIDDynamic(SysIdRoutine.Direction direction) {
+    return armSysIDRoutine.dynamic(direction);
+  }
 
   @Override
   public void periodic() {
@@ -160,7 +189,7 @@ public class Armevator extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Position", getWristPosition());
     SmartDashboard.putNumber("End effector wheel speed", getEndAffectorWheelSpeed());
     SmartDashboard.putBoolean("Has Coral", hasCoral());
-    SmartDashboard.putBoolean("Elevator at start point", isAtStartPos());
+   // SmartDashboard.putBoolean("Elevator at start point", isAtStartPos());
     // Lidar SmartDashboard needs to be added here
 
 
@@ -236,6 +265,12 @@ public class Armevator extends SubsystemBase {
   public void stopEndAffectorWheels() {
     endEffectorMotor.stopMotor();
   }
+  public void stopArm() {
+    armMotor.disable();
+  }
+  public void stopElevator() {
+    elevatorMotor.disable();
+  }
   public boolean hasCoral() {
     return !hasCoral.get();
   }
@@ -266,9 +301,9 @@ public class Armevator extends SubsystemBase {
   public double getEndAffectorWheelSpeed(){
     return endEffectorMotor.get();
   }
-  public boolean isAtStartPos(){
-    return !atStartPos.get();
-  }
+  // public boolean isAtStartPos(){
+  //   return !atStartPos.get();
+  // }
   public void setCurrentArmPositionID(int ID) {
     currentArmPositionID = ID;
   }
@@ -284,6 +319,22 @@ public class Armevator extends SubsystemBase {
   public boolean canArmMove() {
     return canArmMove;
   }
+  public void setDashPIDS(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
+    dashPIDS[0] = P;
+    dashPIDS[1] = I;
+    dashPIDS[2] = D;
+    dashPIDS[3] = P2;
+    dashPIDS[4] = I2;
+    dashPIDS[5] = D2;
+    dashPIDS[6] = P3;
+    dashPIDS[7] = I3;
+    dashPIDS[8] = D3;
+    dashPIDS[9] = Izone;
+    dashPIDS[10] = FF;
+ }
+ public double[] getDashPIDS() {
+    return dashPIDS;
+ }
   
 
 }

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase {
   TalonFX climberMotor;
   private DigitalInput atMaxClimb;
+  private double[] dashPIDS = new double[11];
 
   /** Creates a new Climber. */
   public Climber() {
@@ -63,5 +64,21 @@ public class Climber extends SubsystemBase {
 
     return climberMotor.getPosition().getValueAsDouble();
   }
+  public void setDashPIDS(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
+    dashPIDS[0] = P;
+    dashPIDS[1] = I;
+    dashPIDS[2] = D;
+    dashPIDS[3] = P2;
+    dashPIDS[4] = I2;
+    dashPIDS[5] = D2;
+    dashPIDS[6] = P3;
+    dashPIDS[7] = I3;
+    dashPIDS[8] = D3;
+    dashPIDS[9] = Izone;
+    dashPIDS[10] = FF;
+ }
+ public double[] getDashPIDS() {
+    return dashPIDS;
+ }
   
 }

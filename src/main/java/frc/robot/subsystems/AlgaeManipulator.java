@@ -24,6 +24,7 @@ public class AlgaeManipulator extends SubsystemBase {
   private SparkMaxConfig intakeConfig;
   private SparkClosedLoopController manipulatorPositionController;
   private SparkClosedLoopController intakeController;
+  private double[] dashPIDS = new double[11];
   /** Creates a new AlgaeManipulator. */
   public AlgaeManipulator() {
     manipulatorPositionMotor = new SparkMax(3, SparkLowLevel.MotorType.kBrushless);
@@ -62,6 +63,15 @@ public class AlgaeManipulator extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Algae Manipulator Position", getPosition());
     SmartDashboard.putNumber("Algae Manipulator Speed", getSpeed());
+    // intakeConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+    //   .p(dashPIDS[0])
+    //   .i(dashPIDS[1])
+    //   .d(dashPIDS[2])
+    //   .iZone(dashPIDS[3])
+    //   .outputRange(dashPIDS[4], dashPIDS[5]);
+    // intakeMotor.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    
+    
     // This method will be called once per scheduler run
   }
 
@@ -83,4 +93,20 @@ public class AlgaeManipulator extends SubsystemBase {
   public void stopIntakeWheels() {
     intakeMotor.stopMotor();
   }
+  public void setDashPIDS(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
+    dashPIDS[0] = P;
+    dashPIDS[1] = I;
+    dashPIDS[2] = D;
+    dashPIDS[3] = P2;
+    dashPIDS[4] = I2;
+    dashPIDS[5] = D2;
+    dashPIDS[6] = P3;
+    dashPIDS[7] = I3;
+    dashPIDS[8] = D3;
+    dashPIDS[9] = Izone;
+    dashPIDS[10] = FF;
+ }
+ public double[] getDashPIDS() {
+    return dashPIDS;
+ }
 }

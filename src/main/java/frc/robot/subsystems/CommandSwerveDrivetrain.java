@@ -58,6 +58,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private int bestAprilTagTargetID;
     private double[] dashPIDS = new double[11];
     private DutyCycle distanceLaser;
+    private DutyCycle rearLidar;
+    private DutyCycle chuteLidar;
     private Transform3d cameraToTag;
     private boolean hasAprilTagTarget = false;
 
@@ -157,6 +159,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
         distanceLaser = new DutyCycle(new DigitalInput(0));
+        rearLidar = new DutyCycle(new DigitalInput(1));
+        chuteLidar = new DutyCycle(new DigitalInput(2));
         rpi = new PhotonCamera("Arducam_Main");
         configureAutoBuilder();
     }
@@ -184,6 +188,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
         distanceLaser = new DutyCycle(new DigitalInput(0));
+        rearLidar = new DutyCycle(new DigitalInput(1));
+        chuteLidar = new DutyCycle(new DigitalInput(2));
         configureAutoBuilder();
     }
 
@@ -218,6 +224,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
         distanceLaser = new DutyCycle(new DigitalInput(0));
+        rearLidar = new DutyCycle(new DigitalInput(1));
+        chuteLidar = new DutyCycle(new DigitalInput(2));
         configureAutoBuilder();
     }
     private void configureAutoBuilder() {
@@ -325,6 +333,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putString("2D pose X", this.getState().Pose.getMeasureX().toString());
         SmartDashboard.putString("2D pose Y", this.getState().Pose.getMeasureY().toString());
         SmartDashboard.putNumber("Distance Laser", this.getDistanceLaser());
+        SmartDashboard.putNumber("Rear Lidar", getRearLidar());
+        SmartDashboard.putNumber("Chute Lidar", getChuteLidar());
         //SmartDashboard.putNumber("Path Coral Align Estimated Y", cameraToTag.getX());
         //SmartDashboard.putNumber("Path Coral Align Estimated X", cameraToTag.getY());
         //SmartDashboard.putString("cameraToTag", cameraToTag.toString());
@@ -386,7 +396,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return dashPIDS;
      }
      public double getDistanceLaser() {
-        return distanceLaser.getOutput() * 180 + 20;
+        return distanceLaser.getOutput() * 780 + 20;
+    }
+    public double getRearLidar(){
+        return rearLidar.getOutput() * 790 + 10; //10 is the lowest consistent reading
+    }
+    public double getChuteLidar() {
+        return chuteLidar.getOutput() * 780 + 20; //20 is the lowest consistent reading
     }
 
      
