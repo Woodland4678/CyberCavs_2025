@@ -29,18 +29,18 @@ public class Climber extends SubsystemBase {
 
     // set slot 0 gains
     var climberMotionPIDConfigs = climberConfigs.Slot0;
-    climberMotionPIDConfigs.kS = 0.25; // Add 0.25 V output to overcome static friction
-    climberMotionPIDConfigs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-    climberMotionPIDConfigs.kA = 0.01; // An acceleration of 1 rps/s requires 0.01 V output
-    climberMotionPIDConfigs.kP = 4.8; // A position error of 2.5 rotations results in 12 V output
+    climberMotionPIDConfigs.kS = 0.0; // Add 0.25 V output to overcome static friction
+    climberMotionPIDConfigs.kV = 0.0; // A velocity target of 1 rps results in 0.12 V output
+    climberMotionPIDConfigs.kA = 0.00; // An acceleration of 1 rps/s requires 0.01 V output
+    climberMotionPIDConfigs.kP = 1; // A position error of 2.5 rotations results in 12 V output
     climberMotionPIDConfigs.kI = 0; // no output for integrated error
-    climberMotionPIDConfigs.kD = 0.1; // A velocity error of 1 rps results in 0.1 V output
+    climberMotionPIDConfigs.kD = 0.0; // A velocity error of 1 rps results in 0.1 V output
 
     // set Motion Magic settings
     var climberMotionConfigs = climberConfigs.MotionMagic;
-    climberMotionConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
-    climberMotionConfigs.MotionMagicAcceleration = 160; // Target acceleration of 160 rps/s (0.5 seconds)
-    climberMotionConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    climberMotionConfigs.MotionMagicCruiseVelocity = 30; // Target cruise velocity of 80 rps
+    climberMotionConfigs.MotionMagicAcceleration = 80; // Target acceleration of 160 rps/s (0.5 seconds)
+    climberMotionConfigs.MotionMagicJerk = 2000; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     climberMotor.getConfigurator().apply(climberConfigs);
   }

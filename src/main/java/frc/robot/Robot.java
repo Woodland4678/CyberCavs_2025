@@ -72,7 +72,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    m_robotContainer.resetArmPosition();
+  }
 
   @Override
   public void disabledExit() {}

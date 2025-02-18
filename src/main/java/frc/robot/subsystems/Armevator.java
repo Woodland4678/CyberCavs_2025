@@ -82,7 +82,7 @@ public class Armevator extends SubsystemBase {
     wristAbsolute = new AnalogInput(0);
     //atStartPos = new DigitalInput(4);
     FeedbackConfigs armFeedbackConfigs = new FeedbackConfigs();
-    //armFeedbackConfigs.SensorToMechanismRatio = 48; // 48:1 on the arm
+    armFeedbackConfigs.SensorToMechanismRatio = 48; // 48:1 on the arm
     armFeedbackConfigs.RotorToSensorRatio = 48; //48:1
     armFeedbackConfigs.FeedbackRotorOffset = 0; //offset for the arm
     // in init function
@@ -115,17 +115,17 @@ public class Armevator extends SubsystemBase {
     armMotionPIDConfigs.kS = 0.0; // Add 0.25 V output to overcome static friction
     armMotionPIDConfigs.kV = 0.0; // A velocity target of 1 rps results in 0.12 V output
     armMotionPIDConfigs.kA = 0.0; // An acceleration of 1 rps/s requires 0.01 V output    
-    armMotionPIDConfigs.kP = 30; // A position error of 2.5 rotations results in 12 V output
+    armMotionPIDConfigs.kP = 80; // A position error of 2.5 rotations results in 12 V output
     armMotionPIDConfigs.kI = 0; // no output for integrated error
-    armMotionPIDConfigs.kD = 0.0; // A velocity error of 1 rps results in 0.1 V output
+    armMotionPIDConfigs.kD = 5.0; // A velocity error of 1 rps results in 0.1 V output
     armMotionPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
     armMotionPIDConfigs.kG = 0.0;
 
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
-    armMotionConfigs.MotionMagicCruiseVelocity = 30; // Target cruise velocity of 80 rps
-    armMotionConfigs.MotionMagicAcceleration = 60; // Target acceleration of 160 rps/s (0.5 seconds)
-    armMotionConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    armMotionConfigs.MotionMagicCruiseVelocity = 2; // Target cruise velocity of 80 rps
+    armMotionConfigs.MotionMagicAcceleration = 4; // Target acceleration of 160 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicJerk = 1000; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armConfigs.withFeedback(armFeedbackConfigs);
     armMotor.getConfigurator().apply(armConfigs);
@@ -165,7 +165,7 @@ public class Armevator extends SubsystemBase {
       new SysIdRoutine.Config(
           null,
           Volts.of(7),
-          Seconds.of(3),
+          Seconds.of(4),
           state -> SignalLogger.writeString("state", state.toString())),
       new SysIdRoutine.Mechanism(
           volts -> armMotor.setControl(vOut.withOutput(volts.in(Volts))),
@@ -241,13 +241,13 @@ public class Armevator extends SubsystemBase {
   }
 
   public void moveArmToPosition(double pos){
-    if (canArmMove()) {
+   // if (canArmMove()) {
       // create a Motion Magic request, voltage output
       final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
       // set target position to 100 rotations
       armMotor.setControl(m_request.withPosition(pos));
-    }
+   // }
   }
 
   public void moveWristToPosition(double pos){
@@ -335,6 +335,9 @@ public class Armevator extends SubsystemBase {
  }
  public double[] getDashPIDS() {
     return dashPIDS;
+ }
+ public void resetArmToAbsolute() {
+  armMotor.setPosition(getArmAbsolute() - 0.1791); //put arm straight down, then take the value and subtract 0.25, thats what goes here
  }
   
 
