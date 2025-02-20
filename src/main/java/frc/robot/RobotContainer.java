@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutoAlignCoralPath;
 import frc.robot.commands.AutoAlignCoralScore;
+import frc.robot.commands.MoveArm;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeManipulator;
 import frc.robot.subsystems.Armevator;
@@ -33,7 +34,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
+    private double v = 0;
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -91,20 +92,21 @@ public class RobotContainer {
 
          joystick.x().onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(0))); // Deploy climber position, tune value later.
          joystick.y().onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(10))); // Climb position, tune value later.
-         joystick.a().onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(20))); // Intake position, tune values later.
-         joystick.a().onTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(5000)));
-         joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(30))); // Rest postition, tune value later.
-         joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
+         //joystick.a().onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(20))); // Intake position, tune values later.
+         //joystick.a().onTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(5000)));
+        // joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(30))); // Rest postition, tune value later.
+         //joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
 
-         joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(0.001))); //0.25 should be straight up
-         joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(0.25))); //-0.25 should be straight down
-         joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.1))); //-0.25 should be straight down
+
+        // joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(0.00))); //0.25 should be straight up
+        // joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.25))); //-0.25 should be straight down
+         //joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.1))); //-0.25 should be straight down
          joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-4.5))); //TODO find this test value
-         //joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-16))); //TODO find this test value
+         joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-16))); //TODO find this test value
          //joystick.rightTrigger().onTrue(new InstantCommand(() -> S_Armevator.setEndAffectorVelocity(5000))); // Wheel velocity, tune value later.
          //joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.stopEndAffectorWheels()));
-         //joystick.pov(0).onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(-10.83))); //0.25 should be straight up
-         //joystick.pov(180).onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(-3.02))); //-0.25 should be straight down
+         //joystick.pov(0).onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(0))); //0.25 should be straight up
+         //joystick.pov(180).onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(7))); //-0.25 should be straight down
         //  joystick.pov(90).onTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(-4.0))); //TODO find this test value
         //  joystick.pov(270).onTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(4.0))); //TODO find this test value
         //  joystick.pov(90).onFalse(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(0))); //TODO find this test value
@@ -118,6 +120,16 @@ public class RobotContainer {
        // joystick.pov(270).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(18.0)));
        // joystick.pov(90).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(-47.33)));
         //joystick.pov(0).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(0.06)));
+        //joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.increaseArmVoltage()));
+        //joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.decreaseArmVoltage()));
+        joystick.pov(0).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator));
+        joystick.pov(90).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator));
+        joystick.pov(180).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator));
+        joystick.pov(270).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator));
+        joystick.a().onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator));
+        joystick.b().onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator));
+        //joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveEndAffectorWheelsToPosition(100)));
+        //joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveEndAffectorWheelsToPosition(0)));
         
         snapDrive.HeadingController = new PhoenixPIDController(10, 0, 0);
         snapDrive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
@@ -163,7 +175,9 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         //joystick.rightTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, 'A'));
-        joystick.rightTrigger().whileTrue(new AutoAlignCoralPath(drivetrain));
+        //joystick.rightTrigger().whileTrue(new AutoAlignCoralPath(drivetrain));
+        joystick.rightTrigger().whileTrue(new InstantCommand(() -> S_Armevator.setEndEffectorVoltage(-6)));
+        joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.setEndEffectorVoltage(0)));
 
         operatorController.button(1).whileTrue(new AutoAlignCoralScore(drivetrain, 'A'));
         operatorController.button(2).whileTrue(new AutoAlignCoralScore(drivetrain, 'B'));

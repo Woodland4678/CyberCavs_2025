@@ -24,12 +24,12 @@ public final class Constants {
     }
     public static class ArmConstants {
         public static final ArmPosition homePosition = new ArmPosition(0,-90, 0, 0);
-        public static final ArmPosition intakePosition = new ArmPosition(1, -90, 0, 0);
-        public static final ArmPosition restPosition = new ArmPosition(2, -90, 0, 0);        
-        public static final ArmPosition L1Position = new ArmPosition(3, -90, 0, 0);
-        public static final ArmPosition L2Position = new ArmPosition(4,-90, 0, 0);
-        public static final ArmPosition L3Position = new ArmPosition(5,-90, 0, 0);
-        public static final ArmPosition L4Position = new ArmPosition(6,-90, 0, 0);
+        public static final ArmPosition intakePosition = new ArmPosition(1, -0.295, -6.201, -0.119);
+        public static final ArmPosition restPosition = new ArmPosition(2, -0.2, -5.301, 0);        
+        public static final ArmPosition L1Position = new ArmPosition(3, -0.119, -0.67, -0.2276);
+        public static final ArmPosition L2Position = new ArmPosition(4,-0.023438, -4.6108, 0.058);
+        public static final ArmPosition L3Position = new ArmPosition(5,-0.023438, -19.244, 0.058);
+        public static final ArmPosition L4Position = new ArmPosition(6,0.111, -22.1, 0.223);
     }
     public static class ArmPosition{
         public double armTargetAngle = -90; //home angle

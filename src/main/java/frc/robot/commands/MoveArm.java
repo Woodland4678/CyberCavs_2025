@@ -32,9 +32,9 @@ public class MoveArm extends Command {
     currentArmPositionID = S_Armevator.getCurrentArmPositionID();
     S_Armevator.setTargetArmPositionID(targetPosition.positionID);
     if ((currentArmPositionID == 1 && targetPosition.positionID > 1) || (currentArmPositionID != 1 && targetPosition.positionID == 1)) { //if we're moving to intake coral and we're not already in rest position, move to rest first
-     // S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
-      //S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
-      //S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
+      S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+      S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+      S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
       moveState = 0;
     }
     else {
@@ -47,22 +47,22 @@ public class MoveArm extends Command {
   public void execute() {
     switch(moveState) {
       case 0:
-        if (S_Armevator.getArmPositionError() < 5.0 &&
-          S_Armevator.getElevatorPositionError() < 10) { //TODO do we need to check for wrist error?
+        if (S_Armevator.getArmPositionError() < 0.0005 &&
+            S_Armevator.getElevatorPositionError() < 0.05) { //TODO do we need to check for wrist error?
             moveState++;
             S_Armevator.setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);
           }
       break;
       case 1:
-        //  S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
-          //S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
-          //S_Armevator.moveWristToPosition(targetPosition.wristTarget);
+          S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
+          S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
+          S_Armevator.moveWristToPosition(targetPosition.wristTarget);
           moveState++;
       break;
       case 2:
-          if (S_Armevator.getArmPositionError() < 3
-            && S_Armevator.getElevatorPositionError() < 10
-            && S_Armevator.getWristPositionError() < 2) {
+          if (S_Armevator.getArmPositionError() < 0.0005
+            && S_Armevator.getElevatorPositionError() < 0.05
+            && S_Armevator.getWristPositionError() < 0.05) {
               S_Armevator.setCurrentArmPositionID(targetPosition.positionID);
               isDone = true;
           }
