@@ -107,8 +107,8 @@ public class Armevator extends SubsystemBase {
 
     // set Motion Magic settings
     var elevatorMotionConfigs = elevatorConfigs.MotionMagic;
-    elevatorMotionConfigs.MotionMagicCruiseVelocity = 90; // Target cruise velocity of 100 rps
-    elevatorMotionConfigs.MotionMagicAcceleration = 400; // Target acceleration of 500 rps/s
+    elevatorMotionConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 100 rps
+    elevatorMotionConfigs.MotionMagicAcceleration = 350; // Target acceleration of 500 rps/s
     elevatorMotionConfigs.MotionMagicJerk = 2000; // Target jerk of 6000 rps/s/s (0.1 seconds)
 
 
@@ -132,8 +132,8 @@ public class Armevator extends SubsystemBase {
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
     armMotionConfigs.MotionMagicCruiseVelocity = 2.5; // Target cruise velocity of 2 rps this is in mechanism rotations
-    armMotionConfigs.MotionMagicAcceleration = 6; // Target acceleration of 4 rps/s (0.5 seconds)
-    armMotionConfigs.MotionMagicJerk = 1000; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    armMotionConfigs.MotionMagicAcceleration = 4.5; // Target acceleration of 4 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicJerk = 60; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armConfigs.withFeedback(armFeedbackConfigs);
     armConfigs.withMotorOutput(armMotorOutputConfigs);
@@ -168,6 +168,9 @@ public class Armevator extends SubsystemBase {
       .outputRange(-1, 1);
 
       endEffectorMotor.configure(endEffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+      if (Math.abs(getArmPosition() + 0.25) > 0.2) {
+        armMotor.setPosition(-0.25);
+      }
        
   }
   private VoltageOut vOut = new VoltageOut(0.0);
@@ -229,9 +232,9 @@ public class Armevator extends SubsystemBase {
         if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 0.5) { //TODO tune this for robot
           canArmMove = true;
             //endEffectorMotor.getEncoder().setPosition(0);
-            //moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
-            //moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
-           // moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
+            moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+            moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+            moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
         }
         if (getArmPosition() > -0.25 && canArmMove) {
           cState = CoralStates.POSITION_CORAL_FOR_SCORE;
@@ -251,7 +254,7 @@ public class Armevator extends SubsystemBase {
     }
     if (getTargetArmPositionID() == 1 && !hasCoral()) {
       cState = CoralStates.WAITING_FOR_CORAL;
-      setEndEffectorVoltage(-6); //TODO determine correct velocity
+      setEndEffectorVoltage(-4); //TODO determine correct velocity
     } else if (!hasCoral()) {
       canArmMove = true;
     }

@@ -62,6 +62,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private DutyCycle chuteLidar;
     private Transform3d cameraToTag;
     private boolean hasAprilTagTarget = false;
+    private int aprilTagTargetRequest = 7;
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -312,19 +313,38 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (!rpiCoralScoreResult.isEmpty()) {
             var res = rpiCoralScoreResult.get(rpiCoralScoreResult.size() - 1);
             if (res.hasTargets()) {
+                
                 hasAprilTagTarget = true;
-                var bestTarget = res.getBestTarget();
-                bestAprilTagTargetX = bestTarget.yaw;
-                bestAprilTagTargetY = bestTarget.pitch;
-                bestAprilTagTargetID = bestTarget.fiducialId;
-                cameraToTag = bestTarget.getBestCameraToTarget();
+                //var bestTarget = res.getBestTarget();
+                for (int i = 0; i < (res.getTargets().size()); i++) {
+                    SmartDashboard.putNumber("April targets list size", res.getTargets().size());
+                    if (res.getTargets().get(i).getFiducialId() == (aprilTagTargetRequest)) {
+                        bestAprilTagTargetX = res.getTargets().get(i).yaw;
+                        bestAprilTagTargetY = res.getTargets().get(i).pitch;
+                        bestAprilTagTargetID = res.getTargets().get(i).fiducialId;
+                        i = res.getTargets().size(); //TODO kinda jank, maybe change later
+                    }
+                    else {
+                        bestAprilTagTargetX =0;
+                        bestAprilTagTargetY = 0;
+                        bestAprilTagTargetID = 0;
+                    }
+                }
+               
+               // cameraToTag = bestTarget.getBestCameraToTarget();
             }
             else {
                 hasAprilTagTarget = false;
+                bestAprilTagTargetX =0;
+                bestAprilTagTargetY = 0;
+                bestAprilTagTargetID = 0;
             }
         }
         else {
             hasAprilTagTarget = false;
+            bestAprilTagTargetX =0;
+            bestAprilTagTargetY = 0;
+            bestAprilTagTargetID = 0;
         }
         SmartDashboard.putNumber("April Tag Best ID", bestAprilTagTargetID);
         SmartDashboard.putNumber("April Tag X", bestAprilTagTargetX);
@@ -396,13 +416,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return dashPIDS;
      }
      public double getDistanceLaser() {
-        return distanceLaser.getOutput() * 780 + 20;
+        return distanceLaser.getOutput() * 800;
     }
     public double getRearLidar(){
-        return rearLidar.getOutput() * 790 + 10; //10 is the lowest consistent reading
+        return rearLidar.getOutput() * 800; //10 is the lowest consistent reading
     }
     public double getChuteLidar() {
-        return chuteLidar.getOutput() * 780 + 20; //20 is the lowest consistent reading
+        return chuteLidar.getOutput() * 800; //20 is the lowest consistent reading
+    }
+    public void setAprilTagTargetRequest(int tagID) {
+        aprilTagTargetRequest = tagID;
     }
 
      

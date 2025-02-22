@@ -51,7 +51,7 @@ public class Climber extends SubsystemBase {
     // This method will be called once per scheduler run
   }
   public boolean getAtMaxClimb() {
-    return !atMaxClimb.get();
+    return atMaxClimb.get();
   }
   public void moveClimberToPosition(double pos){
     // create a Motion Magic request, voltage output

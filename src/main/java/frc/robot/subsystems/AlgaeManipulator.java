@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -16,15 +18,25 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class AlgaeManipulator extends SubsystemBase {
   SparkMax manipulatorPositionMotor;
   SparkMax intakeMotor;
+  int deployState = 0;
   private SparkMaxConfig manipulatorPositionConfig;
   private SparkMaxConfig intakeConfig;
   private SparkClosedLoopController manipulatorPositionController;
   private SparkClosedLoopController intakeController;
   private double[] dashPIDS = new double[11];
+  private boolean isDeployed = false;
+  private BooleanSupplier intakeStopped = new BooleanSupplier() {
+    public boolean getAsBoolean() {
+      return intakeMotor.getEncoder().getVelocity() < 5;
+    }
+  };
+  private int intakeStoppedCount = 0;
+  Trigger isIntakeStopped = new Trigger(intakeStopped).debounce(0.5);
   /** Creates a new AlgaeManipulator. */
   public AlgaeManipulator() {
     manipulatorPositionMotor = new SparkMax(3, SparkLowLevel.MotorType.kBrushless);
@@ -63,6 +75,27 @@ public class AlgaeManipulator extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Algae Manipulator Position", getPosition());
     SmartDashboard.putNumber("Algae Manipulator Speed", getSpeed());
+    if (isDeployed) {
+      switch(deployState) {
+        case 0:
+          if (intakeMotor.getEncoder().getVelocity() < 3000) {
+            intakeStoppedCount++;
+          }
+          else {
+            intakeStoppedCount = 0;
+          }
+          if (intakeStoppedCount > 15) {
+            setIntakeSpeed(0);
+            moveIntakeWheelsToPosition(intakeMotor.getEncoder().getPosition());
+            deployState ++;
+            intakeStoppedCount = 0;
+          }
+        break;
+        case 1:
+
+        break;
+      }
+    }
     // intakeConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     //   .p(dashPIDS[0])
     //   .i(dashPIDS[1])
@@ -108,5 +141,19 @@ public class AlgaeManipulator extends SubsystemBase {
  }
  public double[] getDashPIDS() {
     return dashPIDS;
+ }
+ public void deploy() {
+  moveManipulatorToPosition(8.2);
+  isDeployed = true;
+  setIntakeSpeed(5);
+  deployState = 0;
+ }
+ public void retract() {
+  setIntakeSpeed(0);
+  moveManipulatorToPosition(0.5);
+  isDeployed = false;
+ }
+ public void moveIntakeWheelsToPosition(double pos){
+  intakeController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
  }
 }

@@ -47,7 +47,7 @@ public class MoveArm extends Command {
   public void execute() {
     switch(moveState) {
       case 0:
-        if (S_Armevator.getArmPositionError() < 0.0005 &&
+        if (S_Armevator.getArmPositionError() < 0.0009 &&
             S_Armevator.getElevatorPositionError() < 0.05) { //TODO do we need to check for wrist error?
             moveState++;
             S_Armevator.setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);
