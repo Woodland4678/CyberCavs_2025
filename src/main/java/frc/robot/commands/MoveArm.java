@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmPosition;
@@ -18,17 +19,22 @@ public class MoveArm extends Command {
   int currentArmPositionID;
   int moveState = 0;
   boolean isDone = false;
+  boolean isArmAtRest = false;
+  boolean isElevatorAtRest = false;
+  Debouncer armevatorAtRest = new Debouncer(0.3); //arm must be at rest for 0.3 seconds before moving on
   public MoveArm(ArmPosition targetPosition, Armevator S_Armevator) {
     this.S_Armevator = S_Armevator;
     this.targetPosition = targetPosition;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(S_Armevator);
+    addRequirements(S_Armevator);    
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     isDone = false;
+    isArmAtRest = false;
+    isElevatorAtRest = false;
     currentArmPositionID = S_Armevator.getCurrentArmPositionID();
     S_Armevator.setTargetArmPositionID(targetPosition.positionID);
     if ((currentArmPositionID == 1 && targetPosition.positionID > 1) || (currentArmPositionID != 1 && targetPosition.positionID == 1)) { //if we're moving to intake coral and we're not already in rest position, move to rest first
@@ -47,8 +53,9 @@ public class MoveArm extends Command {
   public void execute() {
     switch(moveState) {
       case 0:
-        if (S_Armevator.getArmPositionError() < 0.0009 &&
-            S_Armevator.getElevatorPositionError() < 0.05) { //TODO do we need to check for wrist error?
+        isArmAtRest = S_Armevator.getArmPosition() < 0.003;
+        isElevatorAtRest = S_Armevator.getElevatorPositionError() < 0.05;        
+        if (armevatorAtRest.calculate(isArmAtRest && isElevatorAtRest)) { //both arm and elevator in position for defined amount of time, then we move on
             moveState++;
             S_Armevator.setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);
           }
@@ -60,7 +67,7 @@ public class MoveArm extends Command {
           moveState++;
       break;
       case 2:
-          if (S_Armevator.getArmPositionError() < 0.0005
+          if (S_Armevator.getArmPositionError() < 0.003
             && S_Armevator.getElevatorPositionError() < 0.05
             && S_Armevator.getWristPositionError() < 0.05) {
               S_Armevator.setCurrentArmPositionID(targetPosition.positionID);

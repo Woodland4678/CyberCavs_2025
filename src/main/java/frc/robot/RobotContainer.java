@@ -150,12 +150,12 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-        joystick.rightBumper().whileTrue(
-            drivetrain.applyRequest(() -> 
-            snapDrive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-            .withTargetDirection(Rotation2d.fromDegrees(53)))
-        );
+        // joystick.rightBumper().whileTrue(
+        //     drivetrain.applyRequest(() -> 
+        //     snapDrive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
+        //     .withVelocityY(-joystick.getLeftX() * MaxSpeed)
+        //     .withTargetDirection(Rotation2d.fromDegrees(53)))
+        // );
 
         // joystick.leftBumper().whileTrue(
         //     drivetrain.applyRequest(() -> 

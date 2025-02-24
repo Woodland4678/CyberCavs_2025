@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -39,6 +40,7 @@ public class AutoDriveToFeeder extends Command {
     this.S_Swerve = S_Swerve;
     this.angleTarget = angleTarget;
     this.controller = controller;
+    addRequirements(S_Swerve);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -55,11 +57,11 @@ public class AutoDriveToFeeder extends Command {
   public void execute() {
     double degrees = S_Swerve.getgyroValue();
     rSpeed = rController.calculate(degrees, rControllerTarget, Timer.getFPGATimestamp());
-    if (rController.atSetpoint()) {
+    if (rController.atSetpoint() && S_Swerve.getRearLidar() < 150) {
       ySpeed = yController.calculate(S_Swerve.getRearLidar(), yControllerTarget, Timer.getFPGATimestamp());
       S_Swerve.setControl(
         m_driveRequestRobotCentric.withVelocityX(ySpeed)
-            .withVelocityY(controller.getLeftX() * MaxSpeed)
+            .withVelocityY(0)
             .withRotationalRate(rSpeed)
       );
     }

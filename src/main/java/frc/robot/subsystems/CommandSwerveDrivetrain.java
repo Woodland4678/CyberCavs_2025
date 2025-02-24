@@ -23,6 +23,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -309,7 +310,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-        rpiCoralScoreResult = rpi.getAllUnreadResults();
+        rpiCoralScoreResult = rpi.getAllUnreadResults();        
         if (!rpiCoralScoreResult.isEmpty()) {
             var res = rpiCoralScoreResult.get(rpiCoralScoreResult.size() - 1);
             if (res.hasTargets()) {
@@ -317,7 +318,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 hasAprilTagTarget = true;
                 //var bestTarget = res.getBestTarget();
                 for (int i = 0; i < (res.getTargets().size()); i++) {
-                    SmartDashboard.putNumber("April targets list size", res.getTargets().size());
+                    //SmartDashboard.putNumber("April targets list size", res.getTargets().size());
                     if (res.getTargets().get(i).getFiducialId() == (aprilTagTargetRequest)) {
                         bestAprilTagTargetX = res.getTargets().get(i).yaw;
                         bestAprilTagTargetY = res.getTargets().get(i).pitch;
@@ -427,6 +428,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void setAprilTagTargetRequest(int tagID) {
         aprilTagTargetRequest = tagID;
     }
+    public ChassisSpeeds getRobotSpeeds() {
+        double fieldYSpeed = this.getState().Speeds.vxMetersPerSecond;
+        double fieldXSpeed = this.getState().Speeds.vyMetersPerSecond;
+        double fieldRotationSpeed = this.getState().Speeds.omegaRadiansPerSecond;     
+        Rotation2d robotAngle = this.getState().RawHeading;   
+        return ChassisSpeeds.fromFieldRelativeSpeeds(fieldYSpeed, fieldXSpeed, fieldRotationSpeed, robotAngle);
+    }
+    // public double getXSpeed() {
+    //     return this.getState().Speeds.vyMetersPerSecond;
+    // }
 
      
 }
