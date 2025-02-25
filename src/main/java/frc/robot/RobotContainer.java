@@ -133,8 +133,8 @@ public class RobotContainer {
         //joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-2)));
         joystick.a().onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator));
         joystick.b().onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator));
-        joystick.x().onTrue(new InstantCommand(() -> S_AlgaeManipulator.deploy()));
-        joystick.y().onTrue(new InstantCommand(() -> S_AlgaeManipulator.retract()));
+        joystick.leftBumper().onTrue(new InstantCommand(() -> S_AlgaeManipulator.deploy()));
+        joystick.rightBumper().onTrue(new InstantCommand(() -> S_AlgaeManipulator.retract()));
         //joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveEndAffectorWheelsToPosition(100)));
         //joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveEndAffectorWheelsToPosition(0)));
         
@@ -163,8 +163,8 @@ public class RobotContainer {
         //     .withVelocityY(-joystick.getLeftX() * MaxSpeed)
         //     .withTargetDirection(Rotation2d.fromDegrees(-53)))
         // );
-        joystick.leftBumper().whileTrue(new AutoDriveToFeeder(drivetrain, -54, joystick));
-        joystick.rightBumper().whileTrue(new AutoDriveToFeeder(drivetrain, 54, joystick));
+        joystick.x().whileTrue(new AutoDriveToFeeder(drivetrain, -54, joystick)); //left
+        joystick.b().whileTrue(new AutoDriveToFeeder(drivetrain, 54, joystick)); //right
 
         /* joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
@@ -176,10 +176,10 @@ public class RobotContainer {
         // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        joystick.back().and(joystick.y()).whileTrue(S_Armevator.sysIDDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(S_Armevator.sysIDDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(S_Armevator.sysIDQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(S_Armevator.sysIDQuasistatic(Direction.kReverse));
+        // joystick.back().and(joystick.y()).whileTrue(S_Armevator.sysIDDynamic(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(S_Armevator.sysIDDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(S_Armevator.sysIDQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(S_Armevator.sysIDQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -214,7 +214,8 @@ public class RobotContainer {
         operatorController.button(9).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
         operatorController.button(11).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
         operatorController.button(20).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
-        //operatorController.axisGreaterThan(6, 0.6);
+        
+        //operatorController.axisGreaterThan(6, 0.115).onTrue(); //to use the analog buttons
         //joystick.y().onTrue(new InstantCommand(() -> drivetrain.setSwerveToX()));
 
         drivetrain.registerTelemetry(logger::telemeterize);

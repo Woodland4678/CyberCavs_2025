@@ -57,7 +57,7 @@ public class AutoDriveToFeeder extends Command {
   public void execute() {
     double degrees = S_Swerve.getgyroValue();
     rSpeed = rController.calculate(degrees, rControllerTarget, Timer.getFPGATimestamp());
-    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 150) || S_Swerve.getRearLidar() < 20) {
+    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 110) || S_Swerve.getRearLidar() < 20) {
       ySpeed = yController.calculate(S_Swerve.getRearLidar(), yControllerTarget, Timer.getFPGATimestamp());
       S_Swerve.setControl(
         m_driveRequestRobotCentric.withVelocityX(ySpeed)
