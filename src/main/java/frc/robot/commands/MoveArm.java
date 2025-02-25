@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmPosition;
@@ -21,7 +22,7 @@ public class MoveArm extends Command {
   boolean isDone = false;
   boolean isArmAtRest = false;
   boolean isElevatorAtRest = false;
-  Debouncer armevatorAtRest = new Debouncer(0.3); //arm must be at rest for 0.3 seconds before moving on
+  Debouncer armevatorAtRest = new Debouncer(0.2); //arm must be at rest for 0.3 seconds before moving on
   public MoveArm(ArmPosition targetPosition, Armevator S_Armevator) {
     this.S_Armevator = S_Armevator;
     this.targetPosition = targetPosition;
@@ -35,6 +36,7 @@ public class MoveArm extends Command {
     isDone = false;
     isArmAtRest = false;
     isElevatorAtRest = false;
+    armevatorAtRest.calculate(false);
     currentArmPositionID = S_Armevator.getCurrentArmPositionID();
     S_Armevator.setTargetArmPositionID(targetPosition.positionID);
     if ((currentArmPositionID == 1 && targetPosition.positionID > 1) || (currentArmPositionID != 1 && targetPosition.positionID == 1)) { //if we're moving to intake coral and we're not already in rest position, move to rest first
@@ -46,6 +48,7 @@ public class MoveArm extends Command {
     else {
       moveState = 1;
     }
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -53,8 +56,19 @@ public class MoveArm extends Command {
   public void execute() {
     switch(moveState) {
       case 0:
-        isArmAtRest = S_Armevator.getArmPosition() < 0.003;
-        isElevatorAtRest = S_Armevator.getElevatorPositionError() < 0.05;        
+        if (S_Armevator.getArmPositionError() < 0.003) {
+          isArmAtRest = true;
+        }
+        else {
+          isArmAtRest = false;
+        }
+        if (S_Armevator.getElevatorPositionError() < 0.05) {
+          isElevatorAtRest = true;
+        }
+        else {
+          isElevatorAtRest = false;
+        }
+        //isElevatorAtRest = S_Armevator.getElevatorPositionError() < 0.05;        
         if (armevatorAtRest.calculate(isArmAtRest && isElevatorAtRest)) { //both arm and elevator in position for defined amount of time, then we move on
             moveState++;
             S_Armevator.setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);

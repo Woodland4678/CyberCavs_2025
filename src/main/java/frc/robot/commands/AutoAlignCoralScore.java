@@ -43,8 +43,8 @@ public class AutoAlignCoralScore extends Command {
   //PhoenixPIDController yController = new PhoenixPIDController(0.37, 0, 0.02); //0.32, 0, 0.022 //for using camera pitch for lineup
   PhoenixPIDController yController = new PhoenixPIDController(0.045, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
   PhoenixPIDController rController = new PhoenixPIDController(0.12, 0, 0.00);
-  SlewRateLimiter ySpeedLimit = new SlewRateLimiter(3);
-  SlewRateLimiter xSpeedLimit = new SlewRateLimiter(3);
+  SlewRateLimiter ySpeedLimit = new SlewRateLimiter(5.5);
+  SlewRateLimiter xSpeedLimit = new SlewRateLimiter(5.5);
   double xSpeed = 0.0;
   double ySpeed = 0.0;
   double rSpeed = 0.0;
@@ -108,6 +108,13 @@ public class AutoAlignCoralScore extends Command {
   public void execute() {
     if (S_Armevator.getTargetArmPositionID() == 6) {
       yControllerSetpoint = 82;
+      if (xControllerSetpoint < 0) {
+        xControllerSetpoint = -14;
+      }
+      else {
+        xControllerSetpoint = 20.5;
+      }
+      
     }
     dashPIDS = S_Swerve.getDashPIDS();
 
@@ -137,8 +144,9 @@ public class AutoAlignCoralScore extends Command {
       //rController.setSetpoint(Constants.SwerveConstants.aprilTagRotationValues.get(S_Swerve.getBestAprilTagID())); //update the rcontroller target to the rotation target of the best april tag we see
       switch(state) {
         case 0:
-          ySpeedLimit.reset(S_Swerve.getRobotSpeeds().vxMetersPerSecond); //reset slew rate to the speed we're going
-          xSpeedLimit.reset(S_Swerve.getRobotSpeeds().vyMetersPerSecond);
+          ySpeedLimit.reset(-S_Swerve.getRobotSpeeds().vxMetersPerSecond); //reset slew rate to the speed we're going
+          xSpeedLimit.reset(-S_Swerve.getRobotSpeeds().vyMetersPerSecond);
+          state++;
         break;
         case 1:
           

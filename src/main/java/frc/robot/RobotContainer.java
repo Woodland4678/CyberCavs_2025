@@ -125,10 +125,10 @@ public class RobotContainer {
        // joystick.pov(0).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(0.06)));
         //joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.increaseArmVoltage()));
         //joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.decreaseArmVoltage()));
-        joystick.pov(0).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator));
-        joystick.pov(90).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator));
-        joystick.pov(180).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator));
-        joystick.pov(270).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator));
+        //joystick.pov(0).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator));
+        //joystick.pov(90).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator));
+        //joystick.pov(180).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator));
+        //joystick.pov(270).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator));
         //joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-16)));
         //joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-2)));
         joystick.a().onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator));
@@ -185,7 +185,7 @@ public class RobotContainer {
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         //joystick.rightTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, 'A'));
         //joystick.rightTrigger().whileTrue(new AutoAlignCoralPath(drivetrain));
-        joystick.rightTrigger().whileTrue(new InstantCommand(() -> S_Armevator.setEndEffectorVoltage(-6)));
+        joystick.rightTrigger().whileTrue(new InstantCommand(() -> S_Armevator.setEndEffectorVoltage(6)));
         joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.setEndEffectorVoltage(0)));
         joystick.rightTrigger().whileTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(-7)));
         joystick.rightTrigger().onFalse(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(0)));
@@ -193,18 +193,28 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
        //joystick.leftTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A',joystick));
 
-        operatorController.button(3).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
-        operatorController.button(4).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'B', joystick));
-        operatorController.button(5).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'C', joystick));
-        operatorController.button(8).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'D', joystick));
-       // operatorController.button(5).whileTrue(new AutoAlignCoralScore(drivetrain, 'E', joystick));
-        //operatorController.button(6).whileTrue(new AutoAlignCoralScore(drivetrain, 'F', joystick));
-        operatorController.button(15).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'G', joystick));
-        operatorController.button(14).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'H', joystick));
-        //operatorController.button(9).whileTrue(new AutoAlignCoralScore(drivetrain, 'I', joystick));
-        //operatorController.button(10).whileTrue(new AutoAlignCoralScore(drivetrain, 'J', joystick));
-        operatorController.button(13).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
-        operatorController.button(11).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
+        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator));
+        operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator));
+        operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator));
+        operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator));
+        operatorController.button(19).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator));
+        operatorController.button(13).onTrue(new MoveArm(Constants.ArmConstants.lowAlgaeRemoval, S_Armevator));
+        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.highAlgaeRemoval, S_Armevator));
+
+
+        operatorController.button(15).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
+        operatorController.button(16).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'B', joystick));
+        operatorController.button(14).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'C', joystick));
+        operatorController.button(12).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'D', joystick));
+        operatorController.button(10).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'E', joystick));
+        operatorController.button(8).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'F', joystick));
+        operatorController.button(6).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'G', joystick));
+        operatorController.button(5).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'H', joystick));
+        operatorController.button(7).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'I', joystick));
+        operatorController.button(9).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
+        operatorController.button(11).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
+        operatorController.button(20).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
+        //operatorController.axisGreaterThan(6, 0.6);
         //joystick.y().onTrue(new InstantCommand(() -> drivetrain.setSwerveToX()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
@@ -227,5 +237,16 @@ public class RobotContainer {
     public void initialElevatorRaise(){
         S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
 
+    }
+    public double[] getOperatorAxis() {
+        double[] allAxis = {operatorController.getRawAxis(0), 
+                            operatorController.getRawAxis(1), 
+                            operatorController.getRawAxis(2),
+                            operatorController.getRawAxis(3),
+                            operatorController.getRawAxis(4),
+                            operatorController.getRawAxis(5),
+                            operatorController.getRawAxis(6),
+                            operatorController.getRawAxis(7)};
+        return allAxis;
     }
 }

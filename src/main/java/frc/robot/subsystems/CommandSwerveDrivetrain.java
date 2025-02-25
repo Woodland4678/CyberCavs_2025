@@ -326,9 +326,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         i = res.getTargets().size(); //TODO kinda jank, maybe change later
                     }
                     else {
-                        bestAprilTagTargetX =0;
-                        bestAprilTagTargetY = 0;
-                        bestAprilTagTargetID = 0;
+                        //bestAprilTagTargetX =0;
+                        //bestAprilTagTargetY = 0;
+                        //bestAprilTagTargetID = 0;
                     }
                 }
                
@@ -336,16 +336,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             }
             else {
                 hasAprilTagTarget = false;
-                bestAprilTagTargetX =0;
-                bestAprilTagTargetY = 0;
-                bestAprilTagTargetID = 0;
+               // bestAprilTagTargetX =0;
+               // bestAprilTagTargetY = 0;
+               // bestAprilTagTargetID = 0;
             }
         }
         else {
             hasAprilTagTarget = false;
-            bestAprilTagTargetX =0;
-            bestAprilTagTargetY = 0;
-            bestAprilTagTargetID = 0;
+           // bestAprilTagTargetX =0;
+           // bestAprilTagTargetY = 0;
+            //bestAprilTagTargetID = 0;
         }
         SmartDashboard.putNumber("April Tag Best ID", bestAprilTagTargetID);
         SmartDashboard.putNumber("April Tag X", bestAprilTagTargetX);
@@ -356,6 +356,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("Distance Laser", this.getDistanceLaser());
         SmartDashboard.putNumber("Rear Lidar", getRearLidar());
         SmartDashboard.putNumber("Chute Lidar", getChuteLidar());
+        SmartDashboard.putNumber("Robot Speed Y", getRobotSpeeds().vxMetersPerSecond);
+        SmartDashboard.putNumber("Robot speeds X", getRobotSpeeds().vyMetersPerSecond);
         //SmartDashboard.putNumber("Path Coral Align Estimated Y", cameraToTag.getX());
         //SmartDashboard.putNumber("Path Coral Align Estimated X", cameraToTag.getY());
         //SmartDashboard.putString("cameraToTag", cameraToTag.toString());
@@ -432,8 +434,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double fieldYSpeed = this.getState().Speeds.vxMetersPerSecond;
         double fieldXSpeed = this.getState().Speeds.vyMetersPerSecond;
         double fieldRotationSpeed = this.getState().Speeds.omegaRadiansPerSecond;     
-        Rotation2d robotAngle = this.getState().RawHeading;   
-        return ChassisSpeeds.fromFieldRelativeSpeeds(fieldYSpeed, fieldXSpeed, fieldRotationSpeed, robotAngle);
+        Rotation2d robotAngle = this.getState().RawHeading;  
+        return this.getState().Speeds; 
+        //return ChassisSpeeds.fromFieldRelativeSpeeds(fieldYSpeed, fieldXSpeed, fieldRotationSpeed, robotAngle);
     }
     // public double getXSpeed() {
     //     return this.getState().Speeds.vyMetersPerSecond;

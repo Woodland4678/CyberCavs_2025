@@ -131,8 +131,8 @@ public class Armevator extends SubsystemBase {
 
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
-    armMotionConfigs.MotionMagicCruiseVelocity = 1.66; // Target cruise velocity of 1.66 rps this is in mechanism rotations
-    armMotionConfigs.MotionMagicAcceleration = 4; // Target acceleration of 4 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicCruiseVelocity = 1.3; // Target cruise velocity of 1.66 rps this is in mechanism rotations
+    armMotionConfigs.MotionMagicAcceleration = 2.5; // Target acceleration of 4 rps/s (0.5 seconds)
     armMotionConfigs.MotionMagicJerk = 60; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armConfigs.withFeedback(armFeedbackConfigs);
