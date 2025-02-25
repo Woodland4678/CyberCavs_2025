@@ -325,20 +325,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         bestAprilTagTargetID = res.getTargets().get(i).fiducialId;
                         i = res.getTargets().size(); //TODO kinda jank, maybe change later
                     }
-                    else {
-                        //bestAprilTagTargetX =0;
-                        //bestAprilTagTargetY = 0;
-                        //bestAprilTagTargetID = 0;
-                    }
                 }
                
                // cameraToTag = bestTarget.getBestCameraToTarget();
             }
             else {
                 hasAprilTagTarget = false;
-               // bestAprilTagTargetX =0;
-               // bestAprilTagTargetY = 0;
-               // bestAprilTagTargetID = 0;
+               bestAprilTagTargetX =0;
+               bestAprilTagTargetY = 0;
+               bestAprilTagTargetID = 0;
             }
         }
         else {
