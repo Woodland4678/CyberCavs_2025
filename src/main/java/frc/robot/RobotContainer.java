@@ -131,8 +131,8 @@ public class RobotContainer {
         //joystick.pov(270).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator));
         //joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-16)));
         //joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveElevatorToPosition(-2)));
-        joystick.a().onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator));
-        joystick.b().onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator));
+        //joystick.a().onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator));
+        //joystick.b().onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator));
         joystick.leftBumper().onTrue(new InstantCommand(() -> S_AlgaeManipulator.deploy()));
         joystick.rightBumper().onTrue(new InstantCommand(() -> S_AlgaeManipulator.retract()));
         //joystick.pov(90).onTrue(new InstantCommand(() -> S_Armevator.moveEndAffectorWheelsToPosition(100)));
@@ -193,13 +193,13 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
        //joystick.leftTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A',joystick));
 
-        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator));
-        operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator));
-        operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator));
-        operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator));
-        operatorController.button(19).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator));
-        operatorController.button(13).onTrue(new MoveArm(Constants.ArmConstants.lowAlgaeRemoval, S_Armevator));
-        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.highAlgaeRemoval, S_Armevator));
+        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain));
+        operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain));
+        operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain));
+        operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain));
+        operatorController.button(19).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain));
+        operatorController.button(13).onTrue(new MoveArm(Constants.ArmConstants.lowAlgaeRemoval, S_Armevator, drivetrain));
+        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.highAlgaeRemoval, S_Armevator, drivetrain));
 
 
         operatorController.button(15).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
