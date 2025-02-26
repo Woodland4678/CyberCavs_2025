@@ -64,6 +64,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Transform3d cameraToTag;
     private boolean hasAprilTagTarget = false;
     private int aprilTagTargetRequest = 7;
+    private boolean isAutoAligning = false;
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -433,9 +434,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return this.getState().Speeds; 
         //return ChassisSpeeds.fromFieldRelativeSpeeds(fieldYSpeed, fieldXSpeed, fieldRotationSpeed, robotAngle);
     }
-    // public double getXSpeed() {
-    //     return this.getState().Speeds.vyMetersPerSecond;
-    // }
-
-     
+    public boolean getIsAutoAligning() {
+        return isAutoAligning;
+    }
+    public void setIsAutoAligning(boolean setVal) {
+        isAutoAligning = setVal;
+    }
 }

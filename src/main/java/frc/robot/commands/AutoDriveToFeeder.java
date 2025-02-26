@@ -48,7 +48,7 @@ public class AutoDriveToFeeder extends Command {
   @Override
   public void initialize() {
     rControllerTarget = angleTarget;
-    rController.setTolerance(7);
+    rController.setTolerance(10);
     yControllerTarget = 7;
   }
 

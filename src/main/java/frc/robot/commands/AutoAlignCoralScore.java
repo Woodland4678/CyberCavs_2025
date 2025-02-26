@@ -101,6 +101,7 @@ public class AutoAlignCoralScore extends Command {
     xController.reset();
     rController.reset();
     S_Swerve.setAprilTagTargetRequest(branchValues[2]);
+    S_Swerve.setIsAutoAligning(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -149,7 +150,12 @@ public class AutoAlignCoralScore extends Command {
           state++;
         break;
         case 1:
-          
+          if (yController.getPositionError() < 50) { //TODO tune for robot
+            S_Swerve.setIsAutoAligning(true);
+          }
+          else {
+            S_Swerve.setIsAutoAligning(false);
+          }
           //rSpeed = 0;
           //var estYDist = 0.0798/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY()))); //0.0889 is the height diff between the camera and middle of the april tag (3.5 inches)
           var xDist = (S_Swerve.getDistanceLaser()) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
@@ -167,9 +173,12 @@ public class AutoAlignCoralScore extends Command {
           else {
             xSpeed += 0.07;
           }
-          if (xSpeed > 4.0) {
-            xSpeed = 4.0;
-          }          
+          if (xSpeed > 2.5) {
+            xSpeed = 2.5;
+          }   
+          else if (xSpeed < -2.5){
+            xSpeed = -2.5;
+          }       
           
           if(ySpeed < 0) {
             ySpeed -= 0.1;
@@ -177,8 +186,11 @@ public class AutoAlignCoralScore extends Command {
           else {
             ySpeed += 0.1;
           }
-          if (ySpeed < -4) {
-            ySpeed = -4.0;
+          if (ySpeed < -2.5) {
+            ySpeed = -2.5;
+          }
+          else if (ySpeed > 2.5) {
+            ySpeed = 2.5;
           }
           if (xController.atSetpoint()) {
             xSpeed = 0;
