@@ -28,8 +28,9 @@ public class MoveArm extends Command {
   boolean isArmAtRest = false;
   boolean isElevatorAtRest = false;
   boolean forceMove = false;
+  boolean moveToRestFirst = true;
   //int pressedCount = 0;
-  Debouncer armevatorAtRest = new Debouncer(0.2); //arm must be at rest for 0.3 seconds before moving on
+  Debouncer armevatorAtRest = new Debouncer(0.1); //arm must be at rest for 0.3 seconds before moving on
   public MoveArm(ArmPosition targetPosition, Armevator S_Armevator, CommandSwerveDrivetrain S_Swerve, boolean forceMove) {
     this.S_Armevator = S_Armevator;
     this.targetPosition = targetPosition;
@@ -42,46 +43,31 @@ public class MoveArm extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    moveState = 0;
     //pressedCount++;
     isDone = false;
     isArmAtRest = false;
     isElevatorAtRest = false;
     //forceMove = false;
-    armevatorAtRest.calculate(false);
-    // if ((S_Armevator.getPrevArmTarget() == targetPosition.positionID) || targetPosition.positionID == 1 || targetPosition.positionID == 3 || targetPosition.positionID == 2 || S_Armevator.getElevatorPosition() < targetPosition.elevatorTarget){ 
-    //   forceMove = true;
-    // }
-    // else {
-    //   forceMove = false;
-    // }
-    
-    // SmartDashboard.putBoolean("Arm Force Move", forceMove);
-    // SmartDashboard.putNumber("Current target", targetPosition.positionID);
-    // SmartDashboard.putNumber("Prev arm target", S_Armevator.getPrevArmTarget());
-    // S_Armevator.setPrevArmTarget(targetPosition.positionID);
+    armevatorAtRest.calculate(false);     
     currentArmPositionID = S_Armevator.getCurrentArmPositionID();
     S_Armevator.setTargetArmPositionID(targetPosition.positionID);
     if ((currentArmPositionID == 1 && targetPosition.positionID > 1) || (currentArmPositionID != 1 && targetPosition.positionID == 1)) { //if we're moving to intake coral and we're not already in rest position, move to rest first
-      S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
-      S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
-      S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
-      moveState = 0;
+      //S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+      //S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+      //S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
+      //moveState = 0;
+      moveToRestFirst = true;
     }
     else {
-      moveState = 1;
+      moveToRestFirst = false;
     }
     if (targetPosition.positionID == 1) {
       if (S_Armevator.hasCoral()) {
         isDone = true;
         moveState = -1;
       }
-    }
-    if (S_Armevator.getArmPosition() > 0) {
-      if (S_Swerve.getDistanceLaser() < 100 && S_Swerve.getDistanceLaser() > 5) {
-        isDone = true;
-        moveState = -1;
-      }
-    }
+    }    
     
   }
 
@@ -91,6 +77,22 @@ public class MoveArm extends Command {
     
     switch(moveState) {
       case 0:
+        if ((S_Swerve.getDistanceLaser() > 120 || S_Swerve.getDistanceLaser() < 50) && S_Armevator.canArmMove() && S_Armevator.hasCoral()) {
+          if (moveToRestFirst) {
+            moveState++;
+          }
+          else {
+            moveState = 3;
+          }          
+        }
+      break;
+      case 1:
+        S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+        S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+        S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
+        moveState++;
+      break;
+      case 2:
         if (S_Armevator.getArmPositionError() < 0.003) {
           isArmAtRest = true;
         }
@@ -109,7 +111,7 @@ public class MoveArm extends Command {
             S_Armevator.setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);
           }
       break;
-      case 1:
+      case 3:
           S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
           S_Armevator.moveWristToPosition(targetPosition.wristTarget);
           if (S_Swerve.getIsAutoAligning() || forceMove) {
@@ -117,7 +119,7 @@ public class MoveArm extends Command {
             moveState++;
           }
       break;
-      case 2:
+      case 4:
           if (S_Armevator.getArmPositionError() < 0.003
             && S_Armevator.getElevatorPositionError() < 0.05
             && S_Armevator.getWristPositionError() < 0.05) {
