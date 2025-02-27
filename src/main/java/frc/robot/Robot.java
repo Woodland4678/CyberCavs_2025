@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("TunePID FF kS", tunePID_KP);
     SmartDashboard.putNumber("TunePID FF kV", tunePID_KI);
     SmartDashboard.putNumber("TunePID FF kA", tunePID_KD);
+
+    DataLogManager.start();
   }
 
   @Override
@@ -114,37 +116,37 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    double tunePID_Dashboard_P = SmartDashboard.getNumber("TunePID P Gain", 0);
-    double tunePID_Dashboard_I = SmartDashboard.getNumber("TunePID I Gain", 0);
-    double tunePID_Dashboard_D = SmartDashboard.getNumber("TunePID D Gain", 0);
-    double tunePID_Dashboard_P_2 = SmartDashboard.getNumber("TunePID P Gain 2", 0);
-    double tunePID_Dashboard_I_2 = SmartDashboard.getNumber("TunePID I Gain 2", 0);
-    double tunePID_Dashboard_D_2 = SmartDashboard.getNumber("TunePID D Gain 2", 0);
-    double tunePID_Dashboard_P_3 = SmartDashboard.getNumber("TunePID P Gain 3", 0);
-    double tunePID_Dashboard_I_3 = SmartDashboard.getNumber("TunePID I Gain 3", 0);
-    double tunePID_Dashboard_D_3 = SmartDashboard.getNumber("TunePID D Gain 3", 0);
-    double tunePID_Dashboard_Iz = SmartDashboard.getNumber("TunePID I Zone", 0);
-    double tunePID_Dashboard_FF = SmartDashboard.getNumber("TunePID Feed Forward", 0);
-    double tunePID_Dashboard_FF_kS = SmartDashboard.getNumber("TunePID FF kS", 0);
-    double tunePID_Dashboard_FF_kV = SmartDashboard.getNumber("TunePID FF kV", 0);
-    double tunePID_Dashboard_FF_kA = SmartDashboard.getNumber("TunePID FF kA", 0);
-    if (tunePID_Dashboard_P != tunePID_KP || tunePID_Dashboard_I != tunePID_KI || tunePID_Dashboard_D != tunePID_KD || tunePID_Dashboard_Iz != tunePID_KIz || tunePID_Dashboard_FF != tunePID_KFF || tunePID_Dashboard_FF_kS != tunePID_KF_kS || tunePID_Dashboard_FF_kV != tunePID_KF_kV || tunePID_Dashboard_FF_kA != tunePID_KF_kA || tunePID_Dashboard_P_2 != tunePID_KP_2 || tunePID_Dashboard_D_2 != tunePID_KD_2 || tunePID_Dashboard_I_2 != tunePID_KI_2 || tunePID_Dashboard_P_3 != tunePID_KP_3 || tunePID_Dashboard_D_3 != tunePID_KD_3 || tunePID_Dashboard_I_3 != tunePID_KI_3) {
-      m_robotContainer.setDashboardPIDs(tunePID_Dashboard_P, tunePID_Dashboard_I, tunePID_Dashboard_D, tunePID_Dashboard_P_2, tunePID_Dashboard_I_2, tunePID_Dashboard_D_2,tunePID_Dashboard_P_3, tunePID_Dashboard_I_3, tunePID_Dashboard_D_3,tunePID_Dashboard_Iz, tunePID_Dashboard_FF);
-      tunePID_KP = tunePID_Dashboard_P;
-      tunePID_KI = tunePID_Dashboard_I;
-      tunePID_KD = tunePID_Dashboard_D;
-      tunePID_KP_2 = tunePID_Dashboard_P_2;
-      tunePID_KI_2 = tunePID_Dashboard_I_2;
-      tunePID_KD_2 = tunePID_Dashboard_D_2;
-      tunePID_KP_3 = tunePID_Dashboard_P_3;
-      tunePID_KI_3 = tunePID_Dashboard_I_3;
-      tunePID_KD_3 = tunePID_Dashboard_D_3;
-      tunePID_KIz = tunePID_Dashboard_Iz;
-      tunePID_KFF = tunePID_Dashboard_FF;
-      tunePID_KF_kS = tunePID_Dashboard_FF_kS;
-      tunePID_KF_kV = tunePID_Dashboard_FF_kV;
-      tunePID_KF_kA = tunePID_Dashboard_FF_kA;
-    }
+    // double tunePID_Dashboard_P = SmartDashboard.getNumber("TunePID P Gain", 0);
+    // double tunePID_Dashboard_I = SmartDashboard.getNumber("TunePID I Gain", 0);
+    // double tunePID_Dashboard_D = SmartDashboard.getNumber("TunePID D Gain", 0);
+    // double tunePID_Dashboard_P_2 = SmartDashboard.getNumber("TunePID P Gain 2", 0);
+    // double tunePID_Dashboard_I_2 = SmartDashboard.getNumber("TunePID I Gain 2", 0);
+    // double tunePID_Dashboard_D_2 = SmartDashboard.getNumber("TunePID D Gain 2", 0);
+    // double tunePID_Dashboard_P_3 = SmartDashboard.getNumber("TunePID P Gain 3", 0);
+    // double tunePID_Dashboard_I_3 = SmartDashboard.getNumber("TunePID I Gain 3", 0);
+    // double tunePID_Dashboard_D_3 = SmartDashboard.getNumber("TunePID D Gain 3", 0);
+    // double tunePID_Dashboard_Iz = SmartDashboard.getNumber("TunePID I Zone", 0);
+    // double tunePID_Dashboard_FF = SmartDashboard.getNumber("TunePID Feed Forward", 0);
+    // double tunePID_Dashboard_FF_kS = SmartDashboard.getNumber("TunePID FF kS", 0);
+    // double tunePID_Dashboard_FF_kV = SmartDashboard.getNumber("TunePID FF kV", 0);
+    // double tunePID_Dashboard_FF_kA = SmartDashboard.getNumber("TunePID FF kA", 0);
+    // if (tunePID_Dashboard_P != tunePID_KP || tunePID_Dashboard_I != tunePID_KI || tunePID_Dashboard_D != tunePID_KD || tunePID_Dashboard_Iz != tunePID_KIz || tunePID_Dashboard_FF != tunePID_KFF || tunePID_Dashboard_FF_kS != tunePID_KF_kS || tunePID_Dashboard_FF_kV != tunePID_KF_kV || tunePID_Dashboard_FF_kA != tunePID_KF_kA || tunePID_Dashboard_P_2 != tunePID_KP_2 || tunePID_Dashboard_D_2 != tunePID_KD_2 || tunePID_Dashboard_I_2 != tunePID_KI_2 || tunePID_Dashboard_P_3 != tunePID_KP_3 || tunePID_Dashboard_D_3 != tunePID_KD_3 || tunePID_Dashboard_I_3 != tunePID_KI_3) {
+    //   m_robotContainer.setDashboardPIDs(tunePID_Dashboard_P, tunePID_Dashboard_I, tunePID_Dashboard_D, tunePID_Dashboard_P_2, tunePID_Dashboard_I_2, tunePID_Dashboard_D_2,tunePID_Dashboard_P_3, tunePID_Dashboard_I_3, tunePID_Dashboard_D_3,tunePID_Dashboard_Iz, tunePID_Dashboard_FF);
+    //   tunePID_KP = tunePID_Dashboard_P;
+    //   tunePID_KI = tunePID_Dashboard_I;
+    //   tunePID_KD = tunePID_Dashboard_D;
+    //   tunePID_KP_2 = tunePID_Dashboard_P_2;
+    //   tunePID_KI_2 = tunePID_Dashboard_I_2;
+    //   tunePID_KD_2 = tunePID_Dashboard_D_2;
+    //   tunePID_KP_3 = tunePID_Dashboard_P_3;
+    //   tunePID_KI_3 = tunePID_Dashboard_I_3;
+    //   tunePID_KD_3 = tunePID_Dashboard_D_3;
+    //   tunePID_KIz = tunePID_Dashboard_Iz;
+    //   tunePID_KFF = tunePID_Dashboard_FF;
+    //   tunePID_KF_kS = tunePID_Dashboard_FF_kS;
+    //   tunePID_KF_kV = tunePID_Dashboard_FF_kV;
+    //   tunePID_KF_kA = tunePID_Dashboard_FF_kA;
+    // }
   }
 
   @Override

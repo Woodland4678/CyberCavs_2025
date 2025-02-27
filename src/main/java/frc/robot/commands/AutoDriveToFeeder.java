@@ -23,7 +23,7 @@ public class AutoDriveToFeeder extends Command {
   CommandSwerveDrivetrain S_Swerve;
   double angleTarget;
   CommandXboxController controller;
-  PhoenixPIDController rController = new PhoenixPIDController(0.15, 0, 0);
+  PhoenixPIDController rController = new PhoenixPIDController(0.12, 0, 0);
   PhoenixPIDController yController = new PhoenixPIDController(0.04, 0, 0.002);
   private final SwerveRequest.RobotCentric m_driveRequestRobotCentric = new SwerveRequest.RobotCentric();
   private final SwerveRequest.FieldCentric m_driveRequestFieldCentric = new SwerveRequest.FieldCentric()
@@ -57,7 +57,7 @@ public class AutoDriveToFeeder extends Command {
   public void execute() {
     double degrees = S_Swerve.getgyroValue();
     rSpeed = rController.calculate(degrees, rControllerTarget, Timer.getFPGATimestamp());
-    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 110) || S_Swerve.getRearLidar() < 20) {
+    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 110) || S_Swerve.getRearLidar() < 50) {
       ySpeed = yController.calculate(S_Swerve.getRearLidar(), yControllerTarget, Timer.getFPGATimestamp());
       S_Swerve.setControl(
         m_driveRequestRobotCentric.withVelocityX(ySpeed)

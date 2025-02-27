@@ -7,6 +7,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
@@ -22,16 +23,18 @@ public class MoveArm extends Command {
   ArmPosition targetPosition;
   int currentArmPositionID;
   int moveState = 0;
-  int prevTargetId = 0;
+  int prevTargetId;
   boolean isDone = false;
   boolean isArmAtRest = false;
   boolean isElevatorAtRest = false;
   boolean forceMove = false;
+  //int pressedCount = 0;
   Debouncer armevatorAtRest = new Debouncer(0.2); //arm must be at rest for 0.3 seconds before moving on
-  public MoveArm(ArmPosition targetPosition, Armevator S_Armevator, CommandSwerveDrivetrain S_Swerve) {
+  public MoveArm(ArmPosition targetPosition, Armevator S_Armevator, CommandSwerveDrivetrain S_Swerve, boolean forceMove) {
     this.S_Armevator = S_Armevator;
     this.targetPosition = targetPosition;
     this.S_Swerve = S_Swerve;
+    this.forceMove = forceMove;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(S_Armevator);    
   }
@@ -39,17 +42,23 @@ public class MoveArm extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //pressedCount++;
     isDone = false;
     isArmAtRest = false;
     isElevatorAtRest = false;
+    //forceMove = false;
     armevatorAtRest.calculate(false);
-    if ((prevTargetId == targetPosition.positionID) || targetPosition.positionID == 1 || targetPosition.positionID == 3 || targetPosition.positionID == 2 || S_Armevator.getElevatorPosition() > targetPosition.elevatorTarget){ 
-      forceMove = true;
-    }
-    else {
-      forceMove = false;
-    }
-    prevTargetId = targetPosition.positionID;
+    // if ((S_Armevator.getPrevArmTarget() == targetPosition.positionID) || targetPosition.positionID == 1 || targetPosition.positionID == 3 || targetPosition.positionID == 2 || S_Armevator.getElevatorPosition() < targetPosition.elevatorTarget){ 
+    //   forceMove = true;
+    // }
+    // else {
+    //   forceMove = false;
+    // }
+    
+    // SmartDashboard.putBoolean("Arm Force Move", forceMove);
+    // SmartDashboard.putNumber("Current target", targetPosition.positionID);
+    // SmartDashboard.putNumber("Prev arm target", S_Armevator.getPrevArmTarget());
+    // S_Armevator.setPrevArmTarget(targetPosition.positionID);
     currentArmPositionID = S_Armevator.getCurrentArmPositionID();
     S_Armevator.setTargetArmPositionID(targetPosition.positionID);
     if ((currentArmPositionID == 1 && targetPosition.positionID > 1) || (currentArmPositionID != 1 && targetPosition.positionID == 1)) { //if we're moving to intake coral and we're not already in rest position, move to rest first
@@ -61,12 +70,25 @@ public class MoveArm extends Command {
     else {
       moveState = 1;
     }
+    if (targetPosition.positionID == 1) {
+      if (S_Armevator.hasCoral()) {
+        isDone = true;
+        moveState = -1;
+      }
+    }
+    if (S_Armevator.getArmPosition() > 0) {
+      if (S_Swerve.getDistanceLaser() < 100 && S_Swerve.getDistanceLaser() > 5) {
+        isDone = true;
+        moveState = -1;
+      }
+    }
     
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
     switch(moveState) {
       case 0:
         if (S_Armevator.getArmPositionError() < 0.003) {
