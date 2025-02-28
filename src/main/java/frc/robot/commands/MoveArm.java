@@ -30,7 +30,7 @@ public class MoveArm extends Command {
   boolean forceMove = false;
   boolean moveToRestFirst = true;
   //int pressedCount = 0;
-  Debouncer armevatorAtRest = new Debouncer(0.1); //arm must be at rest for 0.3 seconds before moving on
+  Debouncer armevatorAtRest = new Debouncer(0.1); //arm must be at rest for 0.1 seconds before moving on
   public MoveArm(ArmPosition targetPosition, Armevator S_Armevator, CommandSwerveDrivetrain S_Swerve, boolean forceMove) {
     this.S_Armevator = S_Armevator;
     this.targetPosition = targetPosition;

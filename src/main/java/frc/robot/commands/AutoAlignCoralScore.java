@@ -6,8 +6,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -56,9 +60,11 @@ public class AutoAlignCoralScore extends Command {
   double yControllerSetpoint;
   double rControllerSetpoint;
   char branch;
+  boolean isDone = false;
   Integer[] branchValues;
   CommandXboxController joystick;
   Armevator S_Armevator;
+  Debouncer AutoAlignDone = new Debouncer(0.1);
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
@@ -84,6 +90,9 @@ public class AutoAlignCoralScore extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Alliance ally = DriverStation.getAlliance().get();    
+    isDone = false;
+    AutoAlignDone.calculate(false);
     if (branch == 'A' || branch == 'C' || branch == 'E' || branch == 'G' || branch == 'I' || branch == 'K') {
       xControllerSetpoint = (22);
     } else {
@@ -93,7 +102,18 @@ public class AutoAlignCoralScore extends Command {
     //yControllerSetpoint = (9);// forward and back
     yControllerSetpoint = 105;
     yController.setTolerance(3.0); //3cm
-    rControllerSetpoint = (branchValues[0]); //rotation
+    if (ally == Alliance.Red) {
+      if (branchValues[0] < 0) {
+        rControllerSetpoint = (branchValues[0] + 180); //rotation
+      }
+      else {
+        rControllerSetpoint = branchValues[0] - 180;
+      }
+    }
+    else {
+      rControllerSetpoint = branchValues[0];
+    }
+    
     rController.setTolerance(0.5);
     state = 0;
     isAtSetpointCnt = 0;
@@ -161,13 +181,8 @@ public class AutoAlignCoralScore extends Command {
     }
     else {
       //rController.setSetpoint(Constants.SwerveConstants.aprilTagRotationValues.get(S_Swerve.getBestAprilTagID())); //update the rcontroller target to the rotation target of the best april tag we see
-      switch(state) {
+      switch(state) {        
         case 0:
-          ySpeedLimit.reset(-S_Swerve.getRobotSpeeds().vxMetersPerSecond); //reset slew rate to the speed we're going
-          xSpeedLimit.reset(-S_Swerve.getRobotSpeeds().vyMetersPerSecond);
-          state++;
-        break;
-        case 1:
           if (yController.getPositionError() < 50 && Math.abs(xController.getPositionError()) < 9) { //TODO tune for robot
             S_Swerve.setIsAutoAligning(true);
           }
@@ -238,6 +253,10 @@ public class AutoAlignCoralScore extends Command {
                 .withVelocityY(xSpeed)
                 .withRotationalRate(rSpeed)
           );
+          if(AutoAlignDone.calculate(ySpeed == 0 && xSpeed == 0)) {
+            state = 1;
+            AutoAlignDone.calculate(false);
+          }
           // if (xController.atSetpoint() && yController.atSetpoint() && rController.atSetpoint()) {
           //   isAtSetpointCnt++;
           //   if (isAtSetpointCnt > 10) {
@@ -249,10 +268,12 @@ public class AutoAlignCoralScore extends Command {
           // }
           
           break;
-        case 2:
-          S_Swerve.setControl(brake);
-        // S_Swerve.applyRequest(() -> brake);
-          break;
+        case 1:         
+          S_Armevator.setEndEffectorVoltage(6);
+          if (AutoAlignDone.calculate(!S_Armevator.hasCoral())); {
+            isDone = true;
+          } 
+        break;
       }
   }
     
@@ -270,6 +291,6 @@ public class AutoAlignCoralScore extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isDone;
   }
 }

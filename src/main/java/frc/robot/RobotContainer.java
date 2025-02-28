@@ -31,6 +31,8 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -62,7 +64,11 @@ public class RobotContainer {
     public RobotContainer() {
         ledStrip = LEDStrip.getInstance();
         configureBindings();
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        NamedCommands.registerCommand("AutoScoreJ", new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
+        new EventTrigger("MoveArmToL4").onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false));
+        new EventTrigger("MoveArmToIntake").onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true));
+        NamedCommands.registerCommand("AutoLineupFeeder", new AutoDriveToFeeder(drivetrain, MaxAngularRate, joystick));
+        autoChooser = AutoBuilder.buildAutoChooser("Left4L4");
         //autoChooser = null;
        
     }

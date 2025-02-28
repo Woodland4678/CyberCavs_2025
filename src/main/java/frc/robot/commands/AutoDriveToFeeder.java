@@ -6,11 +6,15 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
+import javax.xml.xpath.XPath;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +37,8 @@ public class AutoDriveToFeeder extends Command {
   double yControllerTarget;
   double rSpeed = 0;
   double ySpeed = 0;
+  boolean isDone = false;
+  Debouncer coralIncoming = new Debouncer(0.1);
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
   /** Creates a new AutoDriveToFeeder. */
@@ -50,13 +56,20 @@ public class AutoDriveToFeeder extends Command {
     rControllerTarget = angleTarget;
     rController.setTolerance(10);
     yControllerTarget = 7;
+    coralIncoming.calculate(false);
+    isDone = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
+  public void execute() {    
     double degrees = S_Swerve.getgyroValue();
     rSpeed = rController.calculate(degrees, rControllerTarget, Timer.getFPGATimestamp());
+    if (coralIncoming.calculate(S_Swerve.getChuteLidar() < 35)) {
+      isDone = true;
+      ySpeed = 0;
+      rSpeed = 0;
+    }
     if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 110) || S_Swerve.getRearLidar() < 50) {
       ySpeed = yController.calculate(S_Swerve.getRearLidar(), yControllerTarget, Timer.getFPGATimestamp());
       S_Swerve.setControl(
@@ -83,6 +96,6 @@ public class AutoDriveToFeeder extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isDone;
   }
 }
