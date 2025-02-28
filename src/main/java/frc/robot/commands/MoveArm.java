@@ -27,14 +27,16 @@ public class MoveArm extends Command {
   boolean isDone = false;
   boolean isArmAtRest = false;
   boolean isElevatorAtRest = false;
+  boolean forceElevatorMove = false;
   boolean forceMove = false;
   boolean moveToRestFirst = true;
   //int pressedCount = 0;
   Debouncer armevatorAtRest = new Debouncer(0.1); //arm must be at rest for 0.1 seconds before moving on
-  public MoveArm(ArmPosition targetPosition, Armevator S_Armevator, CommandSwerveDrivetrain S_Swerve, boolean forceMove) {
+  public MoveArm(ArmPosition targetPosition, Armevator S_Armevator, CommandSwerveDrivetrain S_Swerve, boolean forceElevatorMove, boolean forceMove) {
     this.S_Armevator = S_Armevator;
     this.targetPosition = targetPosition;
     this.S_Swerve = S_Swerve;
+    this.forceElevatorMove = forceElevatorMove;
     this.forceMove = forceMove;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(S_Armevator);    
@@ -67,7 +69,16 @@ public class MoveArm extends Command {
         isDone = true;
         moveState = -1;
       }
-    }    
+    }   
+    if (forceMove) {
+      forceElevatorMove = true;
+      if (moveToRestFirst) {
+        moveState = 1;
+      }
+      else {
+        moveState = 3;
+      }
+    }
     
   }
 
@@ -114,7 +125,7 @@ public class MoveArm extends Command {
       case 3:
           S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
           S_Armevator.moveWristToPosition(targetPosition.wristTarget);
-          if (S_Swerve.getIsAutoAligning() || forceMove) {
+          if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
             S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
             moveState++;
           }

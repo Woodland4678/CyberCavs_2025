@@ -65,8 +65,8 @@ public class RobotContainer {
         ledStrip = LEDStrip.getInstance();
         configureBindings();
         NamedCommands.registerCommand("AutoScoreJ", new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
-        new EventTrigger("MoveArmToL4").onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false));
-        new EventTrigger("MoveArmToIntake").onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true));
+        new EventTrigger("MoveArmToL4").onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
+        new EventTrigger("MoveArmToIntake").onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, false));
         NamedCommands.registerCommand("AutoLineupFeeder", new AutoDriveToFeeder(drivetrain, MaxAngularRate, joystick));
         autoChooser = AutoBuilder.buildAutoChooser("Left4L4");
         //autoChooser = null;
@@ -199,12 +199,12 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
        //joystick.leftTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A',joystick));
 
-        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true));
-        operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain, true));
-        operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, false));
-        operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false));
-        operatorController.button(19).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true));
-        operatorController.button(13).onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true));
+        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, false));
+        operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain, true, false));
+        operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, false, false));
+        operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
+        operatorController.button(19).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, false));
+        operatorController.button(13).onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, false));
        // operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.highAlgaeRemoval, S_Armevator, drivetrain, true));
 
 
@@ -220,6 +220,15 @@ public class RobotContainer {
         operatorController.button(9).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
         operatorController.button(11).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
         operatorController.button(20).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
+
+        //Buttons to force the arm to move
+        operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(1)).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, true));
+        operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(2)).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain, true, true));
+        operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(3)).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, true, true));
+        operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(4)).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, true, true));
+        operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(19)).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, true));
+        operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(13)).onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, true));
+       
         
         //operatorController.axisGreaterThan(6, 0.115).onTrue(); //to use the analog buttons
         //joystick.y().onTrue(new InstantCommand(() -> drivetrain.setSwerveToX()));
