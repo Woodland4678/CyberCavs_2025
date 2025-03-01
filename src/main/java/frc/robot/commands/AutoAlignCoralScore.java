@@ -43,9 +43,9 @@ public class AutoAlignCoralScore extends Command {
   CommandSwerveDrivetrain S_Swerve;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   //PhoenixPIDController xController = new PhoenixPIDController(2, 0, 0.03); //for meters
-  PhoenixPIDController xController = new PhoenixPIDController(0.04, 0, 0.001); //for cm
+  PhoenixPIDController xController = new PhoenixPIDController(0.04, 0, 0.002); //for cm
   //PhoenixPIDController yController = new PhoenixPIDController(0.37, 0, 0.02); //0.32, 0, 0.022 //for using camera pitch for lineup
-  PhoenixPIDController yController = new PhoenixPIDController(0.036, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
+  PhoenixPIDController yController = new PhoenixPIDController(0.043, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
   PhoenixPIDController rController = new PhoenixPIDController(0.12, 0, 0.00);
   SlewRateLimiter ySpeedLimit = new SlewRateLimiter(5.5);
   SlewRateLimiter xSpeedLimit = new SlewRateLimiter(5.5);
@@ -99,7 +99,7 @@ public class AutoAlignCoralScore extends Command {
     } else {
       xControllerSetpoint = (-9); //left and right: +22 for left -9 for right
     }
-    xController.setTolerance(2.0);
+    xController.setTolerance(2);
     //yControllerSetpoint = (9);// forward and back
     yControllerSetpoint = 105;
     yController.setTolerance(3.0); //3cm
@@ -124,9 +124,9 @@ public class AutoAlignCoralScore extends Command {
     S_Swerve.setAprilTagTargetRequest(branchValues[2]);
     S_Swerve.setIsAutoAligning(false);
     if (S_Armevator.getArmPosition() > 0.1) {
-      yControllerSetpoint = 82;
+      yControllerSetpoint = 87.5;
       if (xControllerSetpoint < 0) {
-        xControllerSetpoint = -14;
+        xControllerSetpoint = -14.1;
       }
       else {
         xControllerSetpoint = 20.5;
@@ -139,9 +139,9 @@ public class AutoAlignCoralScore extends Command {
   @Override
   public void execute() {
     if (S_Armevator.getArmPosition() > 0.1) {
-      yControllerSetpoint = 87;
+      yControllerSetpoint = 87.5;
       if (xControllerSetpoint < 0) {
-        xControllerSetpoint = -14;
+        xControllerSetpoint = -14.1;
       }
       else {
         xControllerSetpoint = 20.5;
@@ -151,7 +151,7 @@ public class AutoAlignCoralScore extends Command {
     dashPIDS = S_Swerve.getDashPIDS();
 
     // xController.setPID(dashPIDS[0], dashPIDS[1], dashPIDS[2]);
-     //yController.setPID(dashPIDS[3], dashPIDS[4], dashPIDS[5]);
+    // yController.setPID(dashPIDS[3], dashPIDS[4], dashPIDS[5]);
      degrees = S_Swerve.getgyroValue();
       // if (rController.getSetpoint() > 160 && degrees < 0) {
       //   degrees = 360 + degrees;
@@ -184,7 +184,7 @@ public class AutoAlignCoralScore extends Command {
       //rController.setSetpoint(Constants.SwerveConstants.aprilTagRotationValues.get(S_Swerve.getBestAprilTagID())); //update the rcontroller target to the rotation target of the best april tag we see
       switch(state) {        
         case 0:
-          if (yController.getPositionError() < 50 && Math.abs(xController.getPositionError()) < 9) { //TODO tune for robot
+          if (yController.getPositionError() < 60 && Math.abs(xController.getPositionError()) < 11) { //TODO tune for robot
             S_Swerve.setIsAutoAligning(true);
           }
           else {
@@ -227,7 +227,7 @@ public class AutoAlignCoralScore extends Command {
             ySpeed = 2.5;
           }
           if (xController.atSetpoint()) {
-            xSpeed = 0;
+            //xSpeed = 0;
           }
           if (yController.atSetpoint()) {
             ySpeed = 0;
@@ -254,7 +254,7 @@ public class AutoAlignCoralScore extends Command {
                 .withVelocityY(xSpeed)
                 .withRotationalRate(rSpeed)
           );
-          if(AutoAlignDone.calculate(ySpeed == 0 && xSpeed == 0)) {
+          if(AutoAlignDone.calculate(ySpeed == 0 && xController.atSetpoint() && (S_Armevator.getTargetArmPositionID() == S_Armevator.getCurrentArmPositionID()))) {
             state = 1;
             AutoAlignDone.calculate(false);
           }

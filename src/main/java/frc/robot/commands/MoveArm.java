@@ -88,7 +88,7 @@ public class MoveArm extends Command {
     
     switch(moveState) {
       case 0:
-        if ((S_Swerve.getDistanceLaser() > 115 || S_Swerve.getDistanceLaser() < 60 || (S_Armevator.getCurrentArmPositionID() == 2 && this.targetPosition.positionID == 1 )) && S_Armevator.canArmMove() && (S_Armevator.hasCoral() || this.targetPosition.positionID == 1 || this.targetPosition.positionID == 2)) {
+        if ((S_Swerve.getDistanceLaser() > 90 || S_Swerve.getDistanceLaser() < 60 || (S_Armevator.getCurrentArmPositionID() == 2 && this.targetPosition.positionID == 1 )) && S_Armevator.canArmMove() && (S_Armevator.hasCoral() || this.targetPosition.positionID == 1 || this.targetPosition.positionID == 2)) {
           if (moveToRestFirst) {
             moveState++;
           }
@@ -123,12 +123,31 @@ public class MoveArm extends Command {
           }
       break;
       case 3:
-          S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
           S_Armevator.moveWristToPosition(targetPosition.wristTarget);
-          if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
-            S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
-            moveState++;
+          if (targetPosition.positionID == 6) {
+            if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
+              S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
+              moveState++;
+            }
+            S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);            
           }
+          else if (targetPosition.positionID == 4) {
+            S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget - 3);
+            if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
+              S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
+              S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
+              moveState++;
+            }
+          }
+          else {
+            if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
+              S_Armevator.moveArmToPosition(targetPosition.armTargetAngle); 
+              moveState++;
+            }
+            S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
+          }
+          
+          
       break;
       case 4:
           if (S_Armevator.getArmPositionError() < 0.003
