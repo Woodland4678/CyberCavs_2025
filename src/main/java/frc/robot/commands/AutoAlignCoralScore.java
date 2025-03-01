@@ -43,9 +43,9 @@ public class AutoAlignCoralScore extends Command {
   CommandSwerveDrivetrain S_Swerve;
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   //PhoenixPIDController xController = new PhoenixPIDController(2, 0, 0.03); //for meters
-  PhoenixPIDController xController = new PhoenixPIDController(0.039, 0, 0.001); //for cm
+  PhoenixPIDController xController = new PhoenixPIDController(0.04, 0, 0.001); //for cm
   //PhoenixPIDController yController = new PhoenixPIDController(0.37, 0, 0.02); //0.32, 0, 0.022 //for using camera pitch for lineup
-  PhoenixPIDController yController = new PhoenixPIDController(0.033, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
+  PhoenixPIDController yController = new PhoenixPIDController(0.036, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
   PhoenixPIDController rController = new PhoenixPIDController(0.12, 0, 0.00);
   SlewRateLimiter ySpeedLimit = new SlewRateLimiter(5.5);
   SlewRateLimiter xSpeedLimit = new SlewRateLimiter(5.5);
@@ -83,6 +83,7 @@ public class AutoAlignCoralScore extends Command {
     this.S_Armevator = S_Armevator;
     branchValues = Constants.SwerveConstants.aprilTagRotationValues.get(branch);
     this.joystick = joystick;
+    rController.enableContinuousInput(-180, 180);
     addRequirements(S_Swerve);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -152,12 +153,12 @@ public class AutoAlignCoralScore extends Command {
     // xController.setPID(dashPIDS[0], dashPIDS[1], dashPIDS[2]);
      //yController.setPID(dashPIDS[3], dashPIDS[4], dashPIDS[5]);
      degrees = S_Swerve.getgyroValue();
-      if (rController.getSetpoint() > 160 && degrees < 0) {
-        degrees = 360 + degrees;
-      }
-      else if (rController.getSetpoint() < -160 && degrees > 0) {
-        degrees = degrees - 360;
-      }
+      // if (rController.getSetpoint() > 160 && degrees < 0) {
+      //   degrees = 360 + degrees;
+      // }
+      // else if (rController.getSetpoint() < -160 && degrees > 0) {
+      //   degrees = degrees - 360;
+      // }
       rSpeed = rController.calculate(degrees, rControllerSetpoint, Timer.getFPGATimestamp());
      //xController.setIZone(dashPIDS[6]);
      //yController.setIZone(dashPIDS[7]);

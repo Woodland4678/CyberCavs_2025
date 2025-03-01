@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("TunePID FF kS", tunePID_KP);
     SmartDashboard.putNumber("TunePID FF kV", tunePID_KI);
     SmartDashboard.putNumber("TunePID FF kA", tunePID_KD);
-
+  
     DataLogManager.start();
   }
 
@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
     ledStrip = LEDStrip.getInstance();
     ledStrip.setLEDMode(LEDModes.SOLIDBLUE);
     SignalLogger.stop();
+    m_robotContainer.lockClimber();
   }
 
   @Override

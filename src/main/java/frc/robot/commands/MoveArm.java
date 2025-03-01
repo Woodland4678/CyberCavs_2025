@@ -88,7 +88,7 @@ public class MoveArm extends Command {
     
     switch(moveState) {
       case 0:
-        if ((S_Swerve.getDistanceLaser() > 130 || S_Swerve.getDistanceLaser() < 60) && S_Armevator.canArmMove() && (S_Armevator.hasCoral() || this.targetPosition.positionID == 1 || this.targetPosition.positionID == 2)) {
+        if ((S_Swerve.getDistanceLaser() > 115 || S_Swerve.getDistanceLaser() < 60 || (S_Armevator.getCurrentArmPositionID() == 2 && this.targetPosition.positionID == 1 )) && S_Armevator.canArmMove() && (S_Armevator.hasCoral() || this.targetPosition.positionID == 1 || this.targetPosition.positionID == 2)) {
           if (moveToRestFirst) {
             moveState++;
           }

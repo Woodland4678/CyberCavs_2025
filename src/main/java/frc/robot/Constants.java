@@ -32,7 +32,8 @@ public final class Constants {
         public static final ArmPosition L3Position = new ArmPosition(5,-0.023438, -19.244, 0.058); 
         public static final ArmPosition L4Position = new ArmPosition(6,0.14, -22.1, 0.25);
         public static final ArmPosition lowAlgaeRemoval = new ArmPosition(7, -0.05, -5.301, 0);
-        public static final ArmPosition highAlgaeRemoval = new ArmPosition(7, -0.05, -5.301, 0);
+        public static final ArmPosition highAlgaeRemoval = new ArmPosition(8, -0.05, -5.301, 0);
+        public static final ArmPosition climbPosition = new ArmPosition(9, -0.3, -2.5, 0.075);
     }
     public static class ArmPosition{
         public double armTargetAngle = -90; //home angle

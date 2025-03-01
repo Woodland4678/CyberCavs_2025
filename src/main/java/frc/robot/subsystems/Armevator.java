@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -64,8 +65,8 @@ public class Armevator extends SubsystemBase {
   private final AnalogInput wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
   private boolean isArmAtRest;
-  private final double coralPositionForArmMove = 5.7; //TODO find
-  private final double coralPositionToScore = -5.847; //TODO find
+  private final double coralPositionForArmMove = 5.8; //TODO find
+  private final double coralPositionToScore = -6.147; //TODO find
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
   private double currentWristTarget = 0;
@@ -94,7 +95,8 @@ public class Armevator extends SubsystemBase {
     armMotorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
     // in init function
     var elevatorConfigs = new TalonFXConfiguration();
-
+    
+    elevatorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // set slot 0 gains
     var elevatorMotionPIDConfigs = elevatorConfigs.Slot0; //TODO tune for robot
     elevatorMotionPIDConfigs.kS = 0.25; // Add 0.25 V output to overcome static friction
@@ -118,7 +120,7 @@ public class Armevator extends SubsystemBase {
 
     // in init function
     var armConfigs = new TalonFXConfiguration();
-
+    armConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // set slot 0 gains
     var armMotionPIDConfigs = armConfigs.Slot0; //TODO tune for robot
     armMotionPIDConfigs.kS = 0.25; // Add 0.25 V output to overcome static friction
@@ -220,6 +222,7 @@ public class Armevator extends SubsystemBase {
     // }
 
     //State machine for handling coral positioning in the end effector
+    SmartDashboard.putString("cState", cState.toString());
     switch(cState) {
       case WAITING_FOR_CORAL:
         //setEndEffectorVoltage(-6);
@@ -232,7 +235,7 @@ public class Armevator extends SubsystemBase {
       break;
       case POSITION_CORAL_FOR_ARM_MOVE:
         if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 0.5) { //TODO tune this for robot
-          canArmMove = true;
+             canArmMove = true;
             //endEffectorMotor.getEncoder().setPosition(0);
             moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
             moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);

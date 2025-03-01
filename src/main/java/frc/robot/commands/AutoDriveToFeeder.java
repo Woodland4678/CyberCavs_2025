@@ -16,10 +16,13 @@ import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Armevator;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -39,13 +42,25 @@ public class AutoDriveToFeeder extends Command {
   double ySpeed = 0;
   boolean isDone = false;
   Debouncer coralIncoming = new Debouncer(0.1);
+  Armevator S_Armevator;
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
   /** Creates a new AutoDriveToFeeder. */
-  public AutoDriveToFeeder(CommandSwerveDrivetrain S_Swerve, double angleTarget, CommandXboxController controller) {
+  public AutoDriveToFeeder(CommandSwerveDrivetrain S_Swerve, Armevator S_Armevator, double angleTarget, CommandXboxController controller) {
+    Alliance ally = DriverStation.getAlliance().get();
     this.S_Swerve = S_Swerve;
     this.angleTarget = angleTarget;
     this.controller = controller;
+    this.S_Armevator = S_Armevator;
+    rController.enableContinuousInput(-180, 180);
+    if (ally == Alliance.Red) {
+      if (this.angleTarget < 0) {
+        this.angleTarget += 180;
+      }
+      else {
+        this.angleTarget -= 180;
+      }
+    }
     addRequirements(S_Swerve);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -65,12 +80,12 @@ public class AutoDriveToFeeder extends Command {
   public void execute() {    
     double degrees = S_Swerve.getgyroValue();
     rSpeed = rController.calculate(degrees, rControllerTarget, Timer.getFPGATimestamp());
-    if (coralIncoming.calculate(S_Swerve.getChuteLidar() < 35)) {
+    if (coralIncoming.calculate(S_Swerve.getChuteLidar() < 40 || S_Armevator.hasCoral())) {
       isDone = true;
       ySpeed = 0;
       rSpeed = 0;
     }
-    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 110) || S_Swerve.getRearLidar() < 50) {
+    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 150) || S_Swerve.getRearLidar() < 60) {
       ySpeed = yController.calculate(S_Swerve.getRearLidar(), yControllerTarget, Timer.getFPGATimestamp());
       S_Swerve.setControl(
         m_driveRequestRobotCentric.withVelocityX(ySpeed)

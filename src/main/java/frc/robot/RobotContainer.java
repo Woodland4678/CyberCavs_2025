@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AutoAlignCoralPath;
 import frc.robot.commands.AutoAlignCoralScore;
 import frc.robot.commands.AutoDriveToFeeder;
+import frc.robot.commands.Climb;
+import frc.robot.commands.DeployClimber;
 import frc.robot.commands.MoveArm;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.AlgaeManipulator;
@@ -55,8 +58,10 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
     private static final CommandXboxController operatorController = new CommandXboxController(1);
 
+    PowerDistribution PDH = new PowerDistribution();
+
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final Climber S_Climber = new Climber();
+    public final Climber S_Climber = new Climber(PDH);
     public final Armevator S_Armevator = new Armevator();
     public final AlgaeManipulator S_AlgaeManipulator = new AlgaeManipulator();
     private final SendableChooser<Command> autoChooser;
@@ -65,9 +70,13 @@ public class RobotContainer {
         ledStrip = LEDStrip.getInstance();
         configureBindings();
         NamedCommands.registerCommand("AutoScoreJ", new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
+        NamedCommands.registerCommand("InitElevator", new InstantCommand(() -> S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget)));
         new EventTrigger("MoveArmToL4").onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
         new EventTrigger("MoveArmToIntake").onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, false));
-        NamedCommands.registerCommand("AutoLineupFeeder", new AutoDriveToFeeder(drivetrain, MaxAngularRate, joystick));
+        NamedCommands.registerCommand("AutoLineupFeeder", new AutoDriveToFeeder(drivetrain, S_Armevator, -54, joystick));
+        NamedCommands.registerCommand("AutoScoreK", new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
+        NamedCommands.registerCommand("AutoScoreL", new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
+        NamedCommands.registerCommand("AutoScoreA", new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
         autoChooser = AutoBuilder.buildAutoChooser("Left4L4");
         //autoChooser = null;
        
@@ -169,8 +178,8 @@ public class RobotContainer {
         //     .withVelocityY(-joystick.getLeftX() * MaxSpeed)
         //     .withTargetDirection(Rotation2d.fromDegrees(-53)))
         // );
-        joystick.x().whileTrue(new AutoDriveToFeeder(drivetrain, -54, joystick)); //left
-        joystick.b().whileTrue(new AutoDriveToFeeder(drivetrain, 54, joystick)); //right
+        joystick.x().whileTrue(new AutoDriveToFeeder(drivetrain, S_Armevator, -54, joystick)); //left
+        joystick.b().whileTrue(new AutoDriveToFeeder(drivetrain, S_Armevator, 54, joystick)); //right
 
         /* joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
@@ -200,7 +209,7 @@ public class RobotContainer {
        //joystick.leftTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A',joystick));
 
         operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, false));
-        operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain, true, false));
+        operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain, false, false));
         operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, false, false));
         operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
         operatorController.button(19).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, false));
@@ -220,6 +229,12 @@ public class RobotContainer {
         operatorController.button(9).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
         operatorController.button(11).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
         operatorController.button(20).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
+
+        operatorController.button(17).onTrue(new InstantCommand(() -> S_Climber.lock()));
+        operatorController.button(17).onFalse(new InstantCommand(() -> S_Climber.unlock()));
+
+        operatorController.axisGreaterThan(3, 0.115).onTrue(new DeployClimber(S_Climber));
+        operatorController.axisGreaterThan(5, 0.115).onTrue(new Climb(S_Climber));
 
         //Buttons to force the arm to move
         operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(1)).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, true));
@@ -264,5 +279,8 @@ public class RobotContainer {
                             operatorController.getRawAxis(6),
                             operatorController.getRawAxis(7)};
         return allAxis;
+    }
+    public void lockClimber() {
+        S_Climber.lock();
     }
 }
