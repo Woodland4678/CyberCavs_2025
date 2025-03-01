@@ -440,4 +440,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void setIsAutoAligning(boolean setVal) {
         isAutoAligning = setVal;
     }
+    public boolean isModuleReady(int module) {
+        double degrees = this.getState().ModulePositions[module].angle.getDegrees();
+
+         if (degrees != 0) {
+          return true;
+         }
+        return false;
+      }    
 }

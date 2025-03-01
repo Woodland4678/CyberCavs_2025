@@ -37,24 +37,36 @@ public class LEDStrip {
     private int diagnosticPattern;
     
     // diagnostic segments 
-    /** Left segment 1 (starts at the top)*/  
-    public static final int elbowDiag = 0X01;
+    /** Left segment 1 (starts at the bottom)*/  
+    public static final int elevatorDiag = 0X01;
     /** Left segment 2 */
     public static final int shoulderDiag = 0X02;
     /** Left segment 3*/
-    public static final int gyroDiag = 0X04;
-    /** Left segment 4 */
-    public static final int limelightDiag = 0X08;
-    /** Left segment 5 (bottom) */
-    public static final int apriltagDiag = 0X10;
-    /** Right segment 1 (starts at bottom) */
-    public static final int swerve1Diag = 0X20; // needs position on robot?
+    public static final int wristDiag = 0X04;
+    /** Left segment 4*/
+    public static final int climberDiag = 0X08;
+    /** Left segment 5*/
+    public static final int gyroDiag = 0X10;
+    /** Left segment 6 */
+    public static final int apriltagDiag = 0X20;
+    /** Left segment 7 (top) */
+    public static final int spareDiag = 0X40;
+
+    /** Right segment 1 (starts at top) */
+    public static final int swerve1Diag = 0X80; // needs position on robot?
     /** Right segment 2 */
-    public static final int swerve2Diag = 0X40; // ^
+    public static final int swerve2Diag = 0X100; // ^
     /** Right segment 3*/
-    public static final int swerve3Diag = 0X80; // ^
+    public static final int swerve3Diag = 0X200; // ^
     /** Right segment 4 */
-    public static final int swerve4Diag = 0X100; // ^
+    public static final int swerve4Diag = 0X400; // ^
+    /** Right segment 5 */
+    public static final int frontLidarDiag = 0X800; // ^
+    /** Right segment 6 */
+    public static final int rearLidarDiag = 0X1000; // ^
+    /** Right segment 7 */
+    public static final int chuteLidarDiag = 0X2000; // ^
+
     /** All segments blue */
     public static final int allClear = 0X1FF;
 
@@ -157,47 +169,68 @@ public class LEDStrip {
             for(int i = 0;i<ledBuffer.getLength();i++)
                 ledBuffer.setRGB(i, 255, 0, 0); 
 
-            // First strip of LEDS, 6 leds per diagnostic state, 
-            // represents shoulder/elbow/gryo/limelight/april tag camera (not necessarily in that order) 
-            if((diagnosticPattern & elbowDiag) != 0) {
-                for(int i = 0;i<=5;i++)
+            // First strip of LEDS, 4 or 5 leds per diagnostic state, 
+            // represents elevator/shoulder/wrist/climber/gryo/limelight/april tag camera (not necessarily in that order) 
+            if((diagnosticPattern & elevatorDiag) != 0) {
+                for(int i = 0;i<=3;i++)
                     ledBuffer.setRGB(i, 0, 255, 0); 
             }
             if((diagnosticPattern & shoulderDiag) != 0) {
-                for(int i = 6;i<=11;i++) 
+                for(int i = 4;i<=7;i++) 
+                    ledBuffer.setRGB(i, 0, 255, 0); 
+            }
+            if((diagnosticPattern & wristDiag) != 0) {
+                for(int i = 8;i<=11;i++) 
+                    ledBuffer.setRGB(i, 0, 255, 0); 
+            }
+            if((diagnosticPattern & climberDiag) != 0) {
+                for(int i = 12;i<=15;i++) 
                     ledBuffer.setRGB(i, 0, 255, 0); 
             }
             if((diagnosticPattern & gyroDiag) != 0) {
-                for(int i = 12;i<=17;i++) 
-                    ledBuffer.setRGB(i, 0, 255, 0); 
-            }
-            if((diagnosticPattern & limelightDiag) != 0) {
-                for(int i = 18;i<=23;i++) 
+                for(int i = 16;i<=19;i++) 
                     ledBuffer.setRGB(i, 0, 255, 0); 
             }
             if((diagnosticPattern & apriltagDiag) != 0) {
-                for(int i = 24;i<=29;i++) 
+                for(int i = 20;i<=24;i++) 
                     ledBuffer.setRGB(i, 0, 255, 0); 
             }
-            // Second LED strip, 7 or 8 leds per diagnostic check
+            if((diagnosticPattern & spareDiag) != 0) {
+                for(int i = 25;i<=29;i++) 
+                    ledBuffer.setRGB(i, 0, 255, 0); 
+            }
+
+            // Second LED strip, 4 or 5 leds per diagnostic check
             // represents each each swerve module
             if((diagnosticPattern & swerve1Diag) != 0) {
-                for(int i = 30;i<=36;i++) 
+                for(int i = 30;i<=33;i++) 
                     ledBuffer.setRGB(i, 0, 255, 0); 
             }
             if((diagnosticPattern & swerve2Diag) != 0) {
-                for(int i = 37;i<=44;i++) 
+                for(int i = 34;i<=37;i++) 
                     ledBuffer.setRGB(i, 0, 255, 0); 
             }
             if((diagnosticPattern & swerve3Diag) != 0) {
-                for(int i = 45;i<=51;i++) 
+                for(int i = 38;i<=41;i++) 
                     ledBuffer.setRGB(i, 0, 255, 0); 
             }
             if((diagnosticPattern & swerve4Diag) != 0){
-                for(int i = 52; i<=59;i++)
+                for(int i = 42; i<=45;i++)
                     ledBuffer.setRGB(i, 0, 255, 0);
             }
-	    }
+            if((diagnosticPattern & frontLidarDiag) != 0){
+                for(int i = 46; i<=49;i++)
+                    ledBuffer.setRGB(i, 0, 255, 0);
+            }
+            if((diagnosticPattern & rearLidarDiag) != 0){
+                for(int i = 50; i<=54;i++)
+                    ledBuffer.setRGB(i, 0, 255, 0);
+            }
+            if((diagnosticPattern & chuteLidarDiag) != 0){
+                for(int i = 55; i<=59;i++)
+                    ledBuffer.setRGB(i, 0, 255, 0);
+            }                        
+        }
         //setLEDMode(LEDModes.ROBOTDISABLEDPATTERN);
     }
 

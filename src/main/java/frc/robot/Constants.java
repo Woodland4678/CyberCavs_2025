@@ -23,8 +23,12 @@ public final class Constants {
         
         
     }
+
     public static class ArmConstants {
-        public static final ArmPosition homePosition = new ArmPosition(0,-0.25, 0, 0);
+        public static double armHomePosition = -0.25;
+        public static double armHomePosTolerance = 0.002; 
+    
+        public static final ArmPosition homePosition = new ArmPosition(0, armHomePosition, 0, 0);
         public static final ArmPosition intakePosition = new ArmPosition(1, -0.308, -5.401, -0.119);
         public static final ArmPosition restPosition = new ArmPosition(2, -0.2, -5.301, 0);        
         public static final ArmPosition L1Position = new ArmPosition(3, -0.082, -0.5342, -0.13); //laster distance: 100, -7.88 yaw for x
@@ -47,4 +51,14 @@ public final class Constants {
           this.positionID = positionID;
         }
       }
+
+    public static class WristConstants {
+        public static double wristHomePosition = 0.0;
+        public static double wristHomePosTolerance = 0.002;
+    }
+
+    public static class ElevatorConstants {
+        public static double elevatorHomePosition = 0.0;
+        public static double elevatorHomePosTolerance = 0.002;
+    }    
 }

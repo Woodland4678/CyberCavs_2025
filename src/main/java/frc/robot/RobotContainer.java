@@ -283,4 +283,58 @@ public class RobotContainer {
     public void lockClimber() {
         S_Climber.lock();
     }
-}
+    public boolean isElevatorReady() {
+        return S_Armevator.isElevatorReady();
+    }
+    public boolean isShoulderReady() {
+        return S_Armevator.isShoulderReady();
+    }
+    public boolean isWristReady() {
+        return S_Armevator.isWristReady();
+    }
+    public boolean isClimberReady() {
+        // return S_Arm.isShoulderReady();
+        return true; // TODO: ???
+    }
+    public boolean isFrontLeftSwerveReady() {
+        return drivetrain.isModuleReady(0);
+        // return true;
+    }
+    public boolean isFrontRightSwerveReady() {
+        return drivetrain.isModuleReady(1);
+        // return false;
+    }
+    public boolean isBackLeftSwerveReady() {
+        return drivetrain.isModuleReady(2);
+        // return false;
+    }
+    public boolean isBackRightSwerveReady() {
+        return drivetrain.isModuleReady(3);
+        // return false;
+    }
+    public boolean isGyroReady(){
+        // return S_Swerve.isGyroReady(); 
+        return true; // TODO: ???
+        //return false;
+    }
+    public boolean isAprilTagCameraReady(){
+        // return S_Swerve.isAprilTagCameraReady();
+        return true; // TODO: ???        
+        //return true;
+    }    
+    public boolean isFrontLidarReady(){
+        //return S_Swerve.isLimelightReady();
+        return true; // TODO: ???
+        //return true;
+    }
+    public boolean isRearLidarReady(){
+        // return S_Swerve.isLimelightReady();
+        return true; // TODO: ???
+        //return true;
+       }
+    public boolean isChuteLidarReady(){
+        //return S_Swerve.isLimelightReady();
+        return true; // TODO: ???
+        //return true;
+       } 
+  }

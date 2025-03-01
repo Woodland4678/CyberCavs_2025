@@ -172,7 +172,7 @@ public class Armevator extends SubsystemBase {
 
       endEffectorMotor.configure(endEffectorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
       if (Math.abs(getArmPosition() + 0.25) > 0.2) {
-        armMotor.setPosition(-0.25);
+        armMotor.setPosition(Constants.ArmConstants.armHomePosition);
       }
        
   }
@@ -241,7 +241,7 @@ public class Armevator extends SubsystemBase {
             moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
             moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
         }
-        if (getArmPosition() > -0.25 && canArmMove) {
+        if (getArmPosition() > Constants.ArmConstants.armHomePosition && canArmMove) {
           cState = CoralStates.POSITION_CORAL_FOR_SCORE;
           endEffectorMotor.getEncoder().setPosition(0);
           endEffectorMotor.disable();
@@ -384,6 +384,24 @@ public class Armevator extends SubsystemBase {
   return prevArmTarget;
  }
 
-  
+ public boolean isWristReady() {
+   if (Math.abs(getWristPosition() - Constants.WristConstants.wristHomePosition) < Constants.WristConstants.wristHomePosTolerance) {
+     return true;
+   }
+   return false;
+ }
 
+ public boolean isShoulderReady() {
+   if (Math.abs(getArmPosition() - Constants.ArmConstants.armHomePosition) < Constants.ArmConstants.armHomePosTolerance) {
+     return true;
+   }
+   return false;
+ }
+
+ public boolean isElevatorReady() {
+  if (Math.abs(getElevatorPosition() - Constants.ElevatorConstants.elevatorHomePosition) < Constants.ElevatorConstants.elevatorHomePosTolerance) {
+    return true;
+  }
+  return false;
+}
 }
