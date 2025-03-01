@@ -58,6 +58,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double bestAprilTagTargetY;
     private int bestAprilTagTargetID;
     private double[] dashPIDS = new double[11];
+    private double distanceLaserAvg = 0;
     private DutyCycle distanceLaser;
     private DutyCycle rearLidar;
     private DutyCycle chuteLidar;
@@ -65,7 +66,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean hasAprilTagTarget = false;
     private int aprilTagTargetRequest = 7;
     private boolean isAutoAligning = false;
-
+    private double distanceLaserSum = 0;
+    private int distanceLaserSumSize = 10;
+    double[] distanceLidarReadings = new double[10];
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -165,6 +168,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         rearLidar = new DutyCycle(new DigitalInput(1));
         chuteLidar = new DutyCycle(new DigitalInput(2));
         rpi = new PhotonCamera("Arducam_Main");
+        for (int i = 0; i < distanceLaserSumSize; i++) {
+            distanceLidarReadings[i] = 0;
+        }
         configureAutoBuilder();
     }
 
@@ -343,6 +349,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
            // bestAprilTagTargetY = 0;
             //bestAprilTagTargetID = 0;
         }
+        for (int i =  0; i < distanceLaserSumSize - 1; i++) {
+            distanceLidarReadings[i] = distanceLidarReadings[i + 1];
+        }
+        distanceLidarReadings[distanceLaserSumSize - 1] = getDistanceLaser();
+        for (int i = 0; i < distanceLaserSumSize; i++) {
+            distanceLaserSum += distanceLidarReadings[i];
+        }
+        distanceLaserAvg = distanceLaserSum / 10.0;
+        distanceLaserSum = 0;
         SmartDashboard.putNumber("April Tag Best ID", bestAprilTagTargetID);
         SmartDashboard.putNumber("April Tag X", bestAprilTagTargetX);
         SmartDashboard.putNumber("April Tag Y", bestAprilTagTargetY);
@@ -350,6 +365,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putString("2D pose X", this.getState().Pose.getMeasureX().toString());
         SmartDashboard.putString("2D pose Y", this.getState().Pose.getMeasureY().toString());
         SmartDashboard.putNumber("Distance Laser", this.getDistanceLaser());
+        SmartDashboard.putNumber("Distance Laser Average", distanceLaserAvg);
         SmartDashboard.putNumber("Rear Lidar", getRearLidar());
         SmartDashboard.putNumber("Chute Lidar", getChuteLidar());
         SmartDashboard.putNumber("Robot Speed Y", getRobotSpeeds().vxMetersPerSecond);
@@ -439,5 +455,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     public void setIsAutoAligning(boolean setVal) {
         isAutoAligning = setVal;
+    }
+    public double getDistanceLaserAverage() {
+        return distanceLaserAvg;
     }
 }

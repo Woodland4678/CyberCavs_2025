@@ -66,7 +66,7 @@ public class Armevator extends SubsystemBase {
   private boolean canArmMove;
   private boolean isArmAtRest;
   private final double coralPositionForArmMove = 5.8; //TODO find
-  private final double coralPositionToScore = -6.147; //TODO find
+  private final double coralPositionToScore = -5.847; //TODO find
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
   private double currentWristTarget = 0;
@@ -382,6 +382,14 @@ public class Armevator extends SubsystemBase {
  }
  public int getPrevArmTarget() {
   return prevArmTarget;
+ }
+ public void spitCoral() {
+  if (targetArmPositionID == 3) {
+    setEndEffectorVoltage(2.8);
+  }
+  else {
+    setEndEffectorVoltage(6);
+  }
  }
 
   

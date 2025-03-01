@@ -200,7 +200,7 @@ public class RobotContainer {
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         //joystick.rightTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, 'A'));
         //joystick.rightTrigger().whileTrue(new AutoAlignCoralPath(drivetrain));
-        joystick.rightTrigger().whileTrue(new InstantCommand(() -> S_Armevator.setEndEffectorVoltage(2.8)));
+        joystick.rightTrigger().whileTrue(new InstantCommand(() -> S_Armevator.spitCoral()));
         joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.setEndEffectorVoltage(0)));
        // joystick.rightTrigger().whileTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(-7)));
         //joystick.rightTrigger().onFalse(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(0)));
