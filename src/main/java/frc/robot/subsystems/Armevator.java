@@ -44,8 +44,7 @@ import static edu.wpi.first.units.Units.Volts;
 public class Armevator extends SubsystemBase {
   enum CoralStates {
     WAITING_FOR_CORAL,
-    POSITION_CORAL_FOR_ARM_MOVE,
-    POSITION_CORAL_FOR_SCORE,
+    MOVE_ELEVATOR_FOR_ARM_MOVE,
     WAITING_FOR_SCORE,
   } 
   CoralStates cState;
@@ -65,8 +64,9 @@ public class Armevator extends SubsystemBase {
   private final AnalogInput wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
   private boolean isArmAtRest;
-  private final double coralPositionForArmMove = 5.8; //TODO find
-  private final double coralPositionToScore = -5.847; //TODO find
+  //private final double coralPositionForArmMove = 5.8; //TODO find
+  //private final double coralPositionToScore = -5.847; //TODO find
+  private double elevatorPositionToMoveArm = -2;
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
   private double currentWristTarget = 0;
@@ -222,37 +222,31 @@ public class Armevator extends SubsystemBase {
     // }
 
     //State machine for handling coral positioning in the end effector
-    SmartDashboard.putString("cState", cState.toString());
+    //SmartDashboard.putString("cState", cState.toString());
     switch(cState) {
       case WAITING_FOR_CORAL:
         //setEndEffectorVoltage(-6);
         if (hasCoral()) {
           canArmMove = false;
-          cState = CoralStates.POSITION_CORAL_FOR_ARM_MOVE;
-          endEffectorMotor.stopMotor();
-          endEffectorMotor.getEncoder().setPosition(0); //resest encoder position
+          cState = CoralStates.MOVE_ELEVATOR_FOR_ARM_MOVE;
+          //endEffectorMotor.stopMotor();     
+          moveEndAffectorWheelsToPosition(endEffectorMotor.getEncoder().getPosition());     
+          moveElevatorToPosition(elevatorPositionToMoveArm);
         }
       break;
-      case POSITION_CORAL_FOR_ARM_MOVE:
-        if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 0.5) { //TODO tune this for robot
-             canArmMove = true;
+      case MOVE_ELEVATOR_FOR_ARM_MOVE:
+        if (getElevatorPositionError() < 0.5) { //TODO tune this for robot
+            canArmMove = true;
             //endEffectorMotor.getEncoder().setPosition(0);
-            moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
-            moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+            moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);           
             moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
         }
         if (getArmPosition() > Constants.ArmConstants.armHomePosition && canArmMove) {
-          cState = CoralStates.POSITION_CORAL_FOR_SCORE;
-          endEffectorMotor.getEncoder().setPosition(0);
-          endEffectorMotor.disable();
+          moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+          setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);
+          cState = CoralStates.WAITING_FOR_SCORE;
         }
-      break;
-      case POSITION_CORAL_FOR_SCORE:
-        if (moveEndAffectorWheelsToPosition(coralPositionToScore) < 1){ //TODO tune for robot 
-          canArmMove = true;
-          cState = CoralStates.WAITING_FOR_SCORE; //move on to another state so we don't keep calling the posiiton control
-        }
-      break;
+      break;      
       case WAITING_FOR_SCORE:
         //do nothing really
       break;

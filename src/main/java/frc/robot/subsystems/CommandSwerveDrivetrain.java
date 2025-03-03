@@ -370,6 +370,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("Chute Lidar", getChuteLidar());
         SmartDashboard.putNumber("Robot Speed Y", getRobotSpeeds().vxMetersPerSecond);
         SmartDashboard.putNumber("Robot speeds X", getRobotSpeeds().vyMetersPerSecond);
+        SmartDashboard.putNumber("Robot Module Speed", this.getState().ModuleStates[0].speedMetersPerSecond);
+        SmartDashboard.putNumber("Module 0 RPS", this.getModule(0).getDriveMotor().getRotorVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Module 1 RPS", this.getModule(1).getDriveMotor().getRotorVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Module 2 RPS", this.getModule(2).getDriveMotor().getRotorVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Module 3 RPS", this.getModule(3).getDriveMotor().getRotorVelocity().getValueAsDouble());
         //SmartDashboard.putNumber("Path Coral Align Estimated Y", cameraToTag.getX());
         //SmartDashboard.putNumber("Path Coral Align Estimated X", cameraToTag.getY());
         //SmartDashboard.putString("cameraToTag", cameraToTag.toString());

@@ -27,6 +27,7 @@ public final class Constants {
     public static class ArmConstants {
         public static double armHomePosition = -0.25;
         public static double armHomePosTolerance = 0.002; 
+
     
         public static final ArmPosition homePosition = new ArmPosition(0, armHomePosition, 0, 0);
         public static final ArmPosition intakePosition = new ArmPosition(1, -0.308, -5.401, -0.119);

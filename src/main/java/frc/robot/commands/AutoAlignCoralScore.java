@@ -191,15 +191,16 @@ public class AutoAlignCoralScore extends Command {
             S_Swerve.setIsAutoAligning(false);
           }
           //rSpeed = 0;
-          //var estYDist = 0.0798/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY()))); //0.0889 is the height diff between the camera and middle of the april tag (3.5 inches)
-          var xDist = (S_Swerve.getDistanceLaser()) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
+          var estYDist = 4.422/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY() + 15.87))); //4.422 is height difference from middle of the camera to middle of the april tag, 15.87 is the angle of the camera
+          //var xDist = (S_Swerve.getDistanceLaser()) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
+          var xDist = (estYDist) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
           // if (S_Armevator.getTargetArmPositionID() == 6) {
           //   xSpeed = xSpeedLimit.calculate(xController.calculate(xDist, xControllerSetpoint,Timer.getFPGATimestamp()));
           //   ySpeed = ySpeedLimit.calculate(yController.calculate(S_Swerve.getDistanceLaser(), yControllerSetpoint, Timer.getFPGATimestamp()));
           // }
          // else {
           xSpeed = xController.calculate(xDist, xControllerSetpoint,Timer.getFPGATimestamp());
-          ySpeed = yController.calculate(S_Swerve.getDistanceLaser(), yControllerSetpoint, Timer.getFPGATimestamp());
+          ySpeed = yController.calculate(estYDist, yControllerSetpoint, Timer.getFPGATimestamp());
           //}
           if (xSpeed < 0) { //a little bit of feedfoward
             xSpeed -= 0.07;
