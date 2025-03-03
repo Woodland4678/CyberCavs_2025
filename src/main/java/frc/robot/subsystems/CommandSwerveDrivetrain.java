@@ -54,8 +54,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double m_lastSimTime;
     private List<PhotonPipelineResult> rpiCoralScoreResult;
     private PhotonCamera rpi;
-    private double bestAprilTagTargetX;
+    private double bestAprilTagTargetX;    
     private double bestAprilTagTargetY;
+    private double bestAprilTagTargetSize = 0;
     private int bestAprilTagTargetID;
     private double[] dashPIDS = new double[11];
     private double distanceLaserAvg = 0;
@@ -321,17 +322,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (!rpiCoralScoreResult.isEmpty()) {
             var res = rpiCoralScoreResult.get(rpiCoralScoreResult.size() - 1);
             if (res.hasTargets()) {
-                
+                bestAprilTagTargetSize = 0;
                 hasAprilTagTarget = true;
                 //var bestTarget = res.getBestTarget();
                 for (int i = 0; i < (res.getTargets().size()); i++) {
-                    //SmartDashboard.putNumber("April targets list size", res.getTargets().size());
-                    if (res.getTargets().get(i).getFiducialId() == (aprilTagTargetRequest)) {
-                        bestAprilTagTargetX = res.getTargets().get(i).yaw;
-                        bestAprilTagTargetY = res.getTargets().get(i).pitch;
-                        bestAprilTagTargetID = res.getTargets().get(i).fiducialId;
-                        i = res.getTargets().size(); //TODO kinda jank, maybe change later
+                    var currentTag = res.getTargets().get(i);
+                    if (currentTag.area > bestAprilTagTargetSize) {
+                        bestAprilTagTargetX = currentTag.yaw;
+                        bestAprilTagTargetY = currentTag.pitch;
+                        bestAprilTagTargetID = currentTag.fiducialId;
+                        bestAprilTagTargetSize = currentTag.area;
                     }
+                    //SmartDashboard.putNumber("April targets list size", res.getTargets().size());
+                    // if (res.getTargets().get(i).getFiducialId() == (aprilTagTargetRequest)) {
+                    //     bestAprilTagTargetX = res.getTargets().get(i).yaw;
+                    //     bestAprilTagTargetY = res.getTargets().get(i).pitch;
+                    //     bestAprilTagTargetID = res.getTargets().get(i).fiducialId;
+                    //     i = res.getTargets().size(); //TODO kinda jank, maybe change later
+                    // }
                 }
                
                // cameraToTag = bestTarget.getBestCameraToTarget();
