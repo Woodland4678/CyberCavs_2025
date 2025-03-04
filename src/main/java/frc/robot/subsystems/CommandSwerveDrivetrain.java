@@ -436,10 +436,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return dashPIDS;
      }
      public double getDistanceLaser() {
-        return distanceLaser.getOutput() * 800;
+        return distanceLaser.getOutput() * 400;
     }
     public double getRearLidar(){
-        return rearLidar.getOutput() * 800; //10 is the lowest consistent reading
+        return rearLidar.getOutput() * 400; 
     }
     public double getChuteLidar() {
         return chuteLidar.getOutput() * 800; //20 is the lowest consistent reading

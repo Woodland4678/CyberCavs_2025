@@ -66,7 +66,7 @@ public class Armevator extends SubsystemBase {
   private boolean isArmAtRest;
   //private final double coralPositionForArmMove = 5.8; //TODO find
   //private final double coralPositionToScore = -5.847; //TODO find
-  private double elevatorPositionToMoveArm = -2;
+  private double elevatorPositionToMoveArm = -2.1;
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
   private double currentWristTarget = 0;
@@ -134,8 +134,8 @@ public class Armevator extends SubsystemBase {
 
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
-    armMotionConfigs.MotionMagicCruiseVelocity = 1.4; // Target cruise velocity of 1.66 rps this is in mechanism rotations
-    armMotionConfigs.MotionMagicAcceleration = 3; // Target acceleration of 4 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicCruiseVelocity = 1.65; // Target cruise velocity of 1.66 rps this is in mechanism rotations
+    armMotionConfigs.MotionMagicAcceleration = 3.5; // Target acceleration of 4 rps/s (0.5 seconds)
     armMotionConfigs.MotionMagicJerk = 40; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armConfigs.withFeedback(armFeedbackConfigs);
@@ -149,7 +149,7 @@ public class Armevator extends SubsystemBase {
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       // Set PID values for position control. We don't need to pass a closed
       // loop slot, as it will default to slot 0.
-      .p(2.0) //TODO tune for robot
+      .p(2.5) //TODO tune for robot
       .i(0)
       .d(0)
       .outputRange(-1, 1);
@@ -253,7 +253,7 @@ public class Armevator extends SubsystemBase {
     }
     if (getTargetArmPositionID() == 1 && !hasCoral()) {
       cState = CoralStates.WAITING_FOR_CORAL;
-      setEndEffectorVoltage(4); //TODO determine correct velocity
+      setEndEffectorVoltage(8); //TODO determine correct velocity
     } else if (!hasCoral()) {
       canArmMove = true;
     }
@@ -379,10 +379,10 @@ public class Armevator extends SubsystemBase {
  }
  public void spitCoral() {
   if (targetArmPositionID == 3) {
-    setEndEffectorVoltage(2.8);
+    setEndEffectorVoltage(-3.8);
   }
   else {
-    setEndEffectorVoltage(6);
+    setEndEffectorVoltage(-7);
   }
  }
 

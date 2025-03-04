@@ -101,7 +101,7 @@ public class AutoAlignCoralScore extends Command {
     }
     xController.setTolerance(2);
     //yControllerSetpoint = (9);// forward and back
-    yControllerSetpoint = 105;
+    yControllerSetpoint = 118.0;
     yController.setTolerance(3.0); //3cm
     if (ally == Alliance.Red) {
       if (branchValues[0] < 0) {
@@ -124,7 +124,7 @@ public class AutoAlignCoralScore extends Command {
     S_Swerve.setAprilTagTargetRequest(branchValues[2]);
     S_Swerve.setIsAutoAligning(false);
     if (S_Armevator.getArmPosition() > 0.1) {
-      yControllerSetpoint = 87.5;
+      yControllerSetpoint = 89.2;
       if (xControllerSetpoint < 0) {
         xControllerSetpoint = -14.1;
       }
@@ -139,7 +139,7 @@ public class AutoAlignCoralScore extends Command {
   @Override
   public void execute() {
     if (S_Armevator.getArmPosition() > 0.1) {
-      yControllerSetpoint = 87.5;
+      yControllerSetpoint = 89.2;
       if (xControllerSetpoint < 0) {
         xControllerSetpoint = -14.1;
       }
@@ -164,7 +164,7 @@ public class AutoAlignCoralScore extends Command {
      //yController.setIZone(dashPIDS[7]);
     // rController.setPID(dashPIDS[6], dashPIDS[7], dashPIDS[8]);
     // xController.setIZone(dashPIDS[3]);
-    if (S_Swerve.getBestAprilTagID() != branchValues[2] || S_Swerve.getDistanceLaser() > 200 || S_Swerve.getDistanceLaser() < 10) {
+    if (S_Swerve.getBestAprilTagID() != branchValues[2] || S_Swerve.getDistanceLaser() > 220 || S_Swerve.getDistanceLaser() < 10) {
       ySpeed = -joystick.getLeftY();
       xSpeed = -joystick.getLeftX();
       if (S_Armevator.getArmPosition() > 0.1) {
@@ -184,23 +184,29 @@ public class AutoAlignCoralScore extends Command {
       //rController.setSetpoint(Constants.SwerveConstants.aprilTagRotationValues.get(S_Swerve.getBestAprilTagID())); //update the rcontroller target to the rotation target of the best april tag we see
       switch(state) {        
         case 0:
-          if (yController.getPositionError() < 60 && Math.abs(xController.getPositionError()) < 11) { //TODO tune for robot
+          if (Math.abs(yController.getPositionError()) < 90 && Math.abs(xController.getPositionError()) < 20) { //TODO tune for robot
             S_Swerve.setIsAutoAligning(true);
           }
           else {
             S_Swerve.setIsAutoAligning(false);
           }
+          if (Math.abs(yController.getPositionError()) < 20) {
+            xController.setP(0.052);
+          }
+          else {
+            xController.setP(0.04);
+          }
           //rSpeed = 0;
-          var estYDist = 4.422/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY() + 15.87))); //4.422 is height difference from middle of the camera to middle of the april tag, 15.87 is the angle of the camera
-          //var xDist = (S_Swerve.getDistanceLaser()) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
-          var xDist = (estYDist) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
+          //var estYDist = 4.422/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY() + 15.87))); //4.422 is height difference from middle of the camera to middle of the april tag, 15.87 is the angle of the camera
+          var xDist = (S_Swerve.getDistanceLaser()) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
+          //var xDist = (estYDist) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
           // if (S_Armevator.getTargetArmPositionID() == 6) {
           //   xSpeed = xSpeedLimit.calculate(xController.calculate(xDist, xControllerSetpoint,Timer.getFPGATimestamp()));
           //   ySpeed = ySpeedLimit.calculate(yController.calculate(S_Swerve.getDistanceLaser(), yControllerSetpoint, Timer.getFPGATimestamp()));
           // }
          // else {
           xSpeed = xController.calculate(xDist, xControllerSetpoint,Timer.getFPGATimestamp());
-          ySpeed = yController.calculate(estYDist, yControllerSetpoint, Timer.getFPGATimestamp());
+          ySpeed = yController.calculate(S_Swerve.getDistanceLaser(), yControllerSetpoint, Timer.getFPGATimestamp());
           //}
           if (xSpeed < 0) { //a little bit of feedfoward
             xSpeed -= 0.07;
@@ -271,7 +277,7 @@ public class AutoAlignCoralScore extends Command {
           
           break;
         case 1:         
-          S_Armevator.setEndEffectorVoltage(6);
+          S_Armevator.setEndEffectorVoltage(-6);
           if (AutoAlignDone.calculate(!S_Armevator.hasCoral())); {
             isDone = true;
           } 
