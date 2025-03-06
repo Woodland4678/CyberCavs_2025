@@ -2,10 +2,14 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.opencv.core.Size;
+import org.opencv.photo.Photo;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -168,6 +172,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         rearLidar = new DutyCycle(new DigitalInput(1));
         chuteLidar = new DutyCycle(new DigitalInput(2));
         rpi = new PhotonCamera("Arducam_Main");
+        
         for (int i = 0; i < distanceLaserSumSize; i++) {
             distanceLidarReadings[i] = 0;
         }
@@ -317,12 +322,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-        rpiCoralScoreResult = rpi.getAllUnreadResults();        
+        rpiCoralScoreResult = rpi.getAllUnreadResults();   
+       // PhotonTargetSortMode test;
+       // test = PhotonTargetSortMode.Largest;
+       // rpiCoralScoreResult.sort(new Comparator<T>() {
+            
+        
         if (!rpiCoralScoreResult.isEmpty()) {
             var res = rpiCoralScoreResult.get(rpiCoralScoreResult.size() - 1);
+            
             if (res.hasTargets()) {
                 
                 hasAprilTagTarget = true;
+                
                 //var bestTarget = res.getBestTarget();
                 for (int i = 0; i < (res.getTargets().size()); i++) {
                     //SmartDashboard.putNumber("April targets list size", res.getTargets().size());

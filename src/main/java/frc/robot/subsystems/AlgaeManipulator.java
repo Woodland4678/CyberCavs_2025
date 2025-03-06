@@ -150,7 +150,7 @@ public class AlgaeManipulator extends SubsystemBase {
  }
  public void retract() {
   setIntakeSpeed(0);
-  moveManipulatorToPosition(0.5);
+  moveManipulatorToPosition(0.6);
   isDeployed = false;
  }
  public void moveIntakeWheelsToPosition(double pos){

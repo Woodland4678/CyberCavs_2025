@@ -30,14 +30,14 @@ public final class Constants {
 
     
         public static final ArmPosition homePosition = new ArmPosition(0, armHomePosition, 0, 0);
-        public static final ArmPosition intakePosition = new ArmPosition(1, -0.2917, -3.267, -0.1028); //-0.119 for old end effector
+        public static final ArmPosition intakePosition = new ArmPosition(1, -0.291, -3.267, -0.1028); //-0.119 for old end effector
         public static final ArmPosition restPosition = new ArmPosition(2, -0.2, -3.267, 0);        
-        public static final ArmPosition L1Position = new ArmPosition(3, -0.082, -0.5342, -0.13); //laster distance: 100, -7.88 yaw for x
+        public static final ArmPosition L1Position = new ArmPosition(3, -0.082, -0.5342, 0.35); //laster distance: 100, -7.88 yaw for x
         public static final ArmPosition L2Position = new ArmPosition(4,-0.023438, -4.6108, -0.502); //-0.058 for  old end effector wrist pos
-        public static final ArmPosition L3Position = new ArmPosition(5,-0.023438, -19.244, -0.502); 
+        public static final ArmPosition L3Position = new ArmPosition(5,-0.023438, -18.244, -0.502); 
         public static final ArmPosition L4Position = new ArmPosition(6,0.152, -22.1, -0.24); //0.265 for old end effector wrist pos
-        public static final ArmPosition lowAlgaeRemoval = new ArmPosition(7, -0.05, -5.301, 0);
-        public static final ArmPosition highAlgaeRemoval = new ArmPosition(8, -0.05, -5.301, 0);
+        public static final ArmPosition lowAlgaeRemoval = new ArmPosition(7, -0.05, -3.267, 0);
+        public static final ArmPosition highAlgaeRemoval = new ArmPosition(8, 0.15, -5.301, 0);
         public static final ArmPosition climbPosition = new ArmPosition(9, -0.3, -2.5, 0.075);
     }
     public static class ArmPosition{

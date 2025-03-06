@@ -43,7 +43,7 @@ public class Climb extends Command {
       case 1:
         if (S_Climber.getAtMaxClimb()) {
           S_Climber.setClimberVoltage(0);
-          S_Climber.lock();
+          //S_Climber.lock();
           state++;
         }
       break;

@@ -123,20 +123,20 @@ public class Armevator extends SubsystemBase {
     armConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // set slot 0 gains
     var armMotionPIDConfigs = armConfigs.Slot0; //TODO tune for robot
-    armMotionPIDConfigs.kS = 0.25; // Add 0.25 V output to overcome static friction
-    armMotionPIDConfigs.kV = 2.1; // A velocity target of 1 rps results in 0.12 V output
+    armMotionPIDConfigs.kS = 0.21; // Add 0.25 V output to overcome static friction
+    armMotionPIDConfigs.kV = 6.2; // A velocity target of 1 rps results in 0.12 V output
     armMotionPIDConfigs.kA = 0.0; // An acceleration of 1 rps/s requires 0.01 V output    
-    armMotionPIDConfigs.kP = 80; // A position error of 2.5 rotations results in 12 V output
+    armMotionPIDConfigs.kP = 100; // A position error of 2.5 rotations results in 12 V output
     armMotionPIDConfigs.kI = 0; // no output for integrated error
     armMotionPIDConfigs.kD = 2.0; // A velocity error of 1 rps results in 0.1 V output
     armMotionPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
-    armMotionPIDConfigs.kG = 0.45;
+    armMotionPIDConfigs.kG = 0.4;
 
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
-    armMotionConfigs.MotionMagicCruiseVelocity = 1.65; // Target cruise velocity of 1.66 rps this is in mechanism rotations
-    armMotionConfigs.MotionMagicAcceleration = 3.5; // Target acceleration of 4 rps/s (0.5 seconds)
-    armMotionConfigs.MotionMagicJerk = 40; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    armMotionConfigs.MotionMagicCruiseVelocity = 1.7; // Target cruise velocity of 1.66 rps this is in mechanism rotations
+    armMotionConfigs.MotionMagicAcceleration = 4; // Target acceleration of 4 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicJerk = 100; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armConfigs.withFeedback(armFeedbackConfigs);
     armConfigs.withMotorOutput(armMotorOutputConfigs);
