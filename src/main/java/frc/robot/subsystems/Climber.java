@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.IsPROLicensedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -31,9 +32,10 @@ public class Climber extends SubsystemBase {
     this.PDH = PDH;
     this.isLocked = false;
     var climberConfigs = new TalonFXConfiguration();
-
+    climberConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     // set slot 0 gains
     var climberMotionPIDConfigs = climberConfigs.Slot0;
+    
     climberMotionPIDConfigs.kS = 0.0; // Add 0.25 V output to overcome static friction
     climberMotionPIDConfigs.kV = 0.0; // A velocity target of 1 rps results in 0.12 V output
     climberMotionPIDConfigs.kA = 0.00; // An acceleration of 1 rps/s requires 0.01 V output
