@@ -123,36 +123,27 @@ public class MoveArm extends Command {
           }
       break;
       case 3:
+          S_Armevator.moveWristToPosition(targetPosition.wristTarget); 
           if (targetPosition.positionID == 6) {
             if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
               S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
               moveState++;
             }
-            S_Armevator.moveArmToPosition(targetPosition.armTargetAngle); 
-            S_Armevator.moveWristToPosition(targetPosition.wristTarget);           
+            S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);                      
           }
           else if (targetPosition.positionID == 4) {
-            S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget - 10);
-           // S_Armevator.moveWristToPosition(-0.24);
+            S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget - 3);          
             if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
               S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
-              S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
-              S_Armevator.moveWristToPosition(targetPosition.wristTarget);
+              S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);             
               moveState++;
-            }
-            if (S_Armevator.getElevatorPosition() < -5.9) {
-              S_Armevator.moveWristToPosition(targetPosition.wristTarget);
-            }
+            }            
           }
           else {
             if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
-              S_Armevator.moveArmToPosition(targetPosition.armTargetAngle); 
-              S_Armevator.moveWristToPosition(targetPosition.wristTarget);
+              S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);              
               moveState++;
-            }
-            if (S_Armevator.getElevatorPosition() < -5.9) {
-              S_Armevator.moveWristToPosition(targetPosition.wristTarget);
-            }
+            }            
             S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
           }
           
@@ -161,7 +152,7 @@ public class MoveArm extends Command {
       case 4:
           if (S_Armevator.getArmPositionError() < 0.003
             && S_Armevator.getElevatorPositionError() < 0.05
-            && S_Armevator.getWristPositionError() < 0.015) {
+            && S_Armevator.getWristPositionError() < 0.01) {
               S_Armevator.setCurrentArmPositionID(targetPosition.positionID);
               isDone = true;
           }

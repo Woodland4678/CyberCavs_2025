@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
@@ -15,6 +16,7 @@ public class Climb extends Command {
   int state = 0;
   boolean isDone = false;
   Climber S_Climber;
+  Debouncer isAtMaxClimb = new Debouncer(0.1);
   public Climb(Climber S_Climber) {
     this.S_Climber = S_Climber;
     addRequirements(S_Climber);
@@ -25,6 +27,7 @@ public class Climb extends Command {
   @Override
   public void initialize() {
     isDone = false;
+    isAtMaxClimb.calculate(false);
     S_Climber.moveClimberToPosition(climbFastToPosition);
     state = 0;
   }
@@ -41,7 +44,7 @@ public class Climb extends Command {
         }
       break;
       case 1:
-        if (S_Climber.getAtMaxClimb()) {
+        if (isAtMaxClimb.calculate(S_Climber.getAtMaxClimb())) {
           S_Climber.setClimberVoltage(0);
           //S_Climber.lock();
           state++;

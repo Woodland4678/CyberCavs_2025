@@ -395,6 +395,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("Module 1 RPS", this.getModule(1).getDriveMotor().getRotorVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Module 2 RPS", this.getModule(2).getDriveMotor().getRotorVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Module 3 RPS", this.getModule(3).getDriveMotor().getRotorVelocity().getValueAsDouble());
+
+         var estYDist = 4.422/(Math.tan(Math.toRadians(bestAprilTagTargetY + 15.87))); //4.422 is height difference from middle of the camera to middle of the april tag, 15.87 is the angle of the camera       
+         var xDist = (estYDist) * Math.tan(Math.toRadians(bestAprilTagTargetX));
+        SmartDashboard.putNumber("Camera est Y dist", estYDist);
+        SmartDashboard.putNumber("Camera est X dist", xDist);
+         
         //SmartDashboard.putNumber("Path Coral Align Estimated Y", cameraToTag.getX());
         //SmartDashboard.putNumber("Path Coral Align Estimated X", cameraToTag.getY());
         //SmartDashboard.putString("cameraToTag", cameraToTag.toString());

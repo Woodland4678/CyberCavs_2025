@@ -8,11 +8,11 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.IsPROLicensedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +24,7 @@ public class Climber extends SubsystemBase {
   private double[] dashPIDS = new double[11];
   PowerDistribution PDH;
   boolean isLocked = false;
+  Debouncer atMaxClimbTriggered = new Debouncer(0.3);
   /** Creates a new Climber. */
   public Climber(PowerDistribution PDH) {
     climberMotor = new TalonFX(5,"DriveTrain");
@@ -32,10 +33,9 @@ public class Climber extends SubsystemBase {
     this.PDH = PDH;
     this.isLocked = false;
     var climberConfigs = new TalonFXConfiguration();
-    climberConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
     // set slot 0 gains
     var climberMotionPIDConfigs = climberConfigs.Slot0;
-    
     climberMotionPIDConfigs.kS = 0.0; // Add 0.25 V output to overcome static friction
     climberMotionPIDConfigs.kV = 0.0; // A velocity target of 1 rps results in 0.12 V output
     climberMotionPIDConfigs.kA = 0.00; // An acceleration of 1 rps/s requires 0.01 V output
@@ -57,6 +57,14 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Climber Position", getClimberPosition());
     SmartDashboard.putBoolean("Climber is at max climb", getAtMaxClimb());
+    if (atMaxClimbTriggered.calculate(getAtMaxClimb())) {
+      if (climberMotor.getMotorVoltage().getValueAsDouble() > 0) { //if we're at max climb don't allow a voltage set > 0 (which is in the pull in direction)
+        setClimberVoltage(0);
+      }      
+    }
+    else {
+      atMaxClimbTriggered.calculate(false);
+    }
     // This method will be called once per scheduler run
   }
   public boolean getAtMaxClimb() {
