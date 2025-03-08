@@ -117,7 +117,7 @@ public class MoveArm extends Command {
           isElevatorAtRest = false;
         }
         //isElevatorAtRest = S_Armevator.getElevatorPositionError() < 0.05;        
-        if (armevatorAtRest.calculate(isArmAtRest && isElevatorAtRest)) { //both arm and elevator in position for defined amount of time, then we move on
+        if (armevatorAtRest.calculate(isArmAtRest && isElevatorAtRest && S_Armevator.canArmMove() && S_Armevator.getArmPosition() > -0.21)) { //both arm and elevator in position for defined amount of time, then we move on
             moveState++;
             S_Armevator.setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);
           }
@@ -132,7 +132,7 @@ public class MoveArm extends Command {
             S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);                      
           }
           else if (targetPosition.positionID == 4) {
-            S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget - 3);          
+            S_Armevator.moveElevatorToPosition(Constants.ArmConstants.L2Position.elevatorTarget - 10);          
             if (S_Swerve.getIsAutoAligning() || forceElevatorMove) {
               S_Armevator.moveElevatorToPosition(targetPosition.elevatorTarget);
               S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);             

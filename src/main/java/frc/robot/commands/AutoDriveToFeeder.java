@@ -40,27 +40,22 @@ public class AutoDriveToFeeder extends Command {
   double yControllerTarget;
   double rSpeed = 0;
   double ySpeed = 0;
+  double angle = 0;
   boolean isDone = false;
-  Debouncer coralIncoming = new Debouncer(0.1);
+  Debouncer coralIncoming = new Debouncer(0.05);
   Armevator S_Armevator;
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
   /** Creates a new AutoDriveToFeeder. */
   public AutoDriveToFeeder(CommandSwerveDrivetrain S_Swerve, Armevator S_Armevator, double angleTarget, CommandXboxController controller) {
-    Alliance ally = DriverStation.getAlliance().get();
+    
     this.S_Swerve = S_Swerve;
     this.angleTarget = angleTarget;
     this.controller = controller;
+   
     this.S_Armevator = S_Armevator;
     rController.enableContinuousInput(-180, 180);
-    if (ally == Alliance.Red) {
-      if (this.angleTarget < 0) {
-        this.angleTarget += 180;
-      }
-      else {
-        this.angleTarget -= 180;
-      }
-    }
+   
     addRequirements(S_Swerve);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -68,11 +63,22 @@ public class AutoDriveToFeeder extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    rControllerTarget = angleTarget;
+    angle = angleTarget;
+    Alliance ally = DriverStation.getAlliance().get();
+    if (ally == Alliance.Red) {
+      if (angleTarget < 0) {
+        angle = angleTarget + 180;
+      }
+      else {
+        angle = angleTarget - 180;
+      }
+    }
+    rControllerTarget = angle;
     rController.setTolerance(10);
     yControllerTarget = 7;
     coralIncoming.calculate(false);
     isDone = false;
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -85,7 +91,7 @@ public class AutoDriveToFeeder extends Command {
       ySpeed = 0;
       rSpeed = 0;
     }
-    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 150) || S_Swerve.getRearLidar() < 60) {
+    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 100) || S_Swerve.getRearLidar() < 40) {
       ySpeed = yController.calculate(S_Swerve.getRearLidar(), yControllerTarget, Timer.getFPGATimestamp());
       S_Swerve.setControl(
         m_driveRequestRobotCentric.withVelocityX(ySpeed)

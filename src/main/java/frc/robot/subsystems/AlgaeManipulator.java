@@ -156,4 +156,7 @@ public class AlgaeManipulator extends SubsystemBase {
  public void moveIntakeWheelsToPosition(double pos){
   intakeController.setReference(pos,ControlType.kPosition, ClosedLoopSlot.kSlot0);
  }
+ public void resetEncoder() {
+  manipulatorPositionMotor.getEncoder().setPosition(0);
+ }
 }

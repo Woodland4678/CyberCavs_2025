@@ -77,7 +77,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("AutoScoreK", new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
         NamedCommands.registerCommand("AutoScoreL", new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
         NamedCommands.registerCommand("AutoScoreA", new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
-        autoChooser = AutoBuilder.buildAutoChooser("Left4L4");
+        autoChooser = AutoBuilder.buildAutoChooser("TestSpeeds");
         //autoChooser = null;
        
     }
@@ -209,7 +209,7 @@ public class RobotContainer {
         joystick.pov(0).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(-50)));
        //joystick.leftTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A',joystick));
 
-        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, false));
+        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, true));
         operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain, false, false));
         operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, false, false));
         operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
@@ -247,7 +247,7 @@ public class RobotContainer {
         
         operatorController.axisGreaterThan(2, 0.115).onTrue(new InstantCommand(() -> S_Armevator.moveWristToPosition(-0.68)));
         operatorController.axisGreaterThan(0, 0.115).onTrue(new InstantCommand(() -> S_Armevator.moveWristToPosition(0)));
-
+        operatorController.axisGreaterThan(7, 0.115).onTrue(new InstantCommand(() -> S_AlgaeManipulator.resetEncoder()));
        // operatorController.axisGreaterThan(3, 0.115).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(0.15)));
        // operatorController.axisGreaterThan(5, 0.115).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.20)));
         //operatorController.axisGreaterThan(6, 0.115).onTrue(); //to use the analog buttons

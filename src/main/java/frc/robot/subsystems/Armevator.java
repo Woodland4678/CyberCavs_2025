@@ -65,9 +65,9 @@ public class Armevator extends SubsystemBase {
   private final AnalogInput wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
   private boolean isArmAtRest;
-  private final double coralPositionForArmMove = 5.8; //TODO find
-  private final double coralPositionToScore = -5.847; //TODO find
-  private double elevatorPositionToMoveArm = -2.1;
+  private final double coralPositionForArmMove = 6.5; //TODO find
+  private final double coralPositionToScore = -1; //TODO find
+  //private double elevatorPositionToMoveArm = -2.1;
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
   private double currentWristTarget = 0;
@@ -125,9 +125,9 @@ public class Armevator extends SubsystemBase {
     // set slot 0 gains
     var armMotionPIDConfigs = armConfigs.Slot0; //TODO tune for robot
     armMotionPIDConfigs.kS = 0.21; // Add 0.25 V output to overcome static friction
-    armMotionPIDConfigs.kV = 6.2; // A velocity target of 1 rps results in 0.12 V output
+    armMotionPIDConfigs.kV = 3.2; // A velocity target of 1 rps results in 0.12 V output
     armMotionPIDConfigs.kA = 0.0; // An acceleration of 1 rps/s requires 0.01 V output    
-    armMotionPIDConfigs.kP = 100; // A position error of 2.5 rotations results in 12 V output
+    armMotionPIDConfigs.kP = 80; // A position error of 2.5 rotations results in 12 V output
     armMotionPIDConfigs.kI = 0; // no output for integrated error
     armMotionPIDConfigs.kD = 2.0; // A velocity error of 1 rps results in 0.1 V output
     armMotionPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
@@ -135,9 +135,9 @@ public class Armevator extends SubsystemBase {
 
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
-    armMotionConfigs.MotionMagicCruiseVelocity = 1.7; // Target cruise velocity of 1.66 rps this is in mechanism rotations
-    armMotionConfigs.MotionMagicAcceleration = 4; // Target acceleration of 4 rps/s (0.5 seconds)
-    armMotionConfigs.MotionMagicJerk = 100; // Target jerk of 1600 rps/s/s (0.1 seconds)
+    armMotionConfigs.MotionMagicCruiseVelocity = 1.6; // Target cruise velocity of 1.66 rps this is in mechanism rotations
+    armMotionConfigs.MotionMagicAcceleration = 3; // Target acceleration of 4 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicJerk = 80; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armConfigs.withFeedback(armFeedbackConfigs);
     armConfigs.withMotorOutput(armMotorOutputConfigs);
@@ -166,7 +166,7 @@ public class Armevator extends SubsystemBase {
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       // Set PID values for position control. We don't need to pass a closed
       // loop slot, as it will default to slot 0.
-      .p(0.1) //TODO tune for robot
+      .p(1) //TODO tune for robot
       .i(0)
       .d(0)
       .outputRange(-1, 1);
@@ -223,7 +223,7 @@ public class Armevator extends SubsystemBase {
     // }
 
     //State machine for handling coral positioning in the end effector
-    //SmartDashboard.putString("cState", cState.toString());
+    SmartDashboard.putString("cState", cState.toString());
     switch(cState) {
       case WAITING_FOR_CORAL:
         //setEndEffectorVoltage(-6);
@@ -236,20 +236,20 @@ public class Armevator extends SubsystemBase {
       break;
       case POSITION_CORAL_FOR_ARM_MOVE:
         if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 0.5) { //TODO tune this for robot
-             canArmMove = true;
             //endEffectorMotor.getEncoder().setPosition(0);
             moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
             moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
             moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
         }
-        if (getArmPosition() > -0.25 && canArmMove) {
+        if (getArmPosition() > -0.26) {
+          //canArmMove = true;
           cState = CoralStates.POSITION_CORAL_FOR_SCORE;
-          endEffectorMotor.getEncoder().setPosition(0);
-          endEffectorMotor.disable();
+          //endEffectorMotor.getEncoder().setPosition(0);
+          //endEffectorMotor.disable();
         }
       break;
       case POSITION_CORAL_FOR_SCORE:
-        if (moveEndAffectorWheelsToPosition(coralPositionToScore) < 1){ //TODO tune for robot 
+        if (moveEndAffectorWheelsToPosition(coralPositionToScore) < 0.5){ //TODO tune for robot 
           canArmMove = true;
           cState = CoralStates.WAITING_FOR_SCORE; //move on to another state so we don't keep calling the posiiton control
         }
@@ -258,9 +258,9 @@ public class Armevator extends SubsystemBase {
         //do nothing really
       break;
     }
-    if (getTargetArmPositionID() == 1 && !hasCoral()) {
+    if ((getTargetArmPositionID() == 1) && (!hasCoral())) {
       cState = CoralStates.WAITING_FOR_CORAL;
-      setEndEffectorVoltage(4); //TODO determine correct velocity
+      setEndEffectorVoltage(6); //TODO determine correct velocity
     } else if (!hasCoral()) {
       canArmMove = true;
     }
@@ -386,10 +386,10 @@ public class Armevator extends SubsystemBase {
  }
  public void spitCoral() {
   if (targetArmPositionID == 3) {
-    setEndEffectorVoltage(-3.8);
+    setEndEffectorVoltage(4.3);
   }
   else {
-    setEndEffectorVoltage(-7);
+    setEndEffectorVoltage(8);
   }
  }
 

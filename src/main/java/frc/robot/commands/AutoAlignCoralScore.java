@@ -46,7 +46,7 @@ public class AutoAlignCoralScore extends Command {
   PhoenixPIDController xController = new PhoenixPIDController(0.04, 0, 0.002); //for cm
   //PhoenixPIDController yController = new PhoenixPIDController(0.37, 0, 0.02); //0.32, 0, 0.022 //for using camera pitch for lineup
   PhoenixPIDController yController = new PhoenixPIDController(0.043, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
-  PhoenixPIDController rController = new PhoenixPIDController(0.12, 0, 0.00);
+  PhoenixPIDController rController = new PhoenixPIDController(0.13, 0, 0.00);
   SlewRateLimiter ySpeedLimit = new SlewRateLimiter(5.5);
   SlewRateLimiter xSpeedLimit = new SlewRateLimiter(5.5);
   double xSpeed = 0.0;
@@ -64,7 +64,7 @@ public class AutoAlignCoralScore extends Command {
   Integer[] branchValues;
   CommandXboxController joystick;
   Armevator S_Armevator;
-  Debouncer AutoAlignDone = new Debouncer(0.1);
+  Debouncer AutoAlignDone = new Debouncer(0.2);
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
@@ -95,14 +95,14 @@ public class AutoAlignCoralScore extends Command {
     isDone = false;
     AutoAlignDone.calculate(false);
     if (branch == 'A' || branch == 'C' || branch == 'E' || branch == 'G' || branch == 'I' || branch == 'K') {
-      xControllerSetpoint = (22);
+      xControllerSetpoint = (18.2);
     } else {
-      xControllerSetpoint = (-9); //left and right: +22 for left -9 for right
+      xControllerSetpoint = (-13.5); //left and right: +22 for left -9 for right
     }
     xController.setTolerance(2);
     //yControllerSetpoint = (9);// forward and back
-    yControllerSetpoint = 118.0;
-    yController.setTolerance(3.0); //3cm
+    yControllerSetpoint = 105.8;
+    yController.setTolerance(2.0); //3cm
     if (ally == Alliance.Red) {
       if (branchValues[0] < 0) {
         rControllerSetpoint = (branchValues[0] + 180); //rotation
@@ -115,7 +115,7 @@ public class AutoAlignCoralScore extends Command {
       rControllerSetpoint = branchValues[0];
     }
     
-    rController.setTolerance(0.5);
+    rController.setTolerance(1);
     state = 0;
     isAtSetpointCnt = 0;
     yController.reset();
@@ -124,12 +124,12 @@ public class AutoAlignCoralScore extends Command {
     S_Swerve.setAprilTagTargetRequest(branchValues[2]);
     S_Swerve.setIsAutoAligning(false);
     if (S_Armevator.getArmPosition() > 0.1) {
-      yControllerSetpoint = 89.2;
+      yControllerSetpoint = 82.2;
       if (xControllerSetpoint < 0) {
-        xControllerSetpoint = -14.1;
+        xControllerSetpoint = -14.4;
       }
       else {
-        xControllerSetpoint = 20.5;
+        xControllerSetpoint = 15;
       }
       
     }
@@ -139,12 +139,12 @@ public class AutoAlignCoralScore extends Command {
   @Override
   public void execute() {
     if (S_Armevator.getArmPosition() > 0.1) {
-      yControllerSetpoint = 89.2;
+      yControllerSetpoint = 78.8; //82.2 for lidar
       if (xControllerSetpoint < 0) {
-        xControllerSetpoint = -14.1;
+        xControllerSetpoint = -14.4; //-12.4 for lidar
       }
       else {
-        xControllerSetpoint = 20.5;
+        xControllerSetpoint = 15; //17.5 for liar
       }
       
     }
@@ -190,14 +190,14 @@ public class AutoAlignCoralScore extends Command {
           else {
             S_Swerve.setIsAutoAligning(false);
           }
-          if (Math.abs(yController.getPositionError()) < 20) {
-            xController.setP(0.052);
+          if (Math.abs(yController.getPositionError()) < 7) {
+            xController.setP(0.04);
           }
           else {
             xController.setP(0.04);
           }
           //rSpeed = 0;
-          //var estYDist = 4.422/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY() + 15.87))); //4.422 is height difference from middle of the camera to middle of the april tag, 15.87 is the angle of the camera
+         // var estYDist = 4.422/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY() + 15.87))); //4.422 is height difference from middle of the camera to middle of the april tag, 15.87 is the angle of the camera
           var xDist = (S_Swerve.getDistanceLaser()) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
           //var xDist = (estYDist) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
           // if (S_Armevator.getTargetArmPositionID() == 6) {
@@ -240,7 +240,7 @@ public class AutoAlignCoralScore extends Command {
             ySpeed = 0;
           }
           if (rController.atSetpoint()) {
-            rSpeed = 0;
+            //rSpeed = 0;
           }          
           SmartDashboard.putNumber("auto align coral y-speed", ySpeed);
           //SmartDashboard.putNumber("auto align coral timestamp2", time2.getAllTimestamps().getBestTimestamp().getTime());
@@ -249,6 +249,7 @@ public class AutoAlignCoralScore extends Command {
           SmartDashboard.putBoolean("auto align coral is y done", yController.atSetpoint());
           SmartDashboard.putBoolean("auto align coral is r done", rController.atSetpoint());
           SmartDashboard.putNumber("auto align coral x error", xController.getPositionError());
+          SmartDashboard.putNumber("Auto align coral yaw + r error", S_Swerve.getAprilTagX() + rController.getPositionError());
           SmartDashboard.putNumber("auto align coral y error", yController.getPositionError());
           SmartDashboard.putNumber("auto align coral r error", rController.getPositionError());
         // SmartDashboard.putNumber("auto align coral estimated y distance", estYDist);
@@ -261,7 +262,7 @@ public class AutoAlignCoralScore extends Command {
                 .withVelocityY(xSpeed)
                 .withRotationalRate(rSpeed)
           );
-          if(AutoAlignDone.calculate(ySpeed == 0 && xController.atSetpoint() && (S_Armevator.getTargetArmPositionID() == S_Armevator.getCurrentArmPositionID()))) {
+          if(AutoAlignDone.calculate(ySpeed == 0 && xController.atSetpoint() && rController.atSetpoint() && (S_Armevator.getTargetArmPositionID() == S_Armevator.getCurrentArmPositionID()))) {
             state = 1;
             AutoAlignDone.calculate(false);
           }
@@ -277,7 +278,7 @@ public class AutoAlignCoralScore extends Command {
           
           break;
         case 1:         
-          S_Armevator.setEndEffectorVoltage(-6);
+          S_Armevator.setEndEffectorVoltage(7);
           if (AutoAlignDone.calculate(!S_Armevator.hasCoral())); {
             isDone = true;
           } 

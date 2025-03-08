@@ -58,6 +58,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double m_lastSimTime;
     private List<PhotonPipelineResult> rpiCoralScoreResult;
     private PhotonCamera rpi;
+    private PhotonCamera driverCam;
     private double bestAprilTagTargetX;    
     private double bestAprilTagTargetY;
     private double bestAprilTagTargetSize = 0;
@@ -173,6 +174,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         rearLidar = new DutyCycle(new DigitalInput(1));
         chuteLidar = new DutyCycle(new DigitalInput(2));
         rpi = new PhotonCamera("Arducam_Main");
+        driverCam = new PhotonCamera("driverCam");
+        driverCam.setDriverMode(true);
         
         for (int i = 0; i < distanceLaserSumSize; i++) {
             distanceLidarReadings[i] = 0;
