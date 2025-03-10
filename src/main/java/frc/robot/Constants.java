@@ -20,6 +20,22 @@ public final class Constants {
             put('L', new Integer[] {-60, 22, 6}); //blue alliance right feeder station
             
         }};
+        public static Map<Integer, Integer[]> aprilTagAlgaeData = new HashMap<Integer, Integer[]>() {{
+            put(7, new Integer[] {180, 1}); //key is april tag id, values are robot rotation and if there is a high algae or not (1 = high algae, 0 = low algae)
+            put(8, new Integer[] {-120, 0}); 
+            put(9, new Integer[] {-60, 1});
+            put(10, new Integer[] {0, 0});
+            put(11, new Integer[] {60, 1});
+            put(6, new Integer[] {120, 0}); 
+            put(18, new Integer[] {0, 1}); 
+            put(17, new Integer[] {60, 0}); 
+            put(22, new Integer[] {120, 1});
+            put(21, new Integer[] {180, 0});
+            put(20, new Integer[] {-120, 1}); 
+            put(19, new Integer[] {-60, 0}); 
+            
+        }};
+
         
         
     }

@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.AutoAlignCoralPath;
 import frc.robot.commands.AutoAlignCoralScore;
 import frc.robot.commands.AutoDriveToFeeder;
+import frc.robot.commands.AutoRemoveAlgae;
 import frc.robot.commands.Climb;
 import frc.robot.commands.DeployClimber;
 import frc.robot.commands.MoveArm;
@@ -69,6 +69,7 @@ public class RobotContainer {
     public RobotContainer() {
         ledStrip = LEDStrip.getInstance();
         configureBindings();
+        NamedCommands.registerCommand("AutoScoreI", new AutoAlignCoralScore(drivetrain, S_Armevator, 'I', joystick));
         NamedCommands.registerCommand("AutoScoreJ", new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
         NamedCommands.registerCommand("InitElevator", new InstantCommand(() -> S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget)));
         new EventTrigger("MoveArmToL4").onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
@@ -77,7 +78,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("AutoScoreK", new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
         NamedCommands.registerCommand("AutoScoreL", new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
         NamedCommands.registerCommand("AutoScoreA", new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
-        autoChooser = AutoBuilder.buildAutoChooser("TestSpeeds");
+        autoChooser = AutoBuilder.buildAutoChooser("Left4L4");
         //autoChooser = null;
        
     }
@@ -180,7 +181,7 @@ public class RobotContainer {
         // );
         joystick.x().whileTrue(new AutoDriveToFeeder(drivetrain, S_Armevator, -54, joystick)); //left
         joystick.b().whileTrue(new AutoDriveToFeeder(drivetrain, S_Armevator, 54, joystick)); //right
-
+        joystick.y().whileTrue(new AutoRemoveAlgae(drivetrain, S_Armevator));
         /* joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
@@ -261,6 +262,10 @@ public class RobotContainer {
         return autoChooser.getSelected();
         //return Commands.print("No autonomous command configured");
     }
+    public void armevatorAutoInit() {
+        S_Armevator.setCoralStateToWaitingForScore();
+        S_Armevator.moveEndAffectorWheelsToPosition(0);
+    }
     public void setDashboardPIDs(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
         drivetrain.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
         S_Armevator.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
@@ -271,7 +276,9 @@ public class RobotContainer {
         S_Armevator.resetArmToAbsolute();
     }
     public void initialElevatorRaise(){
-        S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+        if (S_Armevator.getElevatorPosition() > -5) { //this is for teleop init. If the elevator is fully down then we should raise it
+            S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+        }
 
     }
     public double[] getOperatorAxis() {

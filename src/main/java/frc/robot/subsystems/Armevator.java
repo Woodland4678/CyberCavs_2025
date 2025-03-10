@@ -231,11 +231,12 @@ public class Armevator extends SubsystemBase {
           canArmMove = false;
           cState = CoralStates.POSITION_CORAL_FOR_ARM_MOVE;
           endEffectorMotor.stopMotor();
-          endEffectorMotor.getEncoder().setPosition(0); //resest encoder position
+          endEffectorMotor.getEncoder().setPosition(0); //reset encoder position
+          moveEndAffectorWheelsToPosition(coralPositionForArmMove);
         }
       break;
       case POSITION_CORAL_FOR_ARM_MOVE:
-        if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 0.5) { //TODO tune this for robot
+        if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 0.7) { //TODO tune this for robot
             //endEffectorMotor.getEncoder().setPosition(0);
             moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
             moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
@@ -249,7 +250,7 @@ public class Armevator extends SubsystemBase {
         }
       break;
       case POSITION_CORAL_FOR_SCORE:
-        if (moveEndAffectorWheelsToPosition(coralPositionToScore) < 0.5){ //TODO tune for robot 
+        if (moveEndAffectorWheelsToPosition(coralPositionToScore) < 0.9){ //TODO tune for robot 
           canArmMove = true;
           cState = CoralStates.WAITING_FOR_SCORE; //move on to another state so we don't keep calling the posiiton control
         }
@@ -264,6 +265,9 @@ public class Armevator extends SubsystemBase {
     } else if (!hasCoral()) {
       canArmMove = true;
     }
+  }
+  public void setCoralStateToWaitingForScore() {
+    cState = CoralStates.WAITING_FOR_SCORE;
   }
   public void moveElevatorToPosition(double pos){
     // create a Motion Magic request, voltage output

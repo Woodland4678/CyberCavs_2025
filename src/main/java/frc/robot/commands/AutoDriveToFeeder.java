@@ -63,7 +63,7 @@ public class AutoDriveToFeeder extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    angle = angleTarget;
+    //angle = angleTarget;
     Alliance ally = DriverStation.getAlliance().get();
     if (ally == Alliance.Red) {
       if (angleTarget < 0) {
