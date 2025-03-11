@@ -372,15 +372,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
            // bestAprilTagTargetY = 0;
             //bestAprilTagTargetID = 0;
         }
-        for (int i =  0; i < distanceLaserSumSize - 1; i++) {
-            distanceLidarReadings[i] = distanceLidarReadings[i + 1];
-        }
-        distanceLidarReadings[distanceLaserSumSize - 1] = getDistanceLaser();
-        for (int i = 0; i < distanceLaserSumSize; i++) {
-            distanceLaserSum += distanceLidarReadings[i];
-        }
-        distanceLaserAvg = distanceLaserSum / 10.0;
-        distanceLaserSum = 0;
+        // for (int i =  0; i < distanceLaserSumSize - 1; i++) {
+        //     distanceLidarReadings[i] = distanceLidarReadings[i + 1];
+        // }
+        // distanceLidarReadings[distanceLaserSumSize - 1] = getDistanceLaser();
+        // for (int i = 0; i < distanceLaserSumSize; i++) {
+        //     distanceLaserSum += distanceLidarReadings[i];
+        // }
+        // distanceLaserAvg = distanceLaserSum / 10.0;
+        // distanceLaserSum = 0;
         SmartDashboard.putNumber("April Tag Best ID", bestAprilTagTargetID);
         SmartDashboard.putNumber("April Tag X", bestAprilTagTargetX);
         SmartDashboard.putNumber("April Tag Y", bestAprilTagTargetY);
@@ -391,18 +391,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("Distance Laser Average", distanceLaserAvg);
         SmartDashboard.putNumber("Rear Lidar", getRearLidar());
         SmartDashboard.putNumber("Chute Lidar", getChuteLidar());
-        SmartDashboard.putNumber("Robot Speed Y", getRobotSpeeds().vxMetersPerSecond);
-        SmartDashboard.putNumber("Robot speeds X", getRobotSpeeds().vyMetersPerSecond);
-        SmartDashboard.putNumber("Robot Module Speed", this.getState().ModuleStates[0].speedMetersPerSecond);
-        SmartDashboard.putNumber("Module 0 RPS", this.getModule(0).getDriveMotor().getRotorVelocity().getValueAsDouble());
-        SmartDashboard.putNumber("Module 1 RPS", this.getModule(1).getDriveMotor().getRotorVelocity().getValueAsDouble());
-        SmartDashboard.putNumber("Module 2 RPS", this.getModule(2).getDriveMotor().getRotorVelocity().getValueAsDouble());
-        SmartDashboard.putNumber("Module 3 RPS", this.getModule(3).getDriveMotor().getRotorVelocity().getValueAsDouble());
+        // SmartDashboard.putNumber("Robot Speed Y", getRobotSpeeds().vxMetersPerSecond);
+        // SmartDashboard.putNumber("Robot speeds X", getRobotSpeeds().vyMetersPerSecond);
+        // SmartDashboard.putNumber("Robot Module Speed", this.getState().ModuleStates[0].speedMetersPerSecond);
+        // SmartDashboard.putNumber("Module 0 RPS", this.getModule(0).getDriveMotor().getRotorVelocity().getValueAsDouble());
+        // SmartDashboard.putNumber("Module 1 RPS", this.getModule(1).getDriveMotor().getRotorVelocity().getValueAsDouble());
+        // SmartDashboard.putNumber("Module 2 RPS", this.getModule(2).getDriveMotor().getRotorVelocity().getValueAsDouble());
+        // SmartDashboard.putNumber("Module 3 RPS", this.getModule(3).getDriveMotor().getRotorVelocity().getValueAsDouble());
 
-         var estYDist = 4.422/(Math.tan(Math.toRadians(bestAprilTagTargetY + 15.87))); //4.422 is height difference from middle of the camera to middle of the april tag, 15.87 is the angle of the camera       
-         var xDist = (estYDist) * Math.tan(Math.toRadians(bestAprilTagTargetX));
-        SmartDashboard.putNumber("Camera est Y dist", estYDist);
-        SmartDashboard.putNumber("Camera est X dist", xDist);
+        //  var estYDist = 4.422/(Math.tan(Math.toRadians(bestAprilTagTargetY + 15.87))); //4.422 is height difference from middle of the camera to middle of the april tag, 15.87 is the angle of the camera       
+        //  var xDist = (estYDist) * Math.tan(Math.toRadians(bestAprilTagTargetX));
+        // SmartDashboard.putNumber("Camera est Y dist", estYDist);
+        // SmartDashboard.putNumber("Camera est X dist", xDist);
          
         //SmartDashboard.putNumber("Path Coral Align Estimated Y", cameraToTag.getX());
         //SmartDashboard.putNumber("Path Coral Align Estimated X", cameraToTag.getY());

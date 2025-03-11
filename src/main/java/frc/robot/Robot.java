@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("TunePID FF kV", tunePID_KI);
     SmartDashboard.putNumber("TunePID FF kA", tunePID_KD);
   
-    DataLogManager.start();
+   // DataLogManager.start();
   }
 
   @Override
@@ -108,7 +108,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    SignalLogger.start();
+   // SignalLogger.start();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

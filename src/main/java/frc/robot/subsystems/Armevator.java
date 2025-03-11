@@ -65,8 +65,8 @@ public class Armevator extends SubsystemBase {
   private final AnalogInput wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
   private boolean isArmAtRest;
-  private final double coralPositionForArmMove = 6.5; //TODO find
-  private final double coralPositionToScore = -1; //TODO find
+  private final double coralPositionForArmMove = 5.5; //TODO find
+  private final double coralPositionToScore = -0.5; //TODO find
   //private double elevatorPositionToMoveArm = -2.1;
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
@@ -161,7 +161,7 @@ public class Armevator extends SubsystemBase {
     wristMotor.configure(wristMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     
     endEffectorConfig = new SparkMaxConfig();
-  
+    //endEffectorConfig.closedLoopRampRate(0.05);
       endEffectorConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       // Set PID values for position control. We don't need to pass a closed
