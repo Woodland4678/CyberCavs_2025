@@ -103,7 +103,7 @@ public class Armevator extends SubsystemBase {
     elevatorMotionPIDConfigs.kS = 0.25; // Add 0.25 V output to overcome static friction
     elevatorMotionPIDConfigs.kV = 0.0; // A velocity target of 1 rps results in 0.12 V output
     elevatorMotionPIDConfigs.kA = 0.0; // An acceleration of 1 rps/s requires 0.01 V output
-    elevatorMotionPIDConfigs.kP = 40; // A position error of 2.5 rotations results in 12 V output
+    elevatorMotionPIDConfigs.kP = 70; // A position error of 2.5 rotations results in 12 V output
     elevatorMotionPIDConfigs.kI = 0; // no output for integrated error
     elevatorMotionPIDConfigs.kD = 0.0; // A velocity error of 1 rps results in 0.1 V output
     elevatorMotionPIDConfigs.GravityType = GravityTypeValue.Elevator_Static;
@@ -127,7 +127,7 @@ public class Armevator extends SubsystemBase {
     armMotionPIDConfigs.kS = 0.21; // Add 0.25 V output to overcome static friction
     armMotionPIDConfigs.kV = 3.2; // A velocity target of 1 rps results in 0.12 V output
     armMotionPIDConfigs.kA = 0.0; // An acceleration of 1 rps/s requires 0.01 V output    
-    armMotionPIDConfigs.kP = 80; // A position error of 2.5 rotations results in 12 V output
+    armMotionPIDConfigs.kP = 60; // A position error of 2.5 rotations results in 12 V output
     armMotionPIDConfigs.kI = 0; // no output for integrated error
     armMotionPIDConfigs.kD = 2.0; // A velocity error of 1 rps results in 0.1 V output
     armMotionPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
@@ -136,7 +136,7 @@ public class Armevator extends SubsystemBase {
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
     armMotionConfigs.MotionMagicCruiseVelocity = 1.6; // Target cruise velocity of 1.66 rps this is in mechanism rotations
-    armMotionConfigs.MotionMagicAcceleration = 3; // Target acceleration of 4 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicAcceleration = 4; // Target acceleration of 4 rps/s (0.5 seconds)
     armMotionConfigs.MotionMagicJerk = 80; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
     armConfigs.withFeedback(armFeedbackConfigs);
