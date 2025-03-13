@@ -50,8 +50,8 @@ public class AutoRemoveAlgae extends Command {
   public void initialize() {
     state = 0;
     isDone = false;
-    yControllerSetpoint = 97.5;
-    yController.setTolerance(8);
+    yControllerSetpoint = 98;
+    yController.setTolerance(4);
     xController.setTolerance(8);
     rController.setTolerance(5);
     rController.enableContinuousInput(-180, 180);

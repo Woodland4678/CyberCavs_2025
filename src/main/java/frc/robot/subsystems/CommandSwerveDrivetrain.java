@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -65,6 +66,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private int bestAprilTagTargetID;
     private double[] dashPIDS = new double[11];
     private double distanceLaserAvg = 0;
+    private double bestAprilTagXMeters = 0.0;
+    private double bestAprilTagYMeters = 0.0;
     private DutyCycle distanceLaser;
     private DutyCycle rearLidar;
     private DutyCycle chuteLidar;
@@ -174,6 +177,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         rearLidar = new DutyCycle(new DigitalInput(1));
         chuteLidar = new DutyCycle(new DigitalInput(2));
         rpi = new PhotonCamera("Arducam_Main");
+        rpi.setPipelineIndex(1);
         driverCam = new PhotonCamera("driverCam");
         driverCam.setDriverMode(true);
         
@@ -316,6 +320,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          * Otherwise, only check and apply the operator perspective if the DS is disabled.
          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
          */
+        rpi.setPipelineIndex(2);
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
@@ -330,15 +335,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
        // PhotonTargetSortMode test;
        // test = PhotonTargetSortMode.Largest;
        // rpiCoralScoreResult.sort(new Comparator<T>() {
-            
+        
         
         if (!rpiCoralScoreResult.isEmpty()) {
             var res = rpiCoralScoreResult.get(rpiCoralScoreResult.size() - 1);
-            
             if (res.hasTargets()) {
                 bestAprilTagTargetSize = 0;
                 hasAprilTagTarget = true;
-                
+                //SmartDashboard.putNumber("April tag target #", res.getTargets().size());
                 //var bestTarget = res.getBestTarget();
                 for (int i = 0; i < (res.getTargets().size()); i++) {
                     var currentTag = res.getTargets().get(i);
@@ -347,6 +351,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         bestAprilTagTargetY = currentTag.pitch;
                         bestAprilTagTargetID = currentTag.fiducialId;
                         bestAprilTagTargetSize = currentTag.area;
+                        bestAprilTagXMeters = currentTag.bestCameraToTarget.getTranslation().getY();
+                        bestAprilTagYMeters = currentTag.bestCameraToTarget.getTranslation().getX();
                     }
                     //SmartDashboard.putNumber("April targets list size", res.getTargets().size());
                     // if (res.getTargets().get(i).getFiducialId() == (aprilTagTargetRequest)) {
@@ -391,8 +397,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("Distance Laser Average", distanceLaserAvg);
         SmartDashboard.putNumber("Rear Lidar", getRearLidar());
         SmartDashboard.putNumber("Chute Lidar", getChuteLidar());
-        // SmartDashboard.putNumber("Robot Speed Y", getRobotSpeeds().vxMetersPerSecond);
+         SmartDashboard.putNumber("Robot Speed Y", getRobotSpeeds().vxMetersPerSecond);
          SmartDashboard.putNumber("Robot speeds X", getRobotSpeeds().vyMetersPerSecond);
+         SmartDashboard.putNumber("April Tag X meters", bestAprilTagXMeters);
+         SmartDashboard.putNumber("April Tag Y meters", bestAprilTagYMeters);
         // SmartDashboard.putNumber("Robot Module Speed", this.getState().ModuleStates[0].speedMetersPerSecond);
         // SmartDashboard.putNumber("Module 0 RPS", this.getModule(0).getDriveMotor().getRotorVelocity().getValueAsDouble());
         // SmartDashboard.putNumber("Module 1 RPS", this.getModule(1).getDriveMotor().getRotorVelocity().getValueAsDouble());
@@ -424,7 +432,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
-    public double getAprilTagX() {
+     public double bestAprilTagXMeters() {
+        return bestAprilTagXMeters;
+     }
+     public double bestAprilTagYMeters() {
+        return bestAprilTagYMeters;
+     }
+     public double getAprilTagX() {
         return bestAprilTagTargetX;
      }
      public double getAprilTagY() {
