@@ -23,7 +23,7 @@ public class AutoRemoveAlgae extends Command {
   Armevator S_Armevator;
   PhoenixPIDController xController = new PhoenixPIDController(0.06, 0, 0.002); //for cm
   //PhoenixPIDController yController = new PhoenixPIDController(0.37, 0, 0.02); //0.32, 0, 0.022 //for using camera pitch for lineup
-  PhoenixPIDController yController = new PhoenixPIDController(0.06, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
+  PhoenixPIDController yController = new PhoenixPIDController(0.05, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
   PhoenixPIDController rController = new PhoenixPIDController(0.13, 0, 0.00);
   double yControllerSetpoint = 0;
   double xControllerSetpoint = 0;
@@ -50,12 +50,12 @@ public class AutoRemoveAlgae extends Command {
   public void initialize() {
     state = 0;
     isDone = false;
-    yControllerSetpoint = 98;
-    yController.setTolerance(4);
+    yControllerSetpoint = 100.0;
+    yController.setTolerance(3);
     xController.setTolerance(8);
     rController.setTolerance(5);
     rController.enableContinuousInput(-180, 180);
-    xControllerSetpoint = -5.0;
+    xControllerSetpoint = -1.0;
     if (Constants.SwerveConstants.aprilTagAlgaeData.containsKey(S_Swerve.getBestAprilTagID())) {
       rControllerSetpoint = Constants.SwerveConstants.aprilTagAlgaeData.get(S_Swerve.getBestAprilTagID())[0];
       hasHighAlgae = Constants.SwerveConstants.aprilTagAlgaeData.get(S_Swerve.getBestAprilTagID())[1];

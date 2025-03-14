@@ -208,12 +208,12 @@ public class RobotContainer {
         joystick.rightTrigger().onFalse(new InstantCommand(() -> S_Armevator.setEndEffectorVoltage(0)));
        // joystick.rightTrigger().whileTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(-7)));
         //joystick.rightTrigger().onFalse(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(0)));
-        joystick.leftTrigger().whileTrue(new InstantCommand(() -> S_AlgaeManipulator.setIntakeSpeed(-5)));
-        joystick.leftTrigger().onFalse(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
+        joystick.leftTrigger().whileTrue(new InstantCommand(() -> S_AlgaeManipulator.reverseIntakeWheels()));
+        joystick.leftTrigger().onFalse(new InstantCommand(() -> S_AlgaeManipulator.retract()));
         joystick.pov(0).onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(-50)));
        //joystick.leftTrigger().whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A',joystick));
 
-        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, true));
+        operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, false));
         operatorController.button(2).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain, false, false));
         operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, false, false));
         operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
@@ -222,7 +222,7 @@ public class RobotContainer {
        // operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.highAlgaeRemoval, S_Armevator, drivetrain, true));
 
 
-        operatorController.button(15).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'A', joystick));
+        operatorController.button(15).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
         operatorController.button(16).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'B', joystick));
         operatorController.button(14).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'C', joystick));
         operatorController.button(12).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'D', joystick));
@@ -239,6 +239,7 @@ public class RobotContainer {
         operatorController.button(17).onFalse(new InstantCommand(() -> S_Climber.unlock()));
 
         operatorController.axisGreaterThan(3, 0.115).onTrue(new DeployClimber(S_Climber));
+        operatorController.axisGreaterThan(3, 0.115).onTrue(new MoveArm(Constants.ArmConstants.climbPosition, S_Armevator, drivetrain, true, true));
         operatorController.axisGreaterThan(5, 0.115).onTrue(new Climb(S_Climber));
 
         //Buttons to force the arm to move

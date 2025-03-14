@@ -165,7 +165,7 @@ public class AutoAlignCoralScore extends Command {
      //yController.setIZone(dashPIDS[7]);
     // rController.setPID(dashPIDS[6], dashPIDS[7], dashPIDS[8]);
     // xController.setIZone(dashPIDS[3]);
-    if (S_Swerve.getBestAprilTagID() != branchValues[2] || S_Swerve.getDistanceLaser() > 200 || S_Swerve.getDistanceLaser() < 10) {
+    if (S_Swerve.getBestAprilTagID() != branchValues[2] || S_Swerve.getDistanceLaser() > 150 || S_Swerve.getDistanceLaser() < 10) {
       ySpeed = -joystick.getLeftY();
       xSpeed = -joystick.getLeftX();
       if (S_Armevator.getArmPosition() > 0.1) {
@@ -287,7 +287,7 @@ public class AutoAlignCoralScore extends Command {
           
           break;
         case 1:         
-          S_Armevator.setEndEffectorVoltage(6);
+          //S_Armevator.setEndEffectorVoltage(6);
           if (AutoAlignDone.calculate(!S_Armevator.hasCoral())); {
             isDone = true;
           } 

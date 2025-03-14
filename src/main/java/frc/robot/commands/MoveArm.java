@@ -117,7 +117,7 @@ public class MoveArm extends Command {
           isElevatorAtRest = false;
         }
         //isElevatorAtRest = S_Armevator.getElevatorPositionError() < 0.05;        
-        if (armevatorAtRest.calculate(isArmAtRest && isElevatorAtRest && S_Armevator.canArmMove() && S_Armevator.getArmPosition() > -0.21)) { //both arm and elevator in position for defined amount of time, then we move on
+        if (armevatorAtRest.calculate(isArmAtRest && isElevatorAtRest && S_Armevator.canArmMove() && S_Armevator.getArmPosition() > -0.24)) { //both arm and elevator in position for defined amount of time, then we move on
             moveState++;
             S_Armevator.setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);
           }

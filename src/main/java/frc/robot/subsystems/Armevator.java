@@ -8,6 +8,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.VoltageConfigs;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -65,8 +66,8 @@ public class Armevator extends SubsystemBase {
   private final AnalogInput wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
   private boolean isArmAtRest;
-  private final double coralPositionForArmMove = 5.5; //TODO find
-  private final double coralPositionToScore = -0.5; //TODO find
+  private final double coralPositionForArmMove = -7.73; //TODO find
+  private final double coralPositionToScore = -0.5667; //TODO find
   //private double elevatorPositionToMoveArm = -2.1;
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
@@ -132,20 +133,22 @@ public class Armevator extends SubsystemBase {
     armMotionPIDConfigs.kD = 2.0; // A velocity error of 1 rps results in 0.1 V output
     armMotionPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
     armMotionPIDConfigs.kG = 0.4;
+    
 
     // set Motion Magic settings
     var armMotionConfigs = armConfigs.MotionMagic;
     armMotionConfigs.MotionMagicCruiseVelocity = 1.6; // Target cruise velocity of 1.66 rps this is in mechanism rotations
-    armMotionConfigs.MotionMagicAcceleration = 4; // Target acceleration of 4 rps/s (0.5 seconds)
+    armMotionConfigs.MotionMagicAcceleration = 3.5; // Target acceleration of 4 rps/s (0.5 seconds)
     armMotionConfigs.MotionMagicJerk = 80; // Target jerk of 1600 rps/s/s (0.1 seconds)
+
 
     armConfigs.withFeedback(armFeedbackConfigs);
     armConfigs.withMotorOutput(armMotorOutputConfigs);
     armMotor.getConfigurator().apply(armConfigs);
     
-
+    
     wristMotorConfig = new SparkMaxConfig();
-
+    
     wristMotorConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       // Set PID values for position control. We don't need to pass a closed
@@ -160,13 +163,15 @@ public class Armevator extends SubsystemBase {
     wristMotorConfig.apply(wristFeedbackConfig);
     wristMotor.configure(wristMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     
+    
     endEffectorConfig = new SparkMaxConfig();
+    endEffectorConfig.smartCurrentLimit(30,80);
     //endEffectorConfig.closedLoopRampRate(0.05);
       endEffectorConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       // Set PID values for position control. We don't need to pass a closed
       // loop slot, as it will default to slot 0.
-      .p(1) //TODO tune for robot
+      .p(0.2) //TODO tune for robot
       .i(0)
       .d(0)
       .outputRange(-1, 1);
@@ -242,8 +247,8 @@ public class Armevator extends SubsystemBase {
             moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
             moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
         }
-        if (getArmPosition() > -0.26) {
-          //canArmMove = true;
+        if (getArmPosition() > -0.25) {
+          canArmMove = true;
           cState = CoralStates.POSITION_CORAL_FOR_SCORE;
           //endEffectorMotor.getEncoder().setPosition(0);
           //endEffectorMotor.disable();
@@ -261,7 +266,7 @@ public class Armevator extends SubsystemBase {
     }
     if ((getTargetArmPositionID() == 1) && (!hasCoral())) {
       cState = CoralStates.WAITING_FOR_CORAL;
-      setEndEffectorVoltage(6); //TODO determine correct velocity
+      setEndEffectorVoltage(-6); //TODO determine correct velocity
     } else if (!hasCoral()) {
       canArmMove = true;
     }
@@ -357,6 +362,9 @@ public class Armevator extends SubsystemBase {
   public boolean canArmMove() {
     return canArmMove;
   }
+  public void setMaxArmVoltage(double voltage) {
+    
+  }
   public void setDashPIDS(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
     dashPIDS[0] = P;
     dashPIDS[1] = I;
@@ -390,10 +398,10 @@ public class Armevator extends SubsystemBase {
  }
  public void spitCoral() {
   if (targetArmPositionID == 3) {
-    setEndEffectorVoltage(4.3);
+    setEndEffectorVoltage(-3.3);
   }
   else {
-    setEndEffectorVoltage(8);
+    setEndEffectorVoltage(-7);
   }
  }
 

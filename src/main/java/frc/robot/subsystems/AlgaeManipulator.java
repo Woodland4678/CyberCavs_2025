@@ -115,6 +115,12 @@ public class AlgaeManipulator extends SubsystemBase {
     intakeController.setReference(velocity,ControlType.kVoltage, ClosedLoopSlot.kSlot0);
 
   }
+  public void reverseIntakeWheels() {
+    if (!isDeployed) {
+      moveManipulatorToPosition(1.5);
+    }
+    setIntakeSpeed(-5);
+  }
   public double getPosition(){
     return manipulatorPositionMotor.getEncoder().getPosition();
 
@@ -143,7 +149,7 @@ public class AlgaeManipulator extends SubsystemBase {
     return dashPIDS;
  }
  public void deploy() {
-  moveManipulatorToPosition(8.2);
+  moveManipulatorToPosition(9.2);
   isDeployed = true;
   setIntakeSpeed(5);
   deployState = 0;

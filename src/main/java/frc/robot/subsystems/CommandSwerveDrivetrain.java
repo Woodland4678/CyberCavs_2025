@@ -335,7 +335,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
        // PhotonTargetSortMode test;
        // test = PhotonTargetSortMode.Largest;
        // rpiCoralScoreResult.sort(new Comparator<T>() {
-        
+       
         
         if (!rpiCoralScoreResult.isEmpty()) {
             var res = rpiCoralScoreResult.get(rpiCoralScoreResult.size() - 1);
@@ -370,6 +370,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                bestAprilTagTargetX =0;
                bestAprilTagTargetY = 0;
                bestAprilTagTargetID = 0;
+               bestAprilTagXMeters = 0;
+               bestAprilTagYMeters = 0;
             }
         }
         else {
@@ -391,8 +393,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("April Tag X", bestAprilTagTargetX);
         SmartDashboard.putNumber("April Tag Y", bestAprilTagTargetY);
         SmartDashboard.putNumber("Gyro", getgyroValue());
-        SmartDashboard.putString("2D pose X", this.getState().Pose.getMeasureX().toString());
-        SmartDashboard.putString("2D pose Y", this.getState().Pose.getMeasureY().toString());
+      //  SmartDashboard.putString("2D pose X", this.getState().Pose.getMeasureX().toString());
+       // SmartDashboard.putString("2D pose Y", this.getState().Pose.getMeasureY().toString());
         SmartDashboard.putNumber("Distance Laser", this.getDistanceLaser());
         SmartDashboard.putNumber("Distance Laser Average", distanceLaserAvg);
         SmartDashboard.putNumber("Rear Lidar", getRearLidar());
@@ -401,6 +403,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          SmartDashboard.putNumber("Robot speeds X", getRobotSpeeds().vyMetersPerSecond);
          SmartDashboard.putNumber("April Tag X meters", bestAprilTagXMeters);
          SmartDashboard.putNumber("April Tag Y meters", bestAprilTagYMeters);
+         SmartDashboard.putBoolean("Is RPI camera sending data", rpi.isConnected());
         // SmartDashboard.putNumber("Robot Module Speed", this.getState().ModuleStates[0].speedMetersPerSecond);
         // SmartDashboard.putNumber("Module 0 RPS", this.getModule(0).getDriveMotor().getRotorVelocity().getValueAsDouble());
         // SmartDashboard.putNumber("Module 1 RPS", this.getModule(1).getDriveMotor().getRotorVelocity().getValueAsDouble());
@@ -454,6 +457,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          return hasAprilTagTarget;
      }
      public double getgyroValue() {
+         
          return this.getState().Pose.getRotation().getDegrees();
      }
      public void stopDrive() {
