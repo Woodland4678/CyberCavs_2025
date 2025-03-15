@@ -95,6 +95,7 @@ public class Armevator extends SubsystemBase {
     //armFeedbackConfigs.FeedbackRotorOffset = 0; //offset for the arm
 
     armMotorOutputConfigs.Inverted = InvertedValue.Clockwise_Positive;
+    armMotorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
     // in init function
     var elevatorConfigs = new TalonFXConfiguration();
     
@@ -122,7 +123,7 @@ public class Armevator extends SubsystemBase {
 
     // in init function
     var armConfigs = new TalonFXConfiguration();
-    armConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    
     // set slot 0 gains
     var armMotionPIDConfigs = armConfigs.Slot0; //TODO tune for robot
     armMotionPIDConfigs.kS = 0.21; // Add 0.25 V output to overcome static friction
@@ -342,7 +343,7 @@ public class Armevator extends SubsystemBase {
     return wristMotor.getEncoder().getPosition();
   }
   public double getEndAffectorWheelSpeed(){
-    return endEffectorMotor.get();
+    return endEffectorMotor.getEncoder().getVelocity();
   }
   // public boolean isAtStartPos(){
   //   return !atStartPos.get();

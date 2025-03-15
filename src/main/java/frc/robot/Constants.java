@@ -46,12 +46,12 @@ public final class Constants {
 
     
         public static final ArmPosition homePosition = new ArmPosition(0,-0.25, 0, 0);
-        public static final ArmPosition intakePosition = new ArmPosition(1, -0.296, -5.401, -0.119);
+        public static final ArmPosition intakePosition = new ArmPosition(1, -0.30, -5.401, -0.119);
         public static final ArmPosition restPosition = new ArmPosition(2, -0.2, -5.301, 0);        
         public static final ArmPosition L1Position = new ArmPosition(3, -0.082, -2.0342, -0.13); //laster distance: 100, -7.88 yaw for x
-        public static final ArmPosition L2Position = new ArmPosition(4,-0.028438, -4.6108, 0.058);
+        public static final ArmPosition L2Position = new ArmPosition(4,-0.021438, -4.6108, 0.058);
         public static final ArmPosition L3Position = new ArmPosition(5,-0.028438, -19.244, 0.058); 
-        public static final ArmPosition L4Position = new ArmPosition(6,0.149, -21.96, 0.28);
+        public static final ArmPosition L4Position = new ArmPosition(6,0.13, -22.1, 0.28);
         public static final ArmPosition lowAlgaeRemoval = new ArmPosition(7, -0.05, -5.301, 0);
         public static final ArmPosition highAlgaeRemoval = new ArmPosition(8, 0.15, -5.301, 0.267);
         public static final ArmPosition climbPosition = new ArmPosition(9, -0.309, -2.3, 0.065);

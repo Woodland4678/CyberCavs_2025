@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.224436663051124,
-        "y": 5.4659891781350565
+        "x": 6.160554380505282,
+        "y": 5.63209623958475
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.349143835616438,
-        "y": 5.212029109589041
+        "x": 5.664683219178082,
+        "y": 5.587671232876712
       },
       "prevControl": {
-        "x": 6.214738040311212,
-        "y": 5.533164038352464
+        "x": 6.459541246516796,
+        "y": 5.7383537395050705
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,14 +34,14 @@
   "eventMarkers": [
     {
       "name": "MoveArmToL4",
-      "waypointRelativePos": 0.05,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.1,
-    "maxAcceleration": 7.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -57,5 +57,5 @@
     "velocity": 0,
     "rotation": -90.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

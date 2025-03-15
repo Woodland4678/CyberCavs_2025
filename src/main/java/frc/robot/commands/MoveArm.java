@@ -30,6 +30,8 @@ public class MoveArm extends Command {
   boolean forceElevatorMove = false;
   boolean forceMove = false;
   boolean moveToRestFirst = true;
+  Debouncer coralGone = new Debouncer(0.1);
+  Debouncer endEffectorWheelsOn = new Debouncer(0.2);
   //int pressedCount = 0;
   Debouncer armevatorAtRest = new Debouncer(0.1); //arm must be at rest for 0.1 seconds before moving on
   public MoveArm(ArmPosition targetPosition, Armevator S_Armevator, CommandSwerveDrivetrain S_Swerve, boolean forceElevatorMove, boolean forceMove) {
@@ -154,7 +156,23 @@ public class MoveArm extends Command {
             && S_Armevator.getElevatorPositionError() < 0.05
             && S_Armevator.getWristPositionError() < 0.01) {
               S_Armevator.setCurrentArmPositionID(targetPosition.positionID);
-              isDone = true;
+              if (S_Armevator.getArmPosition() < 0.1) {
+                isDone = true;
+              }
+              else {
+                moveState++;
+                coralGone.calculate(false);
+                endEffectorWheelsOn.calculate(false);
+              }
+              
+          }
+      break;
+      case 5:
+          if (coralGone.calculate(!S_Armevator.hasCoral()) ||  endEffectorWheelsOn.calculate(Math.abs(S_Armevator.getEndAffectorWheelSpeed()) > 100)) { 
+            double adjustedPos = targetPosition.armTargetAngle;
+            adjustedPos += 0.02;
+            S_Armevator.moveArmToPosition(adjustedPos);
+            isDone = true;
           }
       break;
     }

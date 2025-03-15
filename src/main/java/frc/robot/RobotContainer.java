@@ -223,17 +223,17 @@ public class RobotContainer {
 
 
         operatorController.button(15).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
-        operatorController.button(16).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'B', joystick));
-        operatorController.button(14).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'C', joystick));
-        operatorController.button(12).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'D', joystick));
-        operatorController.button(10).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'E', joystick));
-        operatorController.button(8).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'F', joystick));
-        operatorController.button(6).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'G', joystick));
-        operatorController.button(5).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'H', joystick));
-        operatorController.button(7).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'I', joystick));
-        operatorController.button(9).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'J', joystick));
-        operatorController.button(11).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'K', joystick));
-        operatorController.button(20).whileTrue(new AutoAlign3D(drivetrain, S_Armevator, 'L', joystick));
+        operatorController.button(16).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'B', joystick));
+        operatorController.button(14).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'C', joystick));
+        operatorController.button(12).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'D', joystick));
+        operatorController.button(10).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'E', joystick));
+        operatorController.button(8).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'F', joystick));
+        operatorController.button(6).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'G', joystick));
+        operatorController.button(5).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'H', joystick));
+        operatorController.button(7).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'I', joystick));
+        operatorController.button(9).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
+        operatorController.button(11).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
+        operatorController.button(20).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
 
         operatorController.button(17).onTrue(new InstantCommand(() -> S_Climber.lock()));
         operatorController.button(17).onFalse(new InstantCommand(() -> S_Climber.unlock()));

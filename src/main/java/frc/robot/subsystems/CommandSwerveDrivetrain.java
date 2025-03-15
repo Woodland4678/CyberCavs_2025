@@ -177,7 +177,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         rearLidar = new DutyCycle(new DigitalInput(1));
         chuteLidar = new DutyCycle(new DigitalInput(2));
         rpi = new PhotonCamera("Arducam_Main");
-        rpi.setPipelineIndex(1);
+       // rpi.setPipelineIndex(1);
         driverCam = new PhotonCamera("driverCam");
         driverCam.setDriverMode(true);
         
@@ -265,7 +265,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(5, 0, 0),
+                    new PIDConstants(7, 0, 0),
                     // PID constants for rotation
                     new PIDConstants(7, 0, 0)
                 ),
@@ -320,7 +320,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          * Otherwise, only check and apply the operator perspective if the DS is disabled.
          * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
          */
-        rpi.setPipelineIndex(2);
+      //  rpi.setPipelineIndex(2);
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(

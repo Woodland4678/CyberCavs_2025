@@ -95,7 +95,7 @@ public class AutoAlignCoralScore extends Command {
     isDone = false;
     AutoAlignDone.calculate(false);
     if (branch == 'A' || branch == 'C' || branch == 'E' || branch == 'G' || branch == 'I' || branch == 'K') {
-      xControllerSetpoint = (22);
+      xControllerSetpoint = (20.5);
     } else {
       xControllerSetpoint = (-11); //left and right: +22 for left -9 for right
     }
@@ -140,7 +140,7 @@ public class AutoAlignCoralScore extends Command {
   @Override
   public void execute() {
     if (S_Armevator.getArmPosition() > 0.1) {
-      yControllerSetpoint = 87;
+      yControllerSetpoint = 84;
       if (xControllerSetpoint < 0) {
         xControllerSetpoint = -14;
       }
@@ -165,7 +165,7 @@ public class AutoAlignCoralScore extends Command {
      //yController.setIZone(dashPIDS[7]);
     // rController.setPID(dashPIDS[6], dashPIDS[7], dashPIDS[8]);
     // xController.setIZone(dashPIDS[3]);
-    if (S_Swerve.getBestAprilTagID() != branchValues[2] || S_Swerve.getDistanceLaser() > 150 || S_Swerve.getDistanceLaser() < 10) {
+    if (S_Swerve.getBestAprilTagID() != branchValues[2] || S_Swerve.getDistanceLaser() > 200 || S_Swerve.getDistanceLaser() < 10) {
       ySpeed = -joystick.getLeftY();
       xSpeed = -joystick.getLeftX();
       if (S_Armevator.getArmPosition() > 0.1) {
@@ -176,7 +176,6 @@ public class AutoAlignCoralScore extends Command {
           m_driveRequestDrive.withVelocityX(ySpeed * MaxSpeed)
               .withVelocityY(xSpeed * MaxSpeed)
               .withRotationalRate(rSpeed)
-
 
         );
         state = 0;
@@ -191,19 +190,19 @@ public class AutoAlignCoralScore extends Command {
           else {
             S_Swerve.setIsAutoAligning(false);
           }
-          if (Math.abs(xController.getPositionError()) < 5) {
-            xController.setP(0.05); 
+          if (Math.abs(xController.getPositionError()) < 10) {
+            xController.setP(0.045); 
            // xController.setD(0.05);                       
           }
           else {
-            xController.setP(0.03);           
+            xController.setP(0.04);           
           }
           if (Math.abs(yController.getPositionError()) < 10) {
             yController.setP(0.055);
            // yController.setD(0.3);
           }
           else {
-            yController.setP(0.041);
+            yController.setP(0.044);
           //  yController.setD(0.1);
           }
           //rSpeed = 0;
@@ -246,7 +245,7 @@ public class AutoAlignCoralScore extends Command {
             //xSpeed = 0;
           }
           if (yController.atSetpoint()) {
-            ySpeed = 0;
+           // ySpeed = 0;
           }
           if (rController.atSetpoint()) {
            // rSpeed = 0;
@@ -287,7 +286,7 @@ public class AutoAlignCoralScore extends Command {
           
           break;
         case 1:         
-          //S_Armevator.setEndEffectorVoltage(6);
+          S_Armevator.setEndEffectorVoltage(-7);
           if (AutoAlignDone.calculate(!S_Armevator.hasCoral())); {
             isDone = true;
           } 

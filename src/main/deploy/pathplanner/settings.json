@@ -7,8 +7,8 @@
     "Right4L4"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 4.1,
-  "defaultMaxAccel": 7.0,
+  "defaultMaxVel": 4.0,
+  "defaultMaxAccel": 4.5,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
