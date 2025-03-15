@@ -518,5 +518,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           return true;
          }
         return false;
-      }    
+    }
+    public boolean isAprilTagCameraReady() {
+        return rpi.isConnected();
+    }    
+    public boolean isFrontLidarReady() {
+        return ((getDistanceLaser() > 0));
+    }
+    public boolean isRearLidarReady() {
+        return (getRearLidar() > 0);
+    }
+    public boolean isChuteLidarReady() {
+        return (getChuteLidar() > 10 && getChuteLidar() < 50);
+    }
+    public boolean isGyroReady() {
+        return (getgyroValue() > 0);
+    }
+
 }

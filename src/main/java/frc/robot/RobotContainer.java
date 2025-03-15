@@ -75,11 +75,14 @@ public class RobotContainer {
         NamedCommands.registerCommand("AutoScoreJ", new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
         NamedCommands.registerCommand("InitElevator", new InstantCommand(() -> S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget)));
         new EventTrigger("MoveArmToL4").onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
-        new EventTrigger("MoveArmToIntake").onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, false));
+        new EventTrigger("MoveArmToIntake").onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, true));
+        NamedCommands.registerCommand("MoveArmToIntake", new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, true));
         NamedCommands.registerCommand("AutoLineupFeeder", new AutoDriveToFeeder(drivetrain, S_Armevator, -54, joystick));
         NamedCommands.registerCommand("AutoScoreK", new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
         NamedCommands.registerCommand("AutoScoreL", new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
         NamedCommands.registerCommand("AutoScoreA", new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
+        NamedCommands.registerCommand("initArm", new InstantCommand(() -> S_Armevator.coralSetForAutoInit()));
+        NamedCommands.registerCommand("ForceArmToIntake", new InstantCommand(() -> S_Armevator.moveArmToPosition(Constants.ArmConstants.intakePosition.armTargetAngle)));
         autoChooser = AutoBuilder.buildAutoChooser("Left4L4");
         //autoChooser = null;
        
@@ -266,10 +269,7 @@ public class RobotContainer {
         return autoChooser.getSelected();
         //return Commands.print("No autonomous command configured");
     }
-    public void armevatorAutoInit() {
-        S_Armevator.setCoralStateToWaitingForScore();
-        S_Armevator.moveEndAffectorWheelsToPosition(0);
-    }
+    
     public void setDashboardPIDs(double P, double I, double D, double P2, double I2, double D2, double P3, double I3, double D3, double Izone, double FF) {
         drivetrain.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
         S_Armevator.setDashPIDS(P, I, D, P2, I2, D2, P3, I3, D3, Izone, FF); 
@@ -329,28 +329,29 @@ public class RobotContainer {
         // return false;
     }
     public boolean isGyroReady(){
+        return drivetrain.isGyroReady();
         // return S_Swerve.isGyroReady(); 
-        return true; // TODO: ???
+       // return true; // TODO: ???
         //return false;
     }
     public boolean isAprilTagCameraReady(){
-        // return S_Swerve.isAprilTagCameraReady();
-        return true; // TODO: ???        
-        //return true;
+        return drivetrain.isAprilTagCameraReady();
+        
     }    
     public boolean isFrontLidarReady(){
-        //return S_Swerve.isLimelightReady();
-        return true; // TODO: ???
+        return drivetrain.isFrontLidarReady();
+        //return true; // TODO: ???
         //return true;
     }
     public boolean isRearLidarReady(){
-        // return S_Swerve.isLimelightReady();
-        return true; // TODO: ???
+         return drivetrain.isRearLidarReady();
+        //return true; // TODO: ???
         //return true;
        }
     public boolean isChuteLidarReady(){
+        return isChuteLidarReady();
         //return S_Swerve.isLimelightReady();
-        return true; // TODO: ???
+       // return true; // TODO: ???
         //return true;
        } 
   }

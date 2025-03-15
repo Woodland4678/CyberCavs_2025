@@ -272,8 +272,11 @@ public class Armevator extends SubsystemBase {
       canArmMove = true;
     }
   }
-  public void setCoralStateToWaitingForScore() {
+  public void coralSetForAutoInit() {
     cState = CoralStates.WAITING_FOR_SCORE;
+    canArmMove = true;
+    endEffectorMotor.getEncoder().setPosition(0);
+    moveEndAffectorWheelsToPosition(0);
   }
   public void moveElevatorToPosition(double pos){
     // create a Motion Magic request, voltage output

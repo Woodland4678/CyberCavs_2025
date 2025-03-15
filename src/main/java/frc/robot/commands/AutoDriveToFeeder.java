@@ -42,7 +42,7 @@ public class AutoDriveToFeeder extends Command {
   double ySpeed = 0;
   double angle = 0;
   boolean isDone = false;
-  Debouncer coralIncoming = new Debouncer(0.05);
+  Debouncer coralIncoming = new Debouncer(0.1);
   Armevator S_Armevator;
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -75,7 +75,7 @@ public class AutoDriveToFeeder extends Command {
     }
     rControllerTarget = angle;
     rController.setTolerance(10);
-    yControllerTarget = 7;
+    yControllerTarget = 9;
     coralIncoming.calculate(false);
     isDone = false;
     

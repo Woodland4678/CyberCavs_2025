@@ -31,7 +31,7 @@ public class MoveArm extends Command {
   boolean forceMove = false;
   boolean moveToRestFirst = true;
   Debouncer coralGone = new Debouncer(0.1);
-  Debouncer endEffectorWheelsOn = new Debouncer(0.2);
+  Debouncer endEffectorWheelsOn = new Debouncer(0.1);
   //int pressedCount = 0;
   Debouncer armevatorAtRest = new Debouncer(0.1); //arm must be at rest for 0.1 seconds before moving on
   public MoveArm(ArmPosition targetPosition, Armevator S_Armevator, CommandSwerveDrivetrain S_Swerve, boolean forceElevatorMove, boolean forceMove) {
@@ -87,7 +87,7 @@ public class MoveArm extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    SmartDashboard.putNumber("Move arm state", moveState);
     switch(moveState) {
       case 0:
         if ((S_Swerve.getDistanceLaser() > 90 || S_Swerve.getDistanceLaser() < 60 || (S_Armevator.getCurrentArmPositionID() == 2 && this.targetPosition.positionID == 1 )) && S_Armevator.canArmMove() && (S_Armevator.hasCoral() || this.targetPosition.positionID == 1 || this.targetPosition.positionID == 2)) {
@@ -106,7 +106,7 @@ public class MoveArm extends Command {
         moveState++;
       break;
       case 2:
-        if (S_Armevator.getArmPositionError() < 0.003) {
+        if (S_Armevator.getArmPositionError() < 0.008) {
           isArmAtRest = true;
         }
         else {
@@ -118,8 +118,11 @@ public class MoveArm extends Command {
         else {
           isElevatorAtRest = false;
         }
+        SmartDashboard.putBoolean("IS arm at rest", isArmAtRest);
+        SmartDashboard.putBoolean("Is elevator at rest", isElevatorAtRest);
+        SmartDashboard.putBoolean("Can arm move", S_Armevator.canArmMove());
         //isElevatorAtRest = S_Armevator.getElevatorPositionError() < 0.05;        
-        if (armevatorAtRest.calculate(isArmAtRest && isElevatorAtRest && S_Armevator.canArmMove() && S_Armevator.getArmPosition() > -0.24)) { //both arm and elevator in position for defined amount of time, then we move on
+        if (armevatorAtRest.calculate(isArmAtRest && isElevatorAtRest && S_Armevator.canArmMove())) { //both arm and elevator in position for defined amount of time, then we move on
             moveState++;
             S_Armevator.setCurrentArmPositionID(Constants.ArmConstants.restPosition.positionID);
           }
@@ -153,7 +156,7 @@ public class MoveArm extends Command {
       break;
       case 4:
           if (S_Armevator.getArmPositionError() < 0.003
-            && S_Armevator.getElevatorPositionError() < 0.05
+            && S_Armevator.getElevatorPositionError() < 0.03
             && S_Armevator.getWristPositionError() < 0.01) {
               S_Armevator.setCurrentArmPositionID(targetPosition.positionID);
               if (S_Armevator.getArmPosition() < 0.1) {
@@ -170,7 +173,7 @@ public class MoveArm extends Command {
       case 5:
           if (coralGone.calculate(!S_Armevator.hasCoral()) ||  endEffectorWheelsOn.calculate(Math.abs(S_Armevator.getEndAffectorWheelSpeed()) > 100)) { 
             double adjustedPos = targetPosition.armTargetAngle;
-            adjustedPos += 0.02;
+            adjustedPos += 0.04;
             S_Armevator.moveArmToPosition(adjustedPos);
             isDone = true;
           }

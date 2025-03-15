@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.334118150684932,
-        "y": 5.16695205479452
+        "x": 5.364169520547945,
+        "y": 5.3773116438356166
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.322747482886817,
-        "y": 5.8357105429386955
+        "x": 5.740317586906378,
+        "y": 6.052396741860819
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.975085616438356,
-        "y": 6.714597602739726
+        "x": 5.694734589041096,
+        "y": 5.963313356164383
       },
       "prevControl": {
-        "x": 3.816438576749258,
-        "y": 6.097777230851751
+        "x": 5.379091523923359,
+        "y": 5.399806173081978
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,14 +34,14 @@
   "eventMarkers": [
     {
       "name": "MoveArmToIntake",
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.35,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 4.5,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -49,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -54.0
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": "Left4L4",

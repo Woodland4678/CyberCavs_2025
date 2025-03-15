@@ -83,7 +83,37 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     ledStrip = LEDStrip.getInstance();
+    var diagState = 0;
+    // if (m_robotContainer.isElbowReady()){
+    //   diagState += LEDStrip.elbowDiag; 
+    // }
+    if (m_robotContainer.isShoulderReady()){
+      diagState += LEDStrip.shoulderDiag; 
+    }
+    if (m_robotContainer.isGyroReady()){
+      diagState += LEDStrip.gyroDiag; 
+    }
+    // if (m_robotContainer.isLimelightReady()){
+    //   diagState += LEDStrip.limelightDiag; 
+    // }
+    if (m_robotContainer.isAprilTagCameraReady()){
+      diagState += LEDStrip.apriltagDiag;
+    }  
+    if (m_robotContainer.isFrontLeftSwerveReady()){
+      diagState += LEDStrip.swerve1Diag; 
+    }
+    if (m_robotContainer.isFrontRightSwerveReady()){
+      diagState += LEDStrip.swerve2Diag; 
+    }
+    if (m_robotContainer.isBackLeftSwerveReady()){
+      diagState += LEDStrip.swerve3Diag; 
+    }
+    if (m_robotContainer.isBackRightSwerveReady()){
+      diagState += LEDStrip.swerve4Diag; 
+    }
+    
     ledStrip.periodic();
+    ledStrip.setDiagnosticPattern(diagState);
 
     //m_robotContainer.resetArmPosition();
   }

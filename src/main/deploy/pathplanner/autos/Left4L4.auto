@@ -7,20 +7,19 @@
         {
           "type": "named",
           "data": {
+            "name": "initArm"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "InitElevator"
           }
         },
         {
-          "type": "deadline",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "LeftMoveToScore1"
-                }
-              }
-            ]
+            "pathName": "LeftMoveToScore1"
           }
         },
         {
@@ -36,9 +35,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "AutoLineupFeeder"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
           }
         },
         {
@@ -60,9 +72,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "AutoLineupFeeder"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
           }
         },
         {
@@ -84,9 +109,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "AutoLineupFeeder"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
           }
         },
         {

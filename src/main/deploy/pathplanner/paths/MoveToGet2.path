@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.707543769049259,
-        "y": 5.232693776609221
+        "x": 4.207191780821918,
+        "y": 6.293878424657534
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.6828767123287671,
-        "y": 7.3306506849315065
+        "x": 1.8631849315068494,
+        "y": 7.1503424657534245
       },
       "prevControl": {
-        "x": 2.331420292656353,
-        "y": 6.955496249488217
+        "x": 2.511728511834435,
+        "y": 6.775188030310135
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,21 +34,21 @@
   "eventMarkers": [
     {
       "name": "MoveArmToIntake",
-      "waypointRelativePos": 0.39999999999999936,
+      "waypointRelativePos": 0.15,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 4.5,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 4.0,
+    "velocity": 3.5,
     "rotation": -53.0
   },
   "reversed": false,
@@ -57,5 +57,5 @@
     "velocity": 0,
     "rotation": -119.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

@@ -60,11 +60,13 @@ public class AutoAlignCoralScore extends Command {
   double yControllerSetpoint;
   double rControllerSetpoint;
   char branch;
+  int doneCnt = 0;
   boolean isDone = false;
   Integer[] branchValues;
   CommandXboxController joystick;
   Armevator S_Armevator;
   Debouncer AutoAlignDone = new Debouncer(0.1);
+  Debouncer isCoralGone = new Debouncer(5, DebounceType.kFalling);
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
@@ -91,6 +93,8 @@ public class AutoAlignCoralScore extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    doneCnt = 0;
+    isCoralGone.calculate(false);
     Alliance ally = DriverStation.getAlliance().get();    
     isDone = false;
     AutoAlignDone.calculate(false);
@@ -149,7 +153,7 @@ public class AutoAlignCoralScore extends Command {
       }
       
     }
-    dashPIDS = S_Swerve.getDashPIDS();
+   // dashPIDS = S_Swerve.getDashPIDS();
 
     // xController.setPID(dashPIDS[0], dashPIDS[1], dashPIDS[2]);
      //yController.setPID(dashPIDS[3], dashPIDS[4], dashPIDS[5]);
@@ -273,6 +277,7 @@ public class AutoAlignCoralScore extends Command {
           if(AutoAlignDone.calculate(yController.atSetpoint() && xController.atSetpoint() && rController.atSetpoint() && (S_Armevator.getTargetArmPositionID() == S_Armevator.getCurrentArmPositionID()))) {
             state = 1;
             AutoAlignDone.calculate(false);
+            isCoralGone.calculate(false);
           }
           // if (xController.atSetpoint() && yController.atSetpoint() && rController.atSetpoint()) {
           //   isAtSetpointCnt++;
@@ -286,12 +291,22 @@ public class AutoAlignCoralScore extends Command {
           
           break;
         case 1:         
-          S_Armevator.setEndEffectorVoltage(-7);
-          if (AutoAlignDone.calculate(!S_Armevator.hasCoral())); {
+          S_Armevator.setEndEffectorVoltage(-8);
+          if (!S_Armevator.hasCoral()) {
+            doneCnt++;
+          }
+          else {
+            doneCnt = 0;
+          }
+          if (doneCnt > 5) {
             isDone = true;
-          } 
+          }
+          // if (isCoralGone.calculate(S_Armevator.hasCoral() == false)); {
+          //   isDone = true;
+          // } 
         break;
       }
+      SmartDashboard.putBoolean("Is auto align done", isDone);
   }
     
     
