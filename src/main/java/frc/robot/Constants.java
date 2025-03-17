@@ -16,8 +16,8 @@ public final class Constants {
             put('H', new Integer[] {180, 21, 10}); //red alliance close right
             put('I', new Integer[] {-120, 20, 11}); //red alliance far right
             put('J', new Integer[] {-120, 20, 11}); //red alliance back
-            put('K', new Integer[] {-60, 22, 6}); //red allaince far left
-            put('L', new Integer[] {-60, 22, 6}); //blue alliance right feeder station
+            put('K', new Integer[] {-60, 19, 6}); //red allaince far left
+            put('L', new Integer[] {-60, 19, 6}); //blue alliance right feeder station
             
         }};
         public static Map<Integer, Integer[]> aprilTagAlgaeData = new HashMap<Integer, Integer[]>() {{

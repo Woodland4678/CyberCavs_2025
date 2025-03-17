@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.212328767123288,
-        "y": 5.8280821917808225
+        "x": 7.122174657534247,
+        "y": 3.9949486301369865
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.160554380505282,
-        "y": 5.63209623958475
+        "x": 6.296481843874819,
+        "y": 4.003493190241886
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.664683219178082,
-        "y": 5.587671232876712
+        "x": 6.2807363013698625,
+        "y": 3.9949486301369865
       },
       "prevControl": {
-        "x": 6.459541246516796,
-        "y": 5.7383537395050705
+        "x": 6.703761712972016,
+        "y": 3.9904808682554096
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,28 +34,28 @@
   "eventMarkers": [
     {
       "name": "MoveArmToL4",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 5.5,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.3,
-    "rotation": -119.99999999999999
+    "velocity": 0,
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Left4L4",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

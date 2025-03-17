@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 12.050599315068494,
-        "y": 2.5975599315068494
+        "x": 3.591138698630137,
+        "y": 2.312
       },
       "prevControl": null,
       "nextControl": {
-        "x": 13.050599315068494,
-        "y": 2.5975599315068494
+        "x": 3.325097809408769,
+        "y": 2.129892550125671
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.7413955479452055,
-        "y": 5.677825342465753
+        "x": 1.803082191780822,
+        "y": 0.9
       },
       "prevControl": {
-        "x": 2.7413955479452055,
-        "y": 5.677825342465753
+        "x": 2.3783573884374754,
+        "y": 1.3783040000841429
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "MoveArmToIntake",
+      "waypointRelativePos": 0.2,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 5.0,
@@ -41,14 +48,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -55.61965527615512
+    "velocity": 3.5,
+    "rotation": 53.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Right4L4",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 51.34019174590994
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }

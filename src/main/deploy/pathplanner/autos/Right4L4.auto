@@ -1,0 +1,154 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "initArm"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "InitElevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightMoveToScore1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoScoreF"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightMoveToGet2"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightMoveToScore2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoScoreC"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightMoveToGet3"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightMoveToScore3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoScoreD"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightMoveToGet4"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightMoveToScore4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoScoreE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightMoveBack"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
