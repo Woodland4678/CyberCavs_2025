@@ -252,7 +252,7 @@ public class RobotContainer {
         operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(4)).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, true, true));
         operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(19)).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, true));
         operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(13)).onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, true));
-        
+       
         operatorController.axisGreaterThan(2, 0.115).onTrue(new InstantCommand(() -> S_Armevator.moveWristToPosition(-0.68)));
         operatorController.axisGreaterThan(0, 0.115).onTrue(new InstantCommand(() -> S_Armevator.moveWristToPosition(0)));
         operatorController.axisGreaterThan(7, 0.115).onTrue(new InstantCommand(() -> S_AlgaeManipulator.resetEncoder()));
@@ -281,7 +281,7 @@ public class RobotContainer {
     }
     public void initialElevatorRaise(){
         if (S_Armevator.getElevatorPosition() > -5) { //this is for teleop init. If the elevator is fully down then we should raise it
-            S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+        S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
         }
 
     }
@@ -300,25 +300,35 @@ public class RobotContainer {
         S_Climber.lock();
     }
     public boolean isElevatorReady() {
+        // return false;
         return S_Armevator.isElevatorReady();
     }
     public boolean isShoulderReady() {
+        // return false;
         return S_Armevator.isShoulderReady();
     }
     public boolean isWristReady() {
+        // return false;
         return S_Armevator.isWristReady();
     }
     public boolean isClimberReady() {
-        // return S_Arm.isShoulderReady();
-        return true; // TODO: ???
+        return true; // no diagnostoic test for this
     }
+    public boolean isGyroReady(){
+        return drivetrain.isGyroReady();
+        // return false;
+    }
+    public boolean isAprilTagCameraReady(){
+        // return false;
+        return drivetrain.isAprilTagCameraReady();
+    }   
     public boolean isFrontLeftSwerveReady() {
         return drivetrain.isModuleReady(0);
-        // return true;
+        // return false;
     }
     public boolean isFrontRightSwerveReady() {
         return drivetrain.isModuleReady(1);
-        // return false;
+        //return false;
     }
     public boolean isBackLeftSwerveReady() {
         return drivetrain.isModuleReady(2);
@@ -326,32 +336,18 @@ public class RobotContainer {
     }
     public boolean isBackRightSwerveReady() {
         return drivetrain.isModuleReady(3);
-        // return false;
+       // return false;
     }
-    public boolean isGyroReady(){
-        return drivetrain.isGyroReady();
-        // return S_Swerve.isGyroReady(); 
-       // return true; // TODO: ???
-        //return false;
-    }
-    public boolean isAprilTagCameraReady(){
-        return drivetrain.isAprilTagCameraReady();
-        
-    }    
     public boolean isFrontLidarReady(){
         return drivetrain.isFrontLidarReady();
-        //return true; // TODO: ???
-        //return true;
+        //return false;
     }
     public boolean isRearLidarReady(){
-         return drivetrain.isRearLidarReady();
-        //return true; // TODO: ???
+        return drivetrain.isRearLidarReady();
         //return true;
        }
     public boolean isChuteLidarReady(){
-        return isChuteLidarReady();
-        //return S_Swerve.isLimelightReady();
-       // return true; // TODO: ???
+        return drivetrain.isChuteLidarReady();
         //return true;
        } 
   }

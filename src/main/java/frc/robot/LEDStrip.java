@@ -68,7 +68,7 @@ public class LEDStrip {
     public static final int chuteLidarDiag = 0X2000; // ^
 
     /** All segments blue */
-    public static final int allClear = 0X1FF;
+    public static final int allClear = 0X2FFF;
 
     private static final LEDStrip instance = new LEDStrip();
 
@@ -79,7 +79,7 @@ public class LEDStrip {
         // Set the data
         addressableLED.setData(ledBuffer);
         addressableLED.start();
-        LEDMode = LEDModes.SOLIDBLUE; // ??? set these OFF to start
+        LEDMode = LEDModes.OFF; // ??? set these OFF to start
     }
 
     public static LEDStrip getInstance(){
@@ -231,7 +231,7 @@ public class LEDStrip {
                     ledBuffer.setRGB(i, 0, 255, 0);
             }                        
         }
-        //setLEDMode(LEDModes.ROBOTDISABLEDPATTERN);
+        setLEDMode(LEDModes.ROBOTDISABLEDPATTERN);
     }
 
     public void setDiagnosticPattern(int binaryVal){
@@ -244,7 +244,7 @@ public class LEDStrip {
     }
 
     public void periodic(){
-        setLEDMode(LEDModes.SOLIDBLUE);
+        //setLEDMode(LEDModes.SOLIDBLUE); SDW
         switch(LEDMode){
             case OFF:
                 setColour(0,0,0);

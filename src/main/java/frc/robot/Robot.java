@@ -68,37 +68,36 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
-    //ledStrip.periodic();
+    ledStrip.periodic();  // SDW uncomment when ready to use
     
   }
 
   @Override
   public void disabledInit() {
     ledStrip = LEDStrip.getInstance();
-    ledStrip.setLEDMode(LEDModes.SOLIDBLUE);
+    ledStrip.setLEDMode(LEDModes.SOLIDBLUE);  
     SignalLogger.stop();
     m_robotContainer.lockClimber();
   }
 
   @Override
   public void disabledPeriodic() {
+    var diagState = 0; //diagnostic state 
+   
     ledStrip = LEDStrip.getInstance();
-    var diagState = 0;
-    // if (m_robotContainer.isElbowReady()){
-    //   diagState += LEDStrip.elbowDiag; 
-    // }
+   
+    if (m_robotContainer.isElevatorReady()){
+      diagState += LEDStrip.elevatorDiag; 
+    }
     if (m_robotContainer.isShoulderReady()){
       diagState += LEDStrip.shoulderDiag; 
     }
-    if (m_robotContainer.isGyroReady()){
-      diagState += LEDStrip.gyroDiag; 
+    if (m_robotContainer.isWristReady()){
+      diagState += LEDStrip.wristDiag; 
     }
-    // if (m_robotContainer.isLimelightReady()){
-    //   diagState += LEDStrip.limelightDiag; 
-    // }
-    if (m_robotContainer.isAprilTagCameraReady()){
-      diagState += LEDStrip.apriltagDiag;
-    }  
+    if (m_robotContainer.isClimberReady()){
+      diagState += LEDStrip.climberDiag; 
+    }
     if (m_robotContainer.isFrontLeftSwerveReady()){
       diagState += LEDStrip.swerve1Diag; 
     }
@@ -111,9 +110,29 @@ public class Robot extends TimedRobot {
     if (m_robotContainer.isBackRightSwerveReady()){
       diagState += LEDStrip.swerve4Diag; 
     }
-    
-    ledStrip.periodic();
+    if (m_robotContainer.isGyroReady()){
+      diagState += LEDStrip.gyroDiag;
+    }  
+    if (m_robotContainer.isAprilTagCameraReady()){
+      diagState += LEDStrip.apriltagDiag;
+    }  
+    if (m_robotContainer.isFrontLidarReady()){
+      diagState += LEDStrip.frontLidarDiag;
+    }  
+    if (m_robotContainer.isRearLidarReady()){
+      diagState += LEDStrip.rearLidarDiag;
+    }
+    if (m_robotContainer.isChuteLidarReady()){
+      diagState += LEDStrip.chuteLidarDiag;
+    }  
+
+    // force the spare led segment to be green
+    diagState += LEDStrip.spareDiag;
+
+    SmartDashboard.putNumber("diagState", diagState);
     ledStrip.setDiagnosticPattern(diagState);
+    ledStrip.diagnosticLEDmode(); // SDW uncomment when ready to use
+    ledStrip.periodic();
 
     //m_robotContainer.resetArmPosition();
   }

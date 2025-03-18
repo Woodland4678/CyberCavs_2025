@@ -2,14 +2,10 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.opencv.core.Size;
-import org.opencv.photo.Photo;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonTargetSortMode;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -60,10 +56,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private List<PhotonPipelineResult> rpiCoralScoreResult;
     private PhotonCamera rpi;
     private PhotonCamera driverCam;
-    private double bestAprilTagTargetX;    
+    private double bestAprilTagTargetX;
     private double bestAprilTagTargetY;
     private double bestAprilTagTargetSize = 0;
     private int bestAprilTagTargetID;
+    private int checkRPICount = 0;    
+    private boolean isRPIOkay = false;
     private double[] dashPIDS = new double[11];
     private double distanceLaserAvg = 0;
     private double bestAprilTagXMeters = 0.0;
@@ -331,7 +329,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-        rpiCoralScoreResult = rpi.getAllUnreadResults();   
+        rpiCoralScoreResult = rpi.getAllUnreadResults();        
        // PhotonTargetSortMode test;
        // test = PhotonTargetSortMode.Largest;
        // rpiCoralScoreResult.sort(new Comparator<T>() {
@@ -434,13 +432,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             updateSimState(deltaTime, RobotController.getBatteryVoltage());
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
+     }
+    public boolean isAprilTagCameraReady() {
+        //checkRPICount ++;
+        //if (checkRPICount > 100) {
+        //  checkRPICount = 0;
+          isRPIOkay = rpi.isConnected();
+        //}
+        return isRPIOkay;
     }
      public double bestAprilTagXMeters() {
         return bestAprilTagXMeters;
      }
      public double bestAprilTagYMeters() {
         return bestAprilTagYMeters;
-     }
+     }    
      public double getAprilTagX() {
         return bestAprilTagTargetX;
      }
@@ -485,11 +491,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      public double getDistanceLaser() {
         return distanceLaser.getOutput() * 400;
     }
+    // Is it getting a reading at all? May be a better way.
+    public boolean isFrontLidarReady() {
+        return (distanceLaser.getOutput() > 0.0);
+    }
     public double getRearLidar(){
         return rearLidar.getOutput() * 400; 
     }
+    // Is it getting a reading at all? May be a better way.
+    public boolean isRearLidarReady() {
+        return (rearLidar.getOutput() > 0.0);
+    }
     public double getChuteLidar() {
         return chuteLidar.getOutput() * 800; //20 is the lowest consistent reading
+    }
+    // Is it getting a reading at all? May be a better way.
+    public boolean isChuteLidarReady() {
+        return (chuteLidar.getOutput() > 0.0);
     }
     public void setAprilTagTargetRequest(int tagID) {
         aprilTagTargetRequest = tagID;
@@ -518,18 +536,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
           return true;
          }
         return false;
-    }
-    public boolean isAprilTagCameraReady() {
-        return rpi.isConnected();
-    }    
-    public boolean isFrontLidarReady() {
-        return ((getDistanceLaser() > 0));
-    }
-    public boolean isRearLidarReady() {
-        return (getRearLidar() > 0);
-    }
-    public boolean isChuteLidarReady() {
-        return (getChuteLidar() > 10 && getChuteLidar() < 50);
     }
     public boolean isGyroReady() {
         return (getgyroValue() > 0);
