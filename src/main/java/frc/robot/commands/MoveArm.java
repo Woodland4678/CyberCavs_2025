@@ -100,7 +100,12 @@ public class MoveArm extends Command {
         }
       break;
       case 1:
-        S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+        if (targetPosition.positionID == 6) { //if we're going to L4 swing the arm out right away
+          S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
+        }
+        else {
+          S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+        }
         S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
         S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
         moveState++;
@@ -172,18 +177,22 @@ public class MoveArm extends Command {
       break;
       case 5:
           if (coralGone.calculate(!S_Armevator.hasCoral()) ||  endEffectorWheelsOn.calculate(Math.abs(S_Armevator.getEndAffectorWheelSpeed()) > 100)) { 
-            double adjustedPos = targetPosition.armTargetAngle;
-            adjustedPos += 0.04;
-            S_Armevator.moveArmToPosition(adjustedPos);
+            S_Armevator.moveArmToPosition(S_Armevator.getArmPosition() + 0.04);
             isDone = true;
+            moveState++; //just make sure we're not here anymore
           }
+      break;
+      case 6:
+          isDone = true;
       break;
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    moveState = 0;
+  }
 
   // Returns true when the command should end.
   @Override

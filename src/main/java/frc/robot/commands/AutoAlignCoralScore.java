@@ -47,8 +47,6 @@ public class AutoAlignCoralScore extends Command {
   //PhoenixPIDController yController = new PhoenixPIDController(0.37, 0, 0.02); //0.32, 0, 0.022 //for using camera pitch for lineup
   PhoenixPIDController yController = new PhoenixPIDController(0.036, 0, 0.002); //0.32, 0, 0.022 //for using lidar to line up
   PhoenixPIDController rController = new PhoenixPIDController(7.1, 0, 0.15);
-  SlewRateLimiter ySpeedLimit = new SlewRateLimiter(5.5);
-  SlewRateLimiter xSpeedLimit = new SlewRateLimiter(5.5);
   double xSpeed = 0.0;
   double ySpeed = 0.0;
   double rSpeed = 0.0;
@@ -69,6 +67,7 @@ public class AutoAlignCoralScore extends Command {
   Debouncer AutoAlignDone = new Debouncer(0.1);
   Debouncer isCoralGone = new Debouncer(5, DebounceType.kFalling);
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
  // StatusSignal time2 = new StatusSignal<>(getClass(), null, null);
@@ -77,16 +76,16 @@ public class AutoAlignCoralScore extends Command {
    .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
    .withSteerRequestType(SteerRequestType.MotionMagicExpo);
    private final SwerveRequest.FieldCentric m_driveRequestDrive = new SwerveRequest.FieldCentric()
-   .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-   .withSteerRequestType(SteerRequestType.MotionMagicExpo);
-  /** Creates a new AutoAlignCoralScore. */
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+    /** Creates a new AutoAlignCoralScore. */
   public AutoAlignCoralScore(CommandSwerveDrivetrain S_Swerve, Armevator S_Armevator, char branch, CommandXboxController joystick) {
     this.S_Swerve = S_Swerve;
     this.branch = branch;
     this.S_Armevator = S_Armevator;
     branchValues = Constants.SwerveConstants.aprilTagRotationValues.get(branch);
     this.joystick = joystick;
-    rController.enableContinuousInput(Math.toRadians(-180), Math.toRadians(180));
+    rController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(S_Swerve);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -125,7 +124,7 @@ public class AutoAlignCoralScore extends Command {
     }
     rControllerSetpoint = Math.toRadians(rControllerSetpoint);
     
-    rController.setTolerance(Math.toRadians(1.2));
+    rController.setTolerance(Math.toRadians(1.5));
     state = 0;
     isAtSetpointCnt = 0;
     yController.reset();
@@ -163,18 +162,8 @@ public class AutoAlignCoralScore extends Command {
     // xController.setPID(dashPIDS[0], dashPIDS[1], dashPIDS[2]);
      //yController.setPID(dashPIDS[3], dashPIDS[4], dashPIDS[5]);
      degrees = S_Swerve.getgyroValue();
-      // if (rController.getSetpoint() > 160 && degrees < 0) {
-      //   degrees = 360 + degrees;
-      // }
-      // else if (rController.getSetpoint() < -160 && degrees > 0) {
-      //   degrees = degrees - 360;
-      // }
-      rSpeed = rController.calculate(Math.toRadians(degrees), rControllerSetpoint, Timer.getFPGATimestamp());
-     //xController.setIZone(dashPIDS[6]);
-     //yController.setIZone(dashPIDS[7]);
-    // rController.setPID(dashPIDS[6], dashPIDS[7], dashPIDS[8]);
-    // xController.setIZone(dashPIDS[3]);
-    if (S_Swerve.getBestAprilTagID() != branchTargetID || S_Swerve.getDistanceLaser() > 200 || S_Swerve.getDistanceLaser() < 10) {
+     rSpeed = rController.calculate(Math.toRadians(degrees), rControllerSetpoint, Timer.getFPGATimestamp());
+     if (S_Swerve.getBestAprilTagID() != branchTargetID || S_Swerve.getDistanceLaser() > 200 || S_Swerve.getDistanceLaser() < 10) {
       ySpeed = -joystick.getLeftY();
       xSpeed = -joystick.getLeftX();
       if (S_Armevator.getArmPosition() > 0.1) {
@@ -190,10 +179,9 @@ public class AutoAlignCoralScore extends Command {
         state = 0;
     }
     else {
-      //rController.setSetpoint(Constants.SwerveConstants.aprilTagRotationValues.get(S_Swerve.getBestAprilTagID())); //update the rcontroller target to the rotation target of the best april tag we see
       switch(state) {        
         case 0:
-          if (yController.getPositionError() < 70 && Math.abs(xController.getPositionError()) < 20) { //TODO tune for robot
+          if (yController.getPositionError() < 70 && Math.abs(xController.getPositionError()) < 30) { //TODO tune for robot
             S_Swerve.setIsAutoAligning(true);
           }
           else {
@@ -217,14 +205,10 @@ public class AutoAlignCoralScore extends Command {
           //rSpeed = 0;
           //var estYDist = 0.0798/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY()))); //0.0889 is the height diff between the camera and middle of the april tag (3.5 inches)
           var xDist = (S_Swerve.getDistanceLaser()) * Math.tan(Math.toRadians(S_Swerve.getAprilTagX() + rController.getPositionError()));
-          // if (S_Armevator.getTargetArmPositionID() == 6) {
-          //   xSpeed = xSpeedLimit.calculate(xController.calculate(xDist, xControllerSetpoint,Timer.getFPGATimestamp()));
-          //   ySpeed = ySpeedLimit.calculate(yController.calculate(S_Swerve.getDistanceLaser(), yControllerSetpoint, Timer.getFPGATimestamp()));
-          // }
-         // else {
+          
           xSpeed = xController.calculate(xDist, xControllerSetpoint,Timer.getFPGATimestamp());
           ySpeed = yController.calculate(S_Swerve.getDistanceLaser(), yControllerSetpoint, Timer.getFPGATimestamp());
-          //}
+          
           if (xSpeed < 0) { //a little bit of feedfoward
             xSpeed -= 0.03;
           }
@@ -250,18 +234,18 @@ public class AutoAlignCoralScore extends Command {
           else if (ySpeed > 2.5) {
             ySpeed = 2.5;
           }
-          if (xController.atSetpoint()) {
-            //xSpeed = 0;
-          }
-          if (yController.atSetpoint()) {
-           // ySpeed = 0;
-          }
-          if (rController.atSetpoint()) {
-           // rSpeed = 0;
-          }          
+          // if (xController.atSetpoint()) {
+          //   //xSpeed = 0;
+          // }
+          // if (yController.atSetpoint()) {
+          //  // ySpeed = 0;
+          // }
+          // if (rController.atSetpoint()) {
+          //  // rSpeed = 0;
+          // }          
           SmartDashboard.putNumber("auto align coral y-speed", ySpeed);
           //SmartDashboard.putNumber("auto align coral timestamp2", time2.getAllTimestamps().getBestTimestamp().getTime());
-          SmartDashboard.putNumber("auto align coral timestamp", time.getSystemTimestamp().getTime());
+          //SmartDashboard.putNumber("auto align coral timestamp", time.getSystemTimestamp().getTime());
           SmartDashboard.putBoolean("auto align coral is x done", xController.atSetpoint());
           SmartDashboard.putBoolean("auto align coral is y done", yController.atSetpoint());
           SmartDashboard.putBoolean("auto align coral is r done", rController.atSetpoint());
@@ -273,29 +257,25 @@ public class AutoAlignCoralScore extends Command {
           
           SmartDashboard.putNumber("Auto Align Coral X Speed", xSpeed);
           SmartDashboard.putNumber("Auto Align Coral R Speed", rSpeed);
+          
+          if(AutoAlignDone.calculate(yController.atSetpoint() && xController.atSetpoint() && rController.atSetpoint() && (S_Armevator.getTargetArmPositionID() == S_Armevator.getCurrentArmPositionID()))) {
+            state = 1;
+            AutoAlignDone.calculate(false);
+            isCoralGone.calculate(false);
+            ySpeed = 0;
+            xSpeed = 0;
+            rSpeed = 0;
+          }
           S_Swerve.setControl(
             m_driveRequestAutoAlign.withVelocityX(-ySpeed)
                 .withVelocityY(xSpeed)
                 .withRotationalRate(rSpeed)
                 .withDriveRequestType(DriveRequestType.Velocity)
           );
-          if(AutoAlignDone.calculate(yController.atSetpoint() && xController.atSetpoint() && rController.atSetpoint() && (S_Armevator.getTargetArmPositionID() == S_Armevator.getCurrentArmPositionID()))) {
-            state = 1;
-            AutoAlignDone.calculate(false);
-            isCoralGone.calculate(false);
-          }
-          // if (xController.atSetpoint() && yController.atSetpoint() && rController.atSetpoint()) {
-          //   isAtSetpointCnt++;
-          //   if (isAtSetpointCnt > 10) {
-          //     //state++;
-          //   }
-          // }
-          // else {
-          //   isAtSetpointCnt = 0;
-          // }
+          
           
           break;
-        case 1:         
+        case 1:                 
           S_Armevator.setEndEffectorVoltage(-8);
           if (!S_Armevator.hasCoral()) {
             doneCnt++;
@@ -305,10 +285,7 @@ public class AutoAlignCoralScore extends Command {
           }
           if (doneCnt > 5) {
             isDone = true;
-          }
-          // if (isCoralGone.calculate(S_Armevator.hasCoral() == false)); {
-          //   isDone = true;
-          // } 
+          }           
         break;
       }
       SmartDashboard.putBoolean("Is auto align done", isDone);
