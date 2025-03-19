@@ -538,7 +538,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return false;
     }
     public boolean isGyroReady() {
-        return (getgyroValue() > 0);
+        return (Math.abs(getgyroValue()) > 0);
     }
 
 }
