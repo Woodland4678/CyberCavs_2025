@@ -163,9 +163,9 @@ public class MoveArm extends Command {
           
       break;
       case 4:
-          if (S_Armevator.getArmPositionError() < 0.003
-            && S_Armevator.getElevatorPositionError() < 0.03
-            && S_Armevator.getWristPositionError() < 0.01) {
+          if (S_Armevator.getArmPositionError() < 0.003 //arm moving up is postitive error, so we don't really need to absolute it here
+            && Math.abs(S_Armevator.getElevatorPositionError()) < 0.03
+            && Math.abs(S_Armevator.getWristPositionError()) < 0.01) {
               S_Armevator.setCurrentArmPositionID(targetPosition.positionID);
               if (targetPosition.positionID != 6) {
                 isDone = true;
