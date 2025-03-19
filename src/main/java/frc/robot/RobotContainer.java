@@ -74,16 +74,27 @@ public class RobotContainer {
         NamedCommands.registerCommand("AutoScoreI", new AutoAlignCoralScore(drivetrain, S_Armevator, 'I', joystick));
         NamedCommands.registerCommand("AutoScoreJ", new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
         NamedCommands.registerCommand("InitElevator", new InstantCommand(() -> S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget)));
+        NamedCommands.registerCommand("InitAlgaeManipulator", new InstantCommand(() -> S_AlgaeManipulator.retract()));
         new EventTrigger("MoveArmToL4").onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
         new EventTrigger("MoveArmToIntake").onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, true));
+        new EventTrigger("MoveArmToRest").onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, true));
         NamedCommands.registerCommand("MoveArmToIntake", new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, true));
         NamedCommands.registerCommand("AutoLineupFeeder", new AutoDriveToFeeder(drivetrain, S_Armevator, -54, joystick));
+        NamedCommands.registerCommand("AutoLineupFeederRight", new AutoDriveToFeeder(drivetrain, S_Armevator, 54, joystick));
         NamedCommands.registerCommand("AutoScoreK", new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
         NamedCommands.registerCommand("AutoScoreL", new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
         NamedCommands.registerCommand("AutoScoreA", new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
+        NamedCommands.registerCommand("AutoScoreF", new AutoAlignCoralScore(drivetrain, S_Armevator, 'F', joystick));
+        NamedCommands.registerCommand("AutoScoreC", new AutoAlignCoralScore(drivetrain, S_Armevator, 'C', joystick));
+        NamedCommands.registerCommand("AutoScoreD", new AutoAlignCoralScore(drivetrain, S_Armevator, 'D', joystick));
+        NamedCommands.registerCommand("AutoScoreE", new AutoAlignCoralScore(drivetrain, S_Armevator, 'E', joystick));
+        NamedCommands.registerCommand("AutoScoreG", new AutoAlignCoralScore(drivetrain, S_Armevator, 'G', joystick));
         NamedCommands.registerCommand("initArm", new InstantCommand(() -> S_Armevator.coralSetForAutoInit()));
         NamedCommands.registerCommand("ForceArmToIntake", new InstantCommand(() -> S_Armevator.moveArmToPosition(Constants.ArmConstants.intakePosition.armTargetAngle)));
-        autoChooser = AutoBuilder.buildAutoChooser("Left4L4");
+        autoChooser = AutoBuilder.buildAutoChooser();
+
+        SmartDashboard.putData("Auto Chooser", autoChooser);
+        //autoChooser = AutoBuilder.buildAutoChooser("CenterForwardAndScore"); //Left4L4
         //autoChooser = null;
        
     }
@@ -221,7 +232,7 @@ public class RobotContainer {
         operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, false, false));
         operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
         operatorController.button(19).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, false));
-        operatorController.button(13).onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, false));
+        operatorController.button(13).onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, true));
        // operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.highAlgaeRemoval, S_Armevator, drivetrain, true));
 
 
@@ -301,15 +312,18 @@ public class RobotContainer {
     }
     public boolean isElevatorReady() {
         // return false;
-        return S_Armevator.isElevatorReady();
+        return true; //nothing to check just return true
+        //return S_Armevator.isElevatorReady();
     }
     public boolean isShoulderReady() {
         // return false;
-        return S_Armevator.isShoulderReady();
+        return true; //nothing to do just return true
+        //return S_Armevator.isShoulderReady();
     }
     public boolean isWristReady() {
         // return false;
-        return S_Armevator.isWristReady();
+        return true; //nothing to check just return true
+       // return S_Armevator.isWristReady();
     }
     public boolean isClimberReady() {
         return true; // no diagnostoic test for this

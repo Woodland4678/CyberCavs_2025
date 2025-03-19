@@ -73,6 +73,9 @@ public class AutoDriveToFeeder extends Command {
         angle = angleTarget - 180;
       }
     }
+    else {
+      angle = angleTarget;
+    }
     rControllerTarget = angle;
     rController.setTolerance(10);
     yControllerTarget = 9;
@@ -86,7 +89,7 @@ public class AutoDriveToFeeder extends Command {
   public void execute() {    
     double degrees = S_Swerve.getgyroValue();
     rSpeed = rController.calculate(degrees, rControllerTarget, Timer.getFPGATimestamp());
-    if (coralIncoming.calculate((S_Swerve.getChuteLidar() < 40 && S_Swerve.getChuteLidar() > 1) || S_Armevator.hasCoral())) {
+    if ((S_Swerve.getChuteLidar() < 40 && S_Swerve.getChuteLidar() > 1) || S_Armevator.hasCoral()) {
       isDone = true;
       ySpeed = 0;
       rSpeed = 0;

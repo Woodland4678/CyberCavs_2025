@@ -11,9 +11,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "InitElevator"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitElevator"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitAlgaeManipulator"
+                }
+              }
+            ]
           }
         },
         {
@@ -41,7 +54,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoLineupFeeder"
+                  "name": "AutoLineupFeederRight"
                 }
               },
               {
@@ -78,7 +91,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoLineupFeeder"
+                  "name": "AutoLineupFeederRight"
                 }
               },
               {
@@ -115,7 +128,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "AutoLineupFeeder"
+                  "name": "AutoLineupFeederRight"
                 }
               },
               {

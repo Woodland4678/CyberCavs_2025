@@ -97,6 +97,9 @@ public class AutoAlignCoralScore extends Command {
     isCoralGone.calculate(false);
     Alliance ally = DriverStation.getAlliance().get();    
     isDone = false;
+    if (!S_Armevator.hasCoral()) {
+      isDone = true;
+    }
     AutoAlignDone.calculate(false);
     if (branch == 'A' || branch == 'C' || branch == 'E' || branch == 'G' || branch == 'I' || branch == 'K') {
       xControllerSetpoint = (20.5);
@@ -181,21 +184,21 @@ public class AutoAlignCoralScore extends Command {
     else {
       switch(state) {        
         case 0:
-          if (yController.getPositionError() < 70 && Math.abs(xController.getPositionError()) < 30) { //TODO tune for robot
+          if (Math.abs(yController.getPositionError()) < 85) { //TODO tune for robot // && Math.abs(xController.getPositionError()) < 30
             S_Swerve.setIsAutoAligning(true);
           }
           else {
             S_Swerve.setIsAutoAligning(false);
           }
           if (Math.abs(xController.getPositionError()) < 10) {
-            xController.setP(0.045); 
+            xController.setP(0.041); 
            // xController.setD(0.05);                       
           }
           else {
             xController.setP(0.04);           
           }
           if (Math.abs(yController.getPositionError()) < 10) {
-            yController.setP(0.055);
+            yController.setP(0.05);
            // yController.setD(0.3);
           }
           else {
@@ -266,6 +269,7 @@ public class AutoAlignCoralScore extends Command {
             xSpeed = 0;
             rSpeed = 0;
           }
+          
           S_Swerve.setControl(
             m_driveRequestAutoAlign.withVelocityX(-ySpeed)
                 .withVelocityY(xSpeed)
@@ -276,7 +280,7 @@ public class AutoAlignCoralScore extends Command {
           
           break;
         case 1:                 
-          S_Armevator.setEndEffectorVoltage(-8);
+          S_Armevator.setEndEffectorVoltage(-6.5);
           if (!S_Armevator.hasCoral()) {
             doneCnt++;
           }

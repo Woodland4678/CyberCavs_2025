@@ -11,9 +11,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "InitElevator"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitElevator"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitAlgaeManipulator"
+                }
+              }
+            ]
           }
         },
         {

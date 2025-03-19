@@ -88,6 +88,7 @@ public class MoveArm extends Command {
   @Override
   public void execute() {
     SmartDashboard.putNumber("Move arm state", moveState);
+    SmartDashboard.putNumber("Move arm target ID", targetPosition.positionID);
     switch(moveState) {
       case 0:
         if ((S_Swerve.getDistanceLaser() > 90 || S_Swerve.getDistanceLaser() < 60 || (S_Armevator.getCurrentArmPositionID() == 2 && this.targetPosition.positionID == 1 )) && S_Armevator.canArmMove() && (S_Armevator.hasCoral() || this.targetPosition.positionID == 1 || this.targetPosition.positionID == 2)) {
@@ -100,14 +101,16 @@ public class MoveArm extends Command {
         }
       break;
       case 1:
-        if (targetPosition.positionID == 6) { //if we're going to L4 swing the arm out right away
+        if (targetPosition.positionID == 6 || targetPosition.positionID == 2) { //if we're going to L4 swing the arm out right away
           S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
+          S_Armevator.moveWristToPosition(targetPosition.wristTarget);
         }
         else {
           S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+          S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
         }
         S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
-        S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
+        
         moveState++;
       break;
       case 2:
@@ -164,7 +167,7 @@ public class MoveArm extends Command {
             && S_Armevator.getElevatorPositionError() < 0.03
             && S_Armevator.getWristPositionError() < 0.01) {
               S_Armevator.setCurrentArmPositionID(targetPosition.positionID);
-              if (S_Armevator.getArmPosition() < 0.1) {
+              if (targetPosition.positionID != 6) {
                 isDone = true;
               }
               else {

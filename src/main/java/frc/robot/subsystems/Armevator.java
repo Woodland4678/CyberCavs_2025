@@ -66,8 +66,8 @@ public class Armevator extends SubsystemBase {
   private final AnalogInput wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
   private boolean isArmAtRest;
-  private final double coralPositionForArmMove = -7.73; //TODO find
-  private final double coralPositionToScore = -0.5667; //TODO find
+  private final double coralPositionForArmMove = -3.22; //TODO find
+  private final double coralPositionToScore = -0.236125; //TODO find
   //private double elevatorPositionToMoveArm = -2.1;
   private int currentArmPositionID = 0;
   private int targetArmPositionID = 0;
@@ -402,10 +402,10 @@ public class Armevator extends SubsystemBase {
  }
  public void spitCoral() {
   if (targetArmPositionID == 3) {
-    setEndEffectorVoltage(-3.3);
+    setEndEffectorVoltage(-1.9);
   }
   else {
-    setEndEffectorVoltage(-7);
+    setEndEffectorVoltage(-5.5);
   }
  }
 
