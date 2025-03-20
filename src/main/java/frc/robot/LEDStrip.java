@@ -171,6 +171,7 @@ public class LEDStrip {
 
             // First strip of LEDS, 4 or 5 leds per diagnostic state, 
             // represents elevator/shoulder/wrist/climber/gryo/limelight/april tag camera (not necessarily in that order) 
+            //LED order starts at the bottom where the cable connects, then goes up to the top, across and down (bottom of the other side is the end)
             if((diagnosticPattern & elevatorDiag) != 0) {
                 for(int i = 0;i<=3;i++)
                     ledBuffer.setRGB(i, 0, 255, 0); 

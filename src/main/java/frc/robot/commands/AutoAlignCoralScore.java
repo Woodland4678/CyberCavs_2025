@@ -30,6 +30,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.security.Timestamp;
 import java.security.cert.X509CRL;
+import java.util.Optional;
 
 import javax.xml.xpath.XPath;
 
@@ -95,7 +96,8 @@ public class AutoAlignCoralScore extends Command {
   public void initialize() {
     doneCnt = 0;
     isCoralGone.calculate(false);
-    Alliance ally = DriverStation.getAlliance().get();    
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    //Alliance ally = DriverStation.getAlliance().get();    
     isDone = false;
     if (!S_Armevator.hasCoral()) {
       isDone = true;
@@ -110,20 +112,22 @@ public class AutoAlignCoralScore extends Command {
     //yControllerSetpoint = (9);// forward and back
     yControllerSetpoint = 105;
     yController.setTolerance(2.5); //3cm
-    if (ally == Alliance.Red) {
-      S_Swerve.setAprilTagTargetRequest(branchValues[2]);
-      branchTargetID = branchValues[2];
-      if (branchValues[0] < 0) {
-        rControllerSetpoint = (branchValues[0] + 180); //rotation
+    if (ally.isPresent()) {
+      if (ally.get() == Alliance.Red) {
+        S_Swerve.setAprilTagTargetRequest(branchValues[2]);
+        branchTargetID = branchValues[2];
+        if (branchValues[0] < 0) {
+          rControllerSetpoint = (branchValues[0] + 180); //rotation
+        }
+        else {
+          rControllerSetpoint = branchValues[0] - 180;
+        }
       }
       else {
-        rControllerSetpoint = branchValues[0] - 180;
+        S_Swerve.setAprilTagTargetRequest(branchValues[1]);
+        branchTargetID = branchValues[1];
+        rControllerSetpoint = branchValues[0];
       }
-    }
-    else {
-      S_Swerve.setAprilTagTargetRequest(branchValues[1]);
-      branchTargetID = branchValues[1];
-      rControllerSetpoint = branchValues[0];
     }
     rControllerSetpoint = Math.toRadians(rControllerSetpoint);
     

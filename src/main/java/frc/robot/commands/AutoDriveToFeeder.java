@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.util.Optional;
+
 import javax.xml.crypto.dsig.spec.XSLTTransformParameterSpec;
 import javax.xml.xpath.XPath;
 
@@ -41,6 +43,7 @@ public class AutoDriveToFeeder extends Command {
   double rSpeed = 0;
   double ySpeed = 0;
   double angle = 0;
+  double lidarTakeOverReading = 100.0;
   boolean isDone = false;
   Debouncer coralIncoming = new Debouncer(0.1);
   Armevator S_Armevator;
@@ -64,17 +67,28 @@ public class AutoDriveToFeeder extends Command {
   @Override
   public void initialize() {
     //angle = angleTarget;
-    Alliance ally = DriverStation.getAlliance().get();
-    if (ally == Alliance.Red) {
-      if (angleTarget < 0) {
-        angle = angleTarget + 180;
+    //Alliance ally = DriverStation.getAlliance().get();
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    boolean isAuto = DriverStation.isAutonomous();
+    if (ally.isPresent()) {
+      if (ally.get() == Alliance.Red) {
+        if (angleTarget < 0) {
+          angle = angleTarget + 180;
+        }
+        else {
+          angle = angleTarget - 180;
+        }
       }
       else {
-        angle = angleTarget - 180;
+        angle = angleTarget;
       }
-    }
-    else {
-      angle = angleTarget;
+      //if we're in auto we assume the pathing gets us close enough so we can be more generous for when the lidar takes over the drive
+      if (isAuto) {
+        lidarTakeOverReading = 100.0;
+      }
+      else {
+        lidarTakeOverReading = 200.0;
+      }
     }
     rControllerTarget = angle;
     rController.setTolerance(10);
@@ -94,7 +108,7 @@ public class AutoDriveToFeeder extends Command {
       ySpeed = 0;
       rSpeed = 0;
     }
-    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < 100) || S_Swerve.getRearLidar() < 40) {
+    if ((rController.atSetpoint() && S_Swerve.getRearLidar() < lidarTakeOverReading) || S_Swerve.getRearLidar() < 40) {
       ySpeed = yController.calculate(S_Swerve.getRearLidar(), yControllerTarget, Timer.getFPGATimestamp());
       S_Swerve.setControl(
         m_driveRequestRobotCentric.withVelocityX(ySpeed)

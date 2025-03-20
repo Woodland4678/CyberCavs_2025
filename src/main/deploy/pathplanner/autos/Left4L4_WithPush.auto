@@ -1,0 +1,167 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "initArm"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitElevator"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitAlgaeManipulator"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftMoveToScore1_WithPush"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoScoreI"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MoveToGet2"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MoveToScore2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoScoreK"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MoveToGet3"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MoveToScore3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoScoreL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MoveToGet4"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoLineupFeeder"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ForceArmToIntake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MoveToScore4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoScoreJ"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MoveBack"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
