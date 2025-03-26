@@ -68,7 +68,7 @@ public class LEDStrip {
     public static final int chuteLidarDiag = 0X2000; // ^
 
     /** All segments blue */
-    public static final int allClear = 0X2FFF;
+    public static final int allClear = 0X3FFF;
 
     private static final LEDStrip instance = new LEDStrip();
 

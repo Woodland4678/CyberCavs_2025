@@ -7,6 +7,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -30,6 +31,8 @@ public class MoveArm extends Command {
   boolean forceElevatorMove = false;
   boolean forceMove = false;
   boolean moveToRestFirst = true;
+  boolean isAuto = false;
+  double currentArmPositionTarget = -0.25;
   Debouncer coralGone = new Debouncer(0.1);
   Debouncer endEffectorWheelsOn = new Debouncer(0.1);
   //int pressedCount = 0;
@@ -47,16 +50,18 @@ public class MoveArm extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    isAuto = DriverStation.isAutonomous();
     moveState = 0;
     //pressedCount++;
     isDone = false;
     isArmAtRest = false;
     isElevatorAtRest = false;
+    currentArmPositionTarget = -0.25;
     //forceMove = false;
     armevatorAtRest.calculate(false);     
     currentArmPositionID = S_Armevator.getCurrentArmPositionID();
     S_Armevator.setTargetArmPositionID(targetPosition.positionID);
-    if ((currentArmPositionID == 1 && targetPosition.positionID > 1) || (currentArmPositionID != 1 && targetPosition.positionID == 1)) { //if we're moving to intake coral and we're not already in rest position, move to rest first
+    if ((currentArmPositionID == 1 && targetPosition.positionID > 1) ) { //if we're moving to intake coral and we're not already in rest position, move to rest first //|| (currentArmPositionID != 1 && targetPosition.positionID == 1)
       //S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
       //S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
       //S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
@@ -91,7 +96,7 @@ public class MoveArm extends Command {
     SmartDashboard.putNumber("Move arm target ID", targetPosition.positionID);
     switch(moveState) {
       case 0:
-        if ((S_Swerve.getDistanceLaser() > 90 || S_Swerve.getDistanceLaser() < 60 || (S_Armevator.getCurrentArmPositionID() == 2 && this.targetPosition.positionID == 1 )) && S_Armevator.canArmMove() && (S_Armevator.hasCoral() || this.targetPosition.positionID == 1 || this.targetPosition.positionID == 2)) {
+        if (((S_Swerve.getDistanceLaser() > 90 || S_Swerve.getDistanceLaser() < 60) || (S_Armevator.getCurrentArmPositionID() == 2 && this.targetPosition.positionID == 1) || (isAuto)) && S_Armevator.canArmMove() && (S_Armevator.hasCoral() || this.targetPosition.positionID == 1 || this.targetPosition.positionID == 2)) {
           if (moveToRestFirst) {
             moveState++;
           }
@@ -102,11 +107,13 @@ public class MoveArm extends Command {
       break;
       case 1:
         if (targetPosition.positionID == 6 || targetPosition.positionID == 2) { //if we're going to L4 swing the arm out right away
-          S_Armevator.moveArmToPosition(targetPosition.armTargetAngle);
+          currentArmPositionTarget = targetPosition.armTargetAngle;
+          S_Armevator.moveArmToPosition(currentArmPositionTarget);
           S_Armevator.moveWristToPosition(targetPosition.wristTarget);
         }
         else {
-          S_Armevator.moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+          currentArmPositionTarget = Constants.ArmConstants.restPosition.armTargetAngle;
+          S_Armevator.moveArmToPosition(currentArmPositionTarget);
           S_Armevator.moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
         }
         S_Armevator.moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
@@ -114,13 +121,17 @@ public class MoveArm extends Command {
         moveState++;
       break;
       case 2:
-        if (S_Armevator.getArmPositionError() < 0.008) {
+        double armTolerance = 0.008;
+        if (targetPosition.positionID == 6) {
+          armTolerance = 0.027;
+        }
+        if (Math.abs(S_Armevator.getArmPosition() - currentArmPositionTarget) < armTolerance) {
           isArmAtRest = true;
         }
         else {
           isArmAtRest = false;
         }
-        if (S_Armevator.getElevatorPositionError() < 0.05) {
+        if (Math.abs(S_Armevator.getElevatorPosition() - Constants.ArmConstants.restPosition.elevatorTarget) < 1.0) {
           isElevatorAtRest = true;
         }
         else {
@@ -163,9 +174,10 @@ public class MoveArm extends Command {
           
       break;
       case 4:
+          SmartDashboard.putNumber("Move Arm Elevator Error", Math.abs(S_Armevator.getElevatorPosition() - targetPosition.elevatorTarget));
           if (S_Armevator.getArmPositionError() < 0.003 //arm moving up is postitive error, so we don't really need to absolute it here
-            && Math.abs(S_Armevator.getElevatorPositionError()) < 0.03
-            && Math.abs(S_Armevator.getWristPositionError()) < 0.01) {
+            && (Math.abs(S_Armevator.getElevatorPosition() - targetPosition.elevatorTarget) < 0.75)
+            && (S_Armevator.getWristPositionError()) < 0.01) {
               S_Armevator.setCurrentArmPositionID(targetPosition.positionID);
               if (targetPosition.positionID != 6) {
                 isDone = true;

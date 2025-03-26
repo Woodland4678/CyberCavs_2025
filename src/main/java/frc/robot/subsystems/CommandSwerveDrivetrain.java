@@ -530,15 +530,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return distanceLaserAvg;
     }
     public boolean isModuleReady(int module) {
-        double degrees = this.getState().ModulePositions[module].angle.getDegrees();
+        return this.getModule(module).getEncoder().isConnected();
+        // double degrees = this.getState().ModulePositions[module].angle.getDegrees();
 
-         if (degrees != 0) {
-          return true;
-         }
-        return false;
+        //  if (degrees != 0) {
+        //   return true;
+        //  }
+        // return false;
     }
     public boolean isGyroReady() {
-        return (Math.abs(getgyroValue()) > 0);
+        return this.getPigeon2().isConnected();
+       // return (Math.abs(getgyroValue()) > 0);
     }
 
 }

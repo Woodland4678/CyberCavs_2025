@@ -58,6 +58,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController joystick2 = new CommandXboxController(2);
     private static final CommandXboxController operatorController = new CommandXboxController(1);
 
     PowerDistribution PDH = new PowerDistribution();
@@ -124,6 +125,16 @@ public class RobotContainer {
          * Operator button 22 is for calibrating the arm.
          */
 
+         joystick2.button(3).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, false));
+         joystick2.button(1).onTrue(new MoveArm(Constants.ArmConstants.L2Position, S_Armevator, drivetrain, false, false));
+         joystick2.button(2).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, false, false));
+         joystick2.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
+         joystick2.leftBumper().onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, false));
+         joystick2.rightBumper().onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, true));
+         joystick2.pov(0).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
+         joystick2.pov(90).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'B', joystick));
+         joystick2.pov(180).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
+         joystick2.pov(270).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
 
         // joystick.x().onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(0))); // Deploy climber position, tune value later.
          //joystick.y().onTrue(new InstantCommand(() -> S_Climber.moveClimberToPosition(10))); // Climb position, tune value later.
@@ -132,7 +143,11 @@ public class RobotContainer {
         // joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.moveManipulatorToPosition(30))); // Rest postition, tune value later.
          //joystick.b().onTrue(new InstantCommand(() -> S_AlgaeManipulator.stopIntakeWheels()));
 
+        // joystick.pov(0).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'A', joystick));
+         //joystick.pov(90).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'B', joystick));
 
+         //joystick.pov(180).onTrue())
+        //joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.adjustFor1Skip()));
         // joystick.pov(0).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(0.00))); //0.25 should be straight up
         // joystick.pov(180).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.25))); //-0.25 should be straight down
          //joystick.pov(270).onTrue(new InstantCommand(() -> S_Armevator.moveArmToPosition(-0.1))); //-0.25 should be straight down
@@ -232,7 +247,7 @@ public class RobotContainer {
         operatorController.button(3).onTrue(new MoveArm(Constants.ArmConstants.L3Position, S_Armevator, drivetrain, false, false));
         operatorController.button(4).onTrue(new MoveArm(Constants.ArmConstants.L4Position, S_Armevator, drivetrain, false, false));
         operatorController.button(19).onTrue(new MoveArm(Constants.ArmConstants.intakePosition, S_Armevator, drivetrain, true, false));
-        operatorController.button(13).onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, true));
+        operatorController.button(20).onTrue(new MoveArm(Constants.ArmConstants.restPosition, S_Armevator, drivetrain, true, true));
        // operatorController.button(1).onTrue(new MoveArm(Constants.ArmConstants.highAlgaeRemoval, S_Armevator, drivetrain, true));
 
 
@@ -247,14 +262,14 @@ public class RobotContainer {
         operatorController.button(7).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'I', joystick));
         operatorController.button(9).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'J', joystick));
         operatorController.button(11).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'K', joystick));
-        operatorController.button(20).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
+        operatorController.button(18).whileTrue(new AutoAlignCoralScore(drivetrain, S_Armevator, 'L', joystick));
 
         operatorController.button(17).onTrue(new InstantCommand(() -> S_Climber.lock()));
         operatorController.button(17).onFalse(new InstantCommand(() -> S_Climber.unlock()));
 
         operatorController.axisGreaterThan(3, 0.115).onTrue(new DeployClimber(S_Climber));
         operatorController.axisGreaterThan(3, 0.115).onTrue(new MoveArm(Constants.ArmConstants.climbPosition, S_Armevator, drivetrain, true, true));
-        operatorController.axisGreaterThan(5, 0.115).onTrue(new Climb(S_Climber));
+        operatorController.axisGreaterThan(1, 0.115).onTrue(new Climb(S_Climber));
 
         //Buttons to force the arm to move
         operatorController.axisGreaterThan(4, 0.115).and(operatorController.button(1)).onTrue(new MoveArm(Constants.ArmConstants.L1Position, S_Armevator, drivetrain, true, true));

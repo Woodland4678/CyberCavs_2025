@@ -131,7 +131,7 @@ public class AutoAlignCoralScore extends Command {
     }
     rControllerSetpoint = Math.toRadians(rControllerSetpoint);
     
-    rController.setTolerance(Math.toRadians(1.5));
+    rController.setTolerance(Math.toRadians(2.5));
     state = 0;
     isAtSetpointCnt = 0;
     yController.reset();
@@ -145,7 +145,7 @@ public class AutoAlignCoralScore extends Command {
         xControllerSetpoint = -14;
       }
       else {
-        xControllerSetpoint = 20.5;
+        xControllerSetpoint = 19.0;
       }
       
     }
@@ -160,7 +160,7 @@ public class AutoAlignCoralScore extends Command {
         xControllerSetpoint = -14;
       }
       else {
-        xControllerSetpoint = 20.5;
+        xControllerSetpoint = 19.0;
       }
       
     }
@@ -188,26 +188,26 @@ public class AutoAlignCoralScore extends Command {
     else {
       switch(state) {        
         case 0:
-          if (Math.abs(yController.getPositionError()) < 85) { //TODO tune for robot // && Math.abs(xController.getPositionError()) < 30
+          if (Math.abs(yController.getPositionError()) < 90) { //TODO tune for robot // && Math.abs(xController.getPositionError()) < 30
             S_Swerve.setIsAutoAligning(true);
           }
           else {
             S_Swerve.setIsAutoAligning(false);
           }
           if (Math.abs(xController.getPositionError()) < 10) {
-            xController.setP(0.041); 
+            xController.setP(0.05); 
            // xController.setD(0.05);                       
           }
           else {
             xController.setP(0.04);           
           }
           if (Math.abs(yController.getPositionError()) < 10) {
-            yController.setP(0.05);
-           // yController.setD(0.3);
+            yController.setP(0.06);
+            yController.setD(0.002);
           }
           else {
-            yController.setP(0.044);
-          //  yController.setD(0.1);
+            yController.setP(0.048);
+            yController.setD(0.002);
           }
           //rSpeed = 0;
           //var estYDist = 0.0798/(Math.tan(Math.toRadians(S_Swerve.getAprilTagY()))); //0.0889 is the height diff between the camera and middle of the april tag (3.5 inches)

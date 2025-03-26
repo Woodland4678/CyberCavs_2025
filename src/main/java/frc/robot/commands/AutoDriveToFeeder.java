@@ -45,7 +45,7 @@ public class AutoDriveToFeeder extends Command {
   double angle = 0;
   double lidarTakeOverReading = 100.0;
   boolean isDone = false;
-  Debouncer coralIncoming = new Debouncer(0.1);
+  Debouncer coralIncoming = new Debouncer(0.04);
   Armevator S_Armevator;
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   //private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -103,7 +103,7 @@ public class AutoDriveToFeeder extends Command {
   public void execute() {    
     double degrees = S_Swerve.getgyroValue();
     rSpeed = rController.calculate(degrees, rControllerTarget, Timer.getFPGATimestamp());
-    if ((S_Swerve.getChuteLidar() < 40 && S_Swerve.getChuteLidar() > 1) || S_Armevator.hasCoral()) {
+    if (coralIncoming.calculate((S_Swerve.getChuteLidar() < 40 && S_Swerve.getChuteLidar() > 1 && S_Swerve.getRearLidar() < 15) || S_Armevator.hasCoral())) {
       isDone = true;
       ySpeed = 0;
       rSpeed = 0;

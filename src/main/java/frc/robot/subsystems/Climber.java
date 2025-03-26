@@ -45,8 +45,8 @@ public class Climber extends SubsystemBase {
 
     // set Motion Magic settings
     var climberMotionConfigs = climberConfigs.MotionMagic;
-    climberMotionConfigs.MotionMagicCruiseVelocity = 70; // Target cruise velocity of 80 rps
-    climberMotionConfigs.MotionMagicAcceleration = 140; // Target acceleration of 160 rps/s (0.5 seconds)
+    climberMotionConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+    climberMotionConfigs.MotionMagicAcceleration = 200; // Target acceleration of 160 rps/s (0.5 seconds)
     climberMotionConfigs.MotionMagicJerk = 2000; // Target jerk of 1600 rps/s/s (0.1 seconds)
 
 
@@ -57,14 +57,14 @@ public class Climber extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Climber Position", getClimberPosition());
     SmartDashboard.putBoolean("Climber is at max climb", getAtMaxClimb());
-    if (atMaxClimbTriggered.calculate(getAtMaxClimb())) {
-      if (climberMotor.getMotorVoltage().getValueAsDouble() > 0) { //if we're at max climb don't allow a voltage set > 0 (which is in the pull in direction)
-        setClimberVoltage(0);
-      }      
-    }
-    else {
-      atMaxClimbTriggered.calculate(false);
-    }
+    // if (atMaxClimbTriggered.calculate(getAtMaxClimb())) {
+    //   if (climberMotor.getMotorVoltage().getValueAsDouble() > 0) { //if we're at max climb don't allow a voltage set > 0 (which is in the pull in direction)
+    //     setClimberVoltage(0);
+    //   }      
+    // }
+    // else {
+    //   atMaxClimbTriggered.calculate(false);
+    // }
     // This method will be called once per scheduler run
   }
   public boolean getAtMaxClimb() {
@@ -77,9 +77,9 @@ public class Climber extends SubsystemBase {
 
     // set target position to 100 rotations
     
-    if (!isLocked) {
+   // if (!isLocked) {
       climberMotor.setControl(m_request.withPosition(pos));
-    }
+    //}
   }
   public double getClimberPosition(){
 
@@ -110,9 +110,9 @@ public class Climber extends SubsystemBase {
   isLocked = false;
  }
  public void setClimberVoltage(double voltage) {
-  if (!isLocked) {
+  //if (!isLocked) {
     climberMotor.setVoltage(voltage);
-  }
+  //}
  }
  public boolean getIsLocked() {
   return isLocked;

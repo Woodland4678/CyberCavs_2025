@@ -66,7 +66,7 @@ public class Armevator extends SubsystemBase {
   private final AnalogInput wristAbsolute; // Absoloute Encoder
   private boolean canArmMove;
   private boolean isArmAtRest;
-  private final double coralPositionForArmMove = -3.22; //TODO find
+  private final double coralPositionForArmMove = -2.9; //TODO find
   private final double coralPositionToScore = -0.236125; //TODO find
   //private double elevatorPositionToMoveArm = -2.1;
   private int currentArmPositionID = 0;
@@ -214,11 +214,12 @@ public class Armevator extends SubsystemBase {
     SmartDashboard.putNumber("End effector wheel speed", getEndAffectorWheelSpeed());
     SmartDashboard.putNumber("End Effector Wheel Position", endEffectorMotor.getEncoder().getPosition());
     SmartDashboard.putBoolean("Has Coral", hasCoral());
-    SmartDashboard.putNumber("Applied Arm Voltage", armVolts);
+   // SmartDashboard.putNumber("Applied Arm Voltage", armVolts);
     SmartDashboard.putNumber("Current Arm Position", getCurrentArmPositionID());
-    SmartDashboard.putNumber("Arm Position Error", getArmPositionError());
+   // SmartDashboard.putNumber("Arm Position Error", getArmPositionError());
     SmartDashboard.putNumber("Elevator Error", getElevatorPositionError());
     SmartDashboard.putNumber("Arm Target Pos", getTargetArmPositionID());
+    //SmartDashboard.putNumber("Elevator Error", getElevatorPositionError());
    // SmartDashboard.putBoolean("Elevator at start point", isAtStartPos());
     // Lidar SmartDashboard needs to be added here
     // if (!hasCoral()) {
@@ -244,9 +245,14 @@ public class Armevator extends SubsystemBase {
       case POSITION_CORAL_FOR_ARM_MOVE:
         if (moveEndAffectorWheelsToPosition(coralPositionForArmMove) < 0.7) { //TODO tune this for robot
             //endEffectorMotor.getEncoder().setPosition(0);
-            moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
-            moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
-            moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
+            if (targetArmPositionID != 6) {
+              moveArmToPosition(Constants.ArmConstants.restPosition.armTargetAngle);
+              moveElevatorToPosition(Constants.ArmConstants.restPosition.elevatorTarget);
+              moveWristToPosition(Constants.ArmConstants.restPosition.wristTarget);
+            }
+            else {
+              canArmMove = true;
+            }
         }
         if (getArmPosition() > -0.25) {
           canArmMove = true;
@@ -407,6 +413,9 @@ public class Armevator extends SubsystemBase {
   else {
     setEndEffectorVoltage(-5.5);
   }
+ }
+ public void adjustFor1Skip() {
+  armMotor.setPosition(getArmPosition() - (0.015625));
  }
 
  public boolean isWristReady() {

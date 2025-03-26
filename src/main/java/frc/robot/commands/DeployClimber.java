@@ -13,7 +13,7 @@ public class DeployClimber extends Command {
   Climber S_Climber;
   int state = 0;
   double getFeetOutPosition = 13.0;
-  double deployPosition = -55.0;
+  double deployPosition = -50.0;
   boolean isDone = false;
   /** Creates a new DeployClimber. */
   public DeployClimber(Climber S_Climber) {

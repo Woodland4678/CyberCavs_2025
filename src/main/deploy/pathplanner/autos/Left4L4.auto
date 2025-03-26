@@ -56,12 +56,6 @@
                 "data": {
                   "name": "AutoLineupFeeder"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ForceArmToIntake"
-                }
               }
             ]
           }
@@ -93,12 +87,6 @@
                 "data": {
                   "name": "AutoLineupFeeder"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ForceArmToIntake"
-                }
               }
             ]
           }
@@ -129,12 +117,6 @@
                 "type": "named",
                 "data": {
                   "name": "AutoLineupFeeder"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ForceArmToIntake"
                 }
               }
             ]
