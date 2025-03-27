@@ -39,8 +39,8 @@ public class Climb extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("State!!!!!!!!!!!!!!!", state);
-    SmartDashboard.putNumber("Climb done count", isDoneCnt);
+   // SmartDashboard.putNumber("State!!!!!!!!!!!!!!!", state);
+   // SmartDashboard.putNumber("Climb done count", isDoneCnt);
     switch (state) {
       // case 0:
       //   if (Math.abs(S_Climber.getClimberPosition() - climbFastToPosition) < 2.3) {
