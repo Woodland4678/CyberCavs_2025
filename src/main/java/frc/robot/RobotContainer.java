@@ -327,21 +327,22 @@ public class RobotContainer {
     }
     public boolean isElevatorReady() {
         // return false;
-        return true; //nothing to check just return true
-        //return S_Armevator.isElevatorReady();
+        //return true; //nothing to check just return true
+        return S_Armevator.isElevatorReady();
     }
     public boolean isShoulderReady() {
         // return false;
-        return true; //nothing to do just return true
-        //return S_Armevator.isShoulderReady();
+        //return true; //nothing to do just return true
+        return S_Armevator.isShoulderReady();
     }
     public boolean isWristReady() {
         // return false;
-        return true; //nothing to check just return true
-       // return S_Armevator.isWristReady();
+       // return true; //nothing to check just return true
+        return S_Armevator.isWristReady();
     }
     public boolean isClimberReady() {
-        return true; // no diagnostoic test for this
+        //return true; // no diagnostoic test for this
+        return S_Climber.isClimberReady();
     }
     public boolean isGyroReady(){
         return drivetrain.isGyroReady();

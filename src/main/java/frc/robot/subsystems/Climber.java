@@ -124,5 +124,8 @@ public class Climber extends SubsystemBase {
  public boolean getIsLocked() {
   return isLocked;
  }
+ public boolean isClimberReady() {
+  return climberMotor.isConnected();
+ }
   
 }

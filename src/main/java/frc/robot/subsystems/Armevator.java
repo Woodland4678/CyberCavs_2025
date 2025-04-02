@@ -419,23 +419,14 @@ public class Armevator extends SubsystemBase {
  }
 
  public boolean isWristReady() {
-   if (Math.abs(getWristPosition() - Constants.WristConstants.wristHomePosition) < Constants.WristConstants.wristHomePosTolerance) {
-     return true;
-   }
-   return false;
+   return  !wristMotor.hasActiveFault();  
  }
 
  public boolean isShoulderReady() {
-   if (Math.abs(getArmPosition() - Constants.ArmConstants.armHomePosition) < Constants.ArmConstants.armHomePosTolerance) {
-     return true;
-   }
-   return false;
+    return armMotor.isConnected();
  }
 
- public boolean isElevatorReady() {
-  if (Math.abs(getElevatorPosition() - Constants.ElevatorConstants.elevatorHomePosition) < Constants.ElevatorConstants.elevatorHomePosTolerance) {
-    return true;
-  }
-  return false;
+ public boolean isElevatorReady() {  
+  return elevatorMotor.isConnected();
 }
 }

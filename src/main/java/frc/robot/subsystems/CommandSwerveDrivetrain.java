@@ -530,7 +530,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return distanceLaserAvg;
     }
     public boolean isModuleReady(int module) {
-        return this.getModule(module).getEncoder().isConnected();
+        var mod = this.getModule(module);       
+        return (mod.getEncoder().isConnected() && mod.getDriveMotor().isConnected() && mod.getSteerMotor().isConnected());
         // double degrees = this.getState().ModulePositions[module].angle.getDegrees();
 
         //  if (degrees != 0) {
