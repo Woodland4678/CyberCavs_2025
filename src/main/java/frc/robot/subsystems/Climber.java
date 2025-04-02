@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.wpilibj.Relay;
+
 public class Climber extends SubsystemBase {
   TalonFX climberMotor;
   private DigitalInput atMaxClimb;
@@ -25,6 +27,8 @@ public class Climber extends SubsystemBase {
   PowerDistribution PDH;
   boolean isLocked = false;
   Debouncer atMaxClimbTriggered = new Debouncer(0.3);
+  Relay lockSolenoid;
+  
   /** Creates a new Climber. */
   public Climber(PowerDistribution PDH) {
     climberMotor = new TalonFX(5,"DriveTrain");
@@ -32,6 +36,7 @@ public class Climber extends SubsystemBase {
     isLocked = true;
     this.PDH = PDH;
     this.isLocked = false;
+    lockSolenoid = new Relay(3);
     var climberConfigs = new TalonFXConfiguration();
 
     // set slot 0 gains
@@ -102,10 +107,12 @@ public class Climber extends SubsystemBase {
     return dashPIDS;
  }
  public void lock() {
+  lockSolenoid.set(Relay.Value.kOff);
   PDH.setSwitchableChannel(false);
   isLocked = true;
  }
  public void unlock() {
+  lockSolenoid.set(Relay.Value.kForward);
   PDH.setSwitchableChannel(true);
   isLocked = false;
  }

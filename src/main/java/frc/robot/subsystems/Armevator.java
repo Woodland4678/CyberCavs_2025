@@ -411,7 +411,7 @@ public class Armevator extends SubsystemBase {
     setEndEffectorVoltage(-1.9);
   }
   else {
-    setEndEffectorVoltage(-5.5);
+    setEndEffectorVoltage(-4.5);
   }
  }
  public void adjustFor1Skip() {
