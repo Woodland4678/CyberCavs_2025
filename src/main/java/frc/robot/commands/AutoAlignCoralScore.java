@@ -177,7 +177,7 @@ public class AutoAlignCoralScore extends Command {
      //yController.setPID(dashPIDS[3], dashPIDS[4], dashPIDS[5]);
      degrees = S_Swerve.getgyroValue();
      rSpeed = rController.calculate(Math.toRadians(degrees), rControllerSetpoint, Timer.getFPGATimestamp());
-     if (S_Swerve.getBestAprilTagID() != branchTargetID || S_Swerve.getDistanceLaser() > 200 || S_Swerve.getDistanceLaser() < 10) {
+     if (S_Swerve.getBestAprilTagID() != branchTargetID || S_Swerve.getDistanceLaser() > 200 || S_Swerve.getDistanceLaser() < 61) {
       ySpeed = -joystick.getLeftY();
       xSpeed = -joystick.getLeftX();
       if (S_Armevator.getArmPosition() > 0.1) {
@@ -216,14 +216,14 @@ public class AutoAlignCoralScore extends Command {
             S_Swerve.setIsAutoAligning(false);
           }
           if (Math.abs(xController.getPositionError()) < 8) {
-            xController.setP(0.057); 
+            xController.setP(0.049); 
            // xController.setD(0.05);                       
           }
           else {
             xController.setP(0.041);           
           }
           if (Math.abs(yController.getPositionError()) < 10) {
-            yController.setP(0.057);
+            yController.setP(0.054);
            // yController.setD(0.002);
           }
           else {
